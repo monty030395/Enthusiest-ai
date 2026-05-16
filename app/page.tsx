@@ -124,15 +124,14 @@ function HomeContent() {
   const searchParams = useSearchParams();
   const [debugParams, setDebugParams] = useState<string>("");
   useEffect(() => {
-    // Trade Me may send the URL via any of these params depending on the app/browser
-    const sharedUrl =
-      searchParams.get("shared_url") ??
-      searchParams.get("url") ??
-      searchParams.get("text");
-
-    // Debug: show raw params so we can diagnose if something unexpected comes through
     const raw = searchParams.toString();
     if (raw) setDebugParams(raw);
+
+    // shared_url/url params come through clean; text param may contain a sentence with the URL embedded
+    const directUrl = searchParams.get("shared_url") ?? searchParams.get("url");
+    const textParam = searchParams.get("text") ?? "";
+    const urlInText = textParam.match(/https?:\/\/[^\s]+/)?.[0];
+    const sharedUrl = directUrl ?? urlInText;
 
     if (sharedUrl) {
       setUrl(sharedUrl);
