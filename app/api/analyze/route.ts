@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
+import OAuth from "oauth-1.0a";
+import crypto from "crypto";
 
 const SYSTEM_PROMPT = `You are an experienced NZ car enthusiast with 20+ years of hands-on knowledge buying, owning, and selling JDM, Euro, and performance cars in the New Zealand market. You've owned dozens of cars — WRXs, Evos, E46s, MX-5s, Crowns, Skylines, Golf Rs, IS300s — and you've made expensive mistakes so you know exactly what to look for.
 
@@ -84,6 +86,76 @@ questionsToAsk — specific, model-relevant questions to ask the seller. Not gen
 
 
 
+function extractTradeMeListingId(url: string): string | null {
+  return url.match(/\/listing\/(\d+)/i)?.[1] ?? null;
+}
+
+async function fetchTradeMeListing(listingId: string): Promise<string> {
+  const oauth = new OAuth({
+    consumer: {
+      key: process.env.TRADEME_CONSUMER_KEY!,
+      secret: process.env.TRADEME_CONSUMER_SECRET!,
+    },
+    signature_method: "HMAC-SHA1",
+    hash_function(baseString, key) {
+      return crypto.createHmac("sha1", key).update(baseString).digest("base64");
+    },
+  });
+
+  const requestData = {
+    url: `https://api.trademe.co.nz/v1/Listings/${listingId}.json`,
+    method: "GET",
+  };
+
+  const authHeader = oauth.toHeader(oauth.authorize(requestData));
+
+  const res = await fetch(requestData.url, {
+    headers: {
+      ...authHeader,
+      Accept: "application/json",
+    },
+    signal: AbortSignal.timeout(10000),
+  });
+
+  if (!res.ok) throw new Error(`Trade Me API returned ${res.status}`);
+
+  const data = await res.json();
+
+  // Format the structured listing data into a clear text summary for GPT
+  const lines = [
+    `Title: ${data.Title ?? ""}`,
+    `Price: $${data.StartPrice ?? data.BuyNowPrice ?? "not listed"}`,
+    `Description: ${data.Body ?? ""}`,
+    `Location: ${data.Region ?? ""} ${data.Suburb ?? ""}`.trim(),
+    `Seller: ${data.Member?.Nickname ?? ""}`,
+    `Listed: ${data.StartDate ?? ""}`,
+  ];
+
+  // Motors-specific fields if present
+  if (data.MotorWebfeatures) {
+    const m = data.MotorWebfeatures;
+    if (m.Odometer) lines.push(`Odometer: ${m.Odometer} km`);
+    if (m.Registration) lines.push(`Registration: ${m.Registration}`);
+    if (m.BodyStyle) lines.push(`Body: ${m.BodyStyle}`);
+    if (m.Transmission) lines.push(`Transmission: ${m.Transmission}`);
+    if (m.FuelType) lines.push(`Fuel: ${m.FuelType}`);
+    if (m.EngineSize) lines.push(`Engine: ${m.EngineSize}cc`);
+    if (m.NumberOfDoors) lines.push(`Doors: ${m.NumberOfDoors}`);
+    if (m.Colour) lines.push(`Colour: ${m.Colour}`);
+    if (m.WOFExpiry) lines.push(`WOF Expiry: ${m.WOFExpiry}`);
+    if (m.RegistrationExpiry) lines.push(`Rego Expiry: ${m.RegistrationExpiry}`);
+  }
+
+  // Also include attributes (Trade Me stores many car details here)
+  if (Array.isArray(data.Attributes)) {
+    for (const attr of data.Attributes) {
+      lines.push(`${attr.Name}: ${attr.Value}`);
+    }
+  }
+
+  return lines.filter(Boolean).join("\n");
+}
+
 function extractJsonLd(html: string): object | null {
   const matches = [...html.matchAll(/<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)];
   for (const match of matches) {
@@ -117,8 +189,26 @@ export async function POST(req: NextRequest) {
 
   if (url) {
     const firecrawlKey = process.env.FIRECRAWL_API_KEY;
+    const tradeMeKey = process.env.TRADEME_CONSUMER_KEY;
     try {
       let text = "";
+
+      // Trade Me URL — use the official API for accurate structured data
+      const listingId = extractTradeMeListingId(url);
+      if (listingId && tradeMeKey) {
+        try {
+          text = await fetchTradeMeListing(listingId);
+          console.log("Trade Me API success — listing ID:", listingId);
+          content.push({ type: "text", text: `Trade Me listing data:\n\n${text}` });
+        } catch (err) {
+          console.error("Trade Me API failed, falling back to scraper:", err);
+          // Fall through to Firecrawl below
+        }
+      }
+
+      if (content.length > 0) {
+        // Already have content from Trade Me API — skip scraping
+      } else
 
       if (firecrawlKey) {
         const res = await fetch("https://api.firecrawl.dev/v1/scrape", {
@@ -173,8 +263,10 @@ export async function POST(req: NextRequest) {
         text = (await res.text()).slice(0, 15000);
       }
 
-      console.log("Content preview:", text.slice(0, 300));
-      content.push({ type: "text", text: `Car listing from ${url}:\n\n${text}` });
+      if (text) {
+        console.log("Content preview:", text.slice(0, 300));
+        content.push({ type: "text", text: `Car listing from ${url}:\n\n${text}` });
+      }
     } catch {
       return NextResponse.json(
         { error: "Could not reach that URL. Try uploading screenshots instead." },
