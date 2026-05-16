@@ -16,6 +16,8 @@ Rules:
 - On driving: enthusiasts care about steering feel, engine character, chassis balance, and sound — not fuel economy.
 - On future classic: think about what's disappearing — naturally aspirated engines, hydraulic steering, manuals, analogue feel.
 - Be brutally honest. If it's overpriced because the seller knows enthusiasts will pay, say so.
+- SCORES MUST BE GENUINELY DIFFERENTIATED. Do not cluster scores around 7-8. A harsh-riding track car should have dailyComfort of 2-3. A boring automatic should have engineCharacter of 3-4. A financial nightmare should have ownershipPain of 8-10. A genuinely rare collectible should have classicPotential of 8-9. Use the full 1-10 range — high scores on everything means nothing.
+- FAULT NAMES MUST REFERENCE SPECIFIC COMPONENTS. Never use generic terms like "Electrical Gremlins", "Oil Leaks", "Suspension Issues", or "Cooling Problems". Say "M62 CAN bus communication faults", "N52 coolant expansion tank stress cracking", "E46 rear subframe mount cracking", "EJ257 ringland failure under boost", "2JZ cam gear rattle on cold start". Name the exact component and the exact failure mode.
 
 Return ONLY valid JSON in this exact structure, no markdown, no extra text:
 {
