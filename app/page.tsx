@@ -3,8 +3,6 @@
 import { useState, useRef, useCallback, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 
-type Fault = { title: string; detail: string };
-
 type Analysis = {
   vehicle: {
     make: string;
@@ -16,46 +14,74 @@ type Analysis = {
     transmission: string;
     location: string;
   };
+  label: string;
   verdict: string;
-  faults: Fault[];
-  priceAnalysis: string;
-  specNotes: string;
-  classicPotential: string;
-  questionsToAsk: string[];
-  scores: {
-    funFactor: number;
-    classicPotential: number;
-    reliabilityRisk: number;
-    dailyDrivability: number;
-    modPotential: number;
+  whyEnthusiastsCare: string;
+  specSignificance: { item: string; note: string }[];
+  priceVerdict: { assessment: string; reason: string };
+  ownershipPain: { score: number; issues: { title: string; detail: string }[] };
+  drivingCharacter: {
+    steeringFeel: number;
+    engineCharacter: number;
+    dailyComfort: number;
+    overallFun: number;
+    summary: string;
   };
+  classicPotential: { score: number; reasons: string[] };
+  questionsToAsk: string[];
   enthusiastTake: string;
 };
 
-const SCORES: {
-  key: keyof Analysis["scores"];
-  label: string;
-  invert?: boolean;
-}[] = [
-  { key: "funFactor", label: "Fun" },
-  { key: "classicPotential", label: "Classic" },
-  { key: "reliabilityRisk", label: "Risk", invert: true },
-  { key: "dailyDrivability", label: "Daily" },
-  { key: "modPotential", label: "Mods" },
-];
+const LABEL_STYLES: Record<string, string> = {
+  "Hidden Gem":            "bg-emerald-600 text-white",
+  "Future Classic":        "bg-amber-500 text-black",
+  "Enthusiast Tax Victim": "bg-orange-600 text-white",
+  "Cheap Thrill":          "bg-sky-600 text-white",
+  "Money Pit":             "bg-red-700 text-white",
+  "Peak Daily Driver":     "bg-zinc-600 text-white",
+  "Overrated":             "bg-rose-700 text-white",
+  "Underrated":            "bg-teal-600 text-white",
+};
 
-function scoreTileColor(score: number, invert = false) {
-  const v = invert ? 11 - score : score;
-  if (v >= 8) return "bg-emerald-950 text-emerald-400 border-emerald-800";
-  if (v >= 5) return "bg-amber-950 text-amber-400 border-amber-800";
-  return "bg-red-950 text-red-400 border-red-900";
+const PRICE_ASSESSMENT_STYLES: Record<string, string> = {
+  "Fair":                "text-emerald-400",
+  "Underpriced":         "text-emerald-400",
+  "Premium Justified":   "text-amber-400",
+  "Overpriced":          "text-red-400",
+  "Enthusiast Tax":      "text-orange-400",
+};
+
+function DriveScore({ score, label }: { score: number; label: string }) {
+  const color = score >= 8 ? "text-emerald-400" : score >= 6 ? "text-amber-400" : "text-zinc-400";
+  return (
+    <div className="flex flex-col items-center gap-1">
+      <span className={`text-2xl font-black tabular-nums ${color}`}>{score}</span>
+      <span className="text-[9px] uppercase tracking-widest text-zinc-600 font-bold text-center leading-tight">{label}</span>
+    </div>
+  );
 }
 
-function ScoreTile({ score, label, invert }: { score: number; label: string; invert?: boolean }) {
+function PainScore({ score }: { score: number }) {
+  const color = score >= 8 ? "text-red-400" : score >= 5 ? "text-amber-400" : "text-emerald-400";
+  const label = score >= 8 ? "High Pain" : score >= 5 ? "Moderate" : "Low Pain";
   return (
-    <div className={`flex flex-col items-center justify-center border rounded-xl py-4 px-2 ${scoreTileColor(score, invert)}`}>
-      <span className="text-3xl font-black tabular-nums leading-none">{score}</span>
-      <span className="text-[10px] font-bold uppercase tracking-widest mt-1.5 opacity-70">{label}</span>
+    <div className="flex items-center gap-2">
+      <span className={`text-4xl font-black tabular-nums ${color}`}>{score}<span className="text-lg text-zinc-700">/10</span></span>
+      <span className={`text-xs font-bold uppercase tracking-widest ${color}`}>{label}</span>
+    </div>
+  );
+}
+
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-zinc-500 mb-3">{children}</p>
+  );
+}
+
+function Card({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return (
+    <div className={`rounded-2xl border border-zinc-800 bg-zinc-900/60 ${className}`}>
+      {children}
     </div>
   );
 }
@@ -65,14 +91,6 @@ function Pill({ children }: { children: React.ReactNode }) {
     <span className="inline-flex items-center px-2.5 py-0.5 rounded-md bg-zinc-800 text-zinc-400 text-xs font-medium">
       {children}
     </span>
-  );
-}
-
-function SectionLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-zinc-500 mb-3">
-      {children}
-    </p>
   );
 }
 
@@ -197,8 +215,7 @@ function HomeContent() {
         </div>
 
         {/* Input card */}
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 backdrop-blur-sm overflow-hidden">
-
+        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 overflow-hidden">
           {/* Mode tabs */}
           <div className="flex border-b border-zinc-800">
             {(["url", "images", "text"] as const).map((m) => (
@@ -282,7 +299,7 @@ function HomeContent() {
             {mode === "text" && (
               <div className="space-y-2">
                 <p className="text-xs text-zinc-500">
-                  On the listing page, select all (<kbd className="bg-zinc-800 px-1 py-0.5 rounded text-zinc-300 font-mono text-[10px]">Ctrl+A</kbd>) and copy (<kbd className="bg-zinc-800 px-1 py-0.5 rounded text-zinc-300 font-mono text-[10px]">Ctrl+C</kbd>), then paste below.
+                  On the listing page, select all (<kbd className="bg-zinc-800 px-1 py-0.5 rounded text-zinc-300 font-mono text-[10px]">Ctrl+A</kbd>) then copy (<kbd className="bg-zinc-800 px-1 py-0.5 rounded text-zinc-300 font-mono text-[10px]">Ctrl+C</kbd>), then paste below.
                 </p>
                 <textarea
                   value={pastedText}
@@ -313,7 +330,7 @@ function HomeContent() {
 
         {/* Loading */}
         {loading && (
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-10 flex flex-col items-center gap-4">
+          <Card className="p-10 flex flex-col items-center gap-4">
             <div className="relative w-10 h-10">
               <div className="absolute inset-0 rounded-full border-2 border-zinc-800" />
               <div className="absolute inset-0 rounded-full border-2 border-t-red-500 animate-spin" />
@@ -322,22 +339,23 @@ function HomeContent() {
               <p className="text-white font-bold text-sm">Consulting the oracle</p>
               <p className="text-zinc-500 text-xs mt-1">Reading the listing, checking the numbers...</p>
             </div>
-          </div>
+          </Card>
         )}
 
         {/* Results */}
         {result && !loading && (
           <div className="space-y-4">
 
-            {/* Vehicle header */}
-            <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 overflow-hidden">
-              {/* Red accent bar */}
+            {/* Vehicle header + label + verdict */}
+            <Card className="overflow-hidden">
               <div className="h-1 bg-gradient-to-r from-red-600 via-red-500 to-transparent" />
-              <div className="p-6">
+              <div className="p-6 space-y-5">
+
+                {/* Make / model / label row */}
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div>
                     <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500 mb-1">
-                      {result.vehicle.year} {result.vehicle.location && `· ${result.vehicle.location}`}
+                      {result.vehicle.year}{result.vehicle.location ? ` · ${result.vehicle.location}` : ""}
                     </p>
                     <h3 className="text-3xl font-black text-white tracking-tight leading-tight">
                       {result.vehicle.make} {result.vehicle.model}
@@ -350,77 +368,132 @@ function HomeContent() {
                       {result.vehicle.transmission && <Pill>{result.vehicle.transmission}</Pill>}
                     </div>
                   </div>
-                  {result.vehicle.price && (
-                    <div className="bg-red-600 rounded-xl px-4 py-2 text-right flex-shrink-0">
-                      <p className="text-[9px] font-bold uppercase tracking-widest text-red-200 opacity-80">Asking</p>
-                      <p className="text-xl font-black text-white">{result.vehicle.price}</p>
-                    </div>
-                  )}
+
+                  <div className="flex flex-col items-end gap-2">
+                    {result.vehicle.price && (
+                      <div className="bg-red-600 rounded-xl px-4 py-2 text-right">
+                        <p className="text-[9px] font-bold uppercase tracking-widest text-red-200 opacity-80">Asking</p>
+                        <p className="text-xl font-black text-white">{result.vehicle.price}</p>
+                      </div>
+                    )}
+                    {result.label && (
+                      <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg ${LABEL_STYLES[result.label] ?? "bg-zinc-700 text-white"}`}>
+                        {result.label}
+                      </span>
+                    )}
+                  </div>
                 </div>
 
-                {/* Verdict */}
-                <div className="mt-5 pl-4 border-l-2 border-red-600">
+                {/* Verdict pull-quote */}
+                <div className="pl-4 border-l-2 border-red-600">
                   <p className="text-zinc-200 leading-relaxed text-sm italic">{result.verdict}</p>
                 </div>
-              </div>
-            </div>
 
-            {/* Score tiles */}
-            <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-5">
-              <SectionLabel>Enthusiast Scores</SectionLabel>
-              <div className="grid grid-cols-5 gap-2">
-                {SCORES.map(({ key, label, invert }) => (
-                  <ScoreTile
-                    key={key}
-                    score={result.scores[key]}
-                    label={label}
-                    invert={invert}
-                  />
-                ))}
+                {/* Why enthusiasts care */}
+                {result.whyEnthusiastsCare && (
+                  <div className="bg-zinc-800/50 rounded-xl p-4">
+                    <SectionLabel>Why Enthusiasts Care</SectionLabel>
+                    <p className="text-zinc-300 text-sm leading-relaxed">{result.whyEnthusiastsCare}</p>
+                  </div>
+                )}
               </div>
-              <div className="grid grid-cols-5 gap-2 mt-1.5">
-                {SCORES.map(({ key, label }) => (
-                  <p key={key} className="text-center text-[9px] text-zinc-600 hidden sm:block">{label}</p>
-                ))}
-              </div>
-            </div>
+            </Card>
 
-            {/* Known faults */}
-            {result.faults.length > 0 && (
-              <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-5">
-                <SectionLabel>Known Faults & Watch Points</SectionLabel>
-                <ul className="space-y-3">
-                  {result.faults.map((fault, i) => (
-                    <li key={i} className="flex gap-3 pl-3 border-l border-red-800">
+            {/* Spec significance */}
+            {result.specSignificance?.length > 0 && (
+              <Card className="p-5">
+                <SectionLabel>Spec Significance</SectionLabel>
+                <ul className="space-y-2">
+                  {result.specSignificance.map((s, i) => (
+                    <li key={i} className="flex gap-3">
+                      <span className="text-red-500 flex-shrink-0 font-black mt-0.5">+</span>
                       <div>
-                        <p className="font-bold text-zinc-200 text-sm">{fault.title}</p>
-                        {fault.detail && (
-                          <p className="text-zinc-500 text-xs mt-0.5 leading-relaxed">{fault.detail}</p>
-                        )}
+                        <span className="font-bold text-zinc-200 text-sm">{s.item}</span>
+                        {s.note && <p className="text-zinc-500 text-xs mt-0.5">{s.note}</p>}
                       </div>
                     </li>
                   ))}
                 </ul>
-              </div>
+              </Card>
             )}
 
-            {/* Price / Spec / Classic */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {[
-                { label: "Price Check", content: result.priceAnalysis },
-                { label: "Spec & Rarity", content: result.specNotes },
-                { label: "Future Classic", content: result.classicPotential },
-              ].filter((s) => s.content).map((section) => (
-                <div key={section.label} className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-4">
-                  <SectionLabel>{section.label}</SectionLabel>
-                  <p className="text-zinc-300 text-xs leading-relaxed">{section.content}</p>
+            {/* Price verdict */}
+            {result.priceVerdict && (
+              <Card className="p-5">
+                <SectionLabel>Price Analysis</SectionLabel>
+                <div className="flex items-baseline gap-3 mb-2">
+                  <span className={`text-xl font-black ${PRICE_ASSESSMENT_STYLES[result.priceVerdict.assessment] ?? "text-zinc-300"}`}>
+                    {result.priceVerdict.assessment}
+                  </span>
                 </div>
-              ))}
-            </div>
+                <p className="text-zinc-400 text-sm leading-relaxed">{result.priceVerdict.reason}</p>
+              </Card>
+            )}
 
-            {/* Questions */}
-            {result.questionsToAsk.length > 0 && (
-              <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-5">
+            {/* Ownership pain */}
+            {result.ownershipPain && (
+              <Card className="p-5">
+                <SectionLabel>Ownership Pain Index</SectionLabel>
+                <div className="mb-4">
+                  <PainScore score={result.ownershipPain.score} />
+                </div>
+                {result.ownershipPain.issues?.length > 0 && (
+                  <ul className="space-y-3">
+                    {result.ownershipPain.issues.map((issue, i) => (
+                      <li key={i} className="pl-3 border-l border-red-900">
+                        <p className="font-bold text-zinc-200 text-sm">{issue.title}</p>
+                        {issue.detail && (
+                          <p className="text-zinc-500 text-xs mt-0.5 leading-relaxed">{issue.detail}</p>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </Card>
+            )}
+
+            {/* Driving character */}
+            {result.drivingCharacter && (
+              <Card className="p-5">
+                <SectionLabel>Driving Character</SectionLabel>
+                <div className="grid grid-cols-4 gap-3 mb-4">
+                  <DriveScore score={result.drivingCharacter.steeringFeel} label="Steering" />
+                  <DriveScore score={result.drivingCharacter.engineCharacter} label="Engine" />
+                  <DriveScore score={result.drivingCharacter.dailyComfort} label="Daily" />
+                  <DriveScore score={result.drivingCharacter.overallFun} label="Fun" />
+                </div>
+                {result.drivingCharacter.summary && (
+                  <p className="text-zinc-400 text-xs leading-relaxed border-t border-zinc-800 pt-3 mt-1">
+                    {result.drivingCharacter.summary}
+                  </p>
+                )}
+              </Card>
+            )}
+
+            {/* Future classic */}
+            {result.classicPotential && (
+              <Card className="p-5">
+                <SectionLabel>Future Classic Potential</SectionLabel>
+                <div className="flex items-baseline gap-2 mb-3">
+                  <span className="text-4xl font-black text-amber-400 tabular-nums">{result.classicPotential.score}</span>
+                  <span className="text-zinc-600 text-lg">/10</span>
+                </div>
+                {result.classicPotential.reasons?.length > 0 && (
+                  <ul className="space-y-1.5">
+                    {result.classicPotential.reasons.map((r, i) => (
+                      <li key={i} className="flex gap-2 text-xs text-zinc-400">
+                        <span className="text-amber-600 flex-shrink-0">▸</span>
+                        {r}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </Card>
+            )}
+
+            {/* Questions to ask */}
+            {result.questionsToAsk?.length > 0 && (
+              <Card className="p-5">
                 <SectionLabel>Ask the Seller</SectionLabel>
                 <ol className="space-y-2.5">
                   {result.questionsToAsk.map((q, i) => (
@@ -430,7 +503,7 @@ function HomeContent() {
                     </li>
                   ))}
                 </ol>
-              </div>
+              </Card>
             )}
 
             {/* Enthusiast take */}
