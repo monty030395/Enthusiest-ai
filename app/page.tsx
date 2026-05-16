@@ -3,6 +3,8 @@
 import { useState, useRef, useCallback, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 
+type DriveMetric = { score: number; description: string };
+
 type Analysis = {
   vehicle: {
     make: string;
@@ -16,18 +18,22 @@ type Analysis = {
   };
   label: string;
   verdict: string;
+  whatMakesSpecial: string;
   whyEnthusiastsCare: string;
+  ownerVibe: { label: string; reasoning: string };
   specSignificance: { item: string; note: string }[];
   priceVerdict: { assessment: string; reason: string };
+  enthusiastTax: { level: string; reasons: string[] };
   ownershipPain: { score: number; issues: { title: string; detail: string }[] };
   drivingCharacter: {
-    steeringFeel: number;
-    engineCharacter: number;
-    dailyComfort: number;
-    overallFun: number;
+    steeringFeel: DriveMetric;
+    engineCharacter: DriveMetric;
+    dailyComfort: DriveMetric;
+    overallFun: DriveMetric;
     summary: string;
   };
   classicPotential: { score: number; reasons: string[] };
+  worstFinancialDecision: { rating: string; reasons: string[] };
   questionsToAsk: string[];
   enthusiastTake: string;
 };
@@ -51,12 +57,42 @@ const PRICE_ASSESSMENT_STYLES: Record<string, string> = {
   "Enthusiast Tax":      "text-orange-400",
 };
 
-function DriveScore({ score, label }: { score: number; label: string }) {
-  const color = score >= 8 ? "text-emerald-400" : score >= 6 ? "text-amber-400" : "text-zinc-400";
+const OWNER_VIBE_STYLES: Record<string, string> = {
+  "Mature Enthusiast Owner":   "bg-blue-900 text-blue-200",
+  "Deferred Maintenance Energy": "bg-amber-900 text-amber-200",
+  "Drift Missile History":     "bg-orange-900 text-orange-200",
+  "Rich Dentist Spec":         "bg-purple-900 text-purple-200",
+  "Grandpa-Owned Gem":         "bg-emerald-900 text-emerald-200",
+  "TikTok Build":              "bg-pink-900 text-pink-200",
+  "Weekend Warrior":           "bg-sky-900 text-sky-200",
+};
+
+const TAX_LEVEL_STYLES: Record<string, { badge: string; icon: string }> = {
+  "None":     { badge: "bg-zinc-700 text-zinc-300",         icon: "text-zinc-500" },
+  "Mild":     { badge: "bg-emerald-900 text-emerald-200",   icon: "text-emerald-500" },
+  "Moderate": { badge: "bg-amber-900 text-amber-200",       icon: "text-amber-500" },
+  "High":     { badge: "bg-orange-900 text-orange-200",     icon: "text-orange-500" },
+  "Extreme":  { badge: "bg-red-900 text-red-200",           icon: "text-red-500" },
+};
+
+const FINANCIAL_RATING_STYLES: Record<string, { color: string; bg: string; stripe: string }> = {
+  "Sensible Purchase":               { color: "text-emerald-400", bg: "",                  stripe: "bg-emerald-600" },
+  "Manageable Pain":                 { color: "text-amber-400",   bg: "",                  stripe: "bg-amber-600" },
+  "Emotionally Justified Disaster":  { color: "text-orange-400",  bg: "bg-orange-950/25",  stripe: "bg-orange-600" },
+  "Dangerous":                       { color: "text-red-400",     bg: "bg-red-950/30",     stripe: "bg-red-600" },
+  "Catastrophic Wallet Destruction": { color: "text-red-300",     bg: "bg-red-950/50",     stripe: "bg-red-500" },
+};
+
+function DriveScoreExpanded({ metric, label }: { metric: DriveMetric; label: string }) {
+  const color = metric.score >= 8 ? "text-emerald-400" : metric.score >= 6 ? "text-amber-400" : metric.score >= 4 ? "text-zinc-300" : "text-red-400";
   return (
-    <div className="flex flex-col items-center gap-1">
-      <span className={`text-2xl font-black tabular-nums ${color}`}>{score}</span>
-      <span className="text-[9px] uppercase tracking-widest text-zinc-600 font-bold text-center leading-tight">{label}</span>
+    <div className="bg-zinc-800/40 rounded-xl p-4 space-y-2">
+      <div className="flex items-baseline gap-1.5">
+        <span className={`text-2xl font-black tabular-nums ${color}`}>{metric.score}</span>
+        <span className="text-zinc-600 text-sm">/10</span>
+        <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 ml-1">{label}</span>
+      </div>
+      <p className="text-zinc-300 text-sm leading-relaxed">{metric.description}</p>
     </div>
   );
 }
@@ -414,7 +450,7 @@ function HomeContent() {
                   )}
                 </div>
 
-                {/* Pills + label badge — all inline, wraps naturally */}
+                {/* Pills + label badge + owner vibe badge — all inline, wraps naturally */}
                 <div className="flex flex-wrap items-center gap-2">
                   {result.vehicle.mileage && <Pill>{result.vehicle.mileage}</Pill>}
                   {result.vehicle.transmission && <Pill>{result.vehicle.transmission}</Pill>}
@@ -423,11 +459,23 @@ function HomeContent() {
                       {result.label}
                     </span>
                   )}
+                  {result.ownerVibe?.label && (
+                    <span className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full ${OWNER_VIBE_STYLES[result.ownerVibe.label] ?? "bg-zinc-700 text-zinc-300"}`}>
+                      {result.ownerVibe.label}
+                    </span>
+                  )}
                 </div>
 
-                {/* Verdict pull-quote */}
-                <div className="pl-4 border-l-2 border-red-600">
-                  <p className="text-zinc-200 leading-relaxed text-sm italic">{result.verdict}</p>
+                {/* What Makes Special — historical/cultural significance */}
+                {result.whatMakesSpecial && (
+                  <div className="pl-4 border-l-[3px] border-red-500">
+                    <p className="text-white text-base font-medium italic leading-snug">{result.whatMakesSpecial}</p>
+                  </div>
+                )}
+
+                {/* Verdict pull-quote — assessment of this specific listing */}
+                <div className="pl-4 border-l-2 border-red-600/70">
+                  <p className="text-zinc-300 leading-relaxed text-sm italic">{result.verdict}</p>
                 </div>
 
                 {/* Why enthusiasts care */}
@@ -471,6 +519,28 @@ function HomeContent() {
               </Card>
             )}
 
+            {/* Enthusiast tax */}
+            {result.enthusiastTax && (
+              <Card className="p-5">
+                <SectionLabel>Enthusiast Tax</SectionLabel>
+                <div className="mb-4">
+                  <span className={`text-sm font-black uppercase tracking-widest px-3 py-1.5 rounded-lg ${TAX_LEVEL_STYLES[result.enthusiastTax.level]?.badge ?? "bg-zinc-700 text-zinc-300"}`}>
+                    {result.enthusiastTax.level}
+                  </span>
+                </div>
+                {result.enthusiastTax.reasons?.length > 0 && (
+                  <ul className="space-y-2">
+                    {result.enthusiastTax.reasons.map((r, i) => (
+                      <li key={i} className="flex gap-2 text-sm text-zinc-400 leading-snug">
+                        <span className={`flex-shrink-0 font-bold ${TAX_LEVEL_STYLES[result.enthusiastTax.level]?.icon ?? "text-zinc-500"}`}>$</span>
+                        {r}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </Card>
+            )}
+
             {/* Ownership pain */}
             {result.ownershipPain && (
               <Card className="p-5">
@@ -497,11 +567,11 @@ function HomeContent() {
             {result.drivingCharacter && (
               <Card className="p-5">
                 <SectionLabel>Driving Character</SectionLabel>
-                <div className="grid grid-cols-4 gap-3 mb-4">
-                  <DriveScore score={result.drivingCharacter.steeringFeel} label="Steering" />
-                  <DriveScore score={result.drivingCharacter.engineCharacter} label="Engine" />
-                  <DriveScore score={result.drivingCharacter.dailyComfort} label="Daily" />
-                  <DriveScore score={result.drivingCharacter.overallFun} label="Fun" />
+                <div className="grid grid-cols-2 gap-3 mb-4">
+                  <DriveScoreExpanded metric={result.drivingCharacter.steeringFeel} label="Steering" />
+                  <DriveScoreExpanded metric={result.drivingCharacter.engineCharacter} label="Engine" />
+                  <DriveScoreExpanded metric={result.drivingCharacter.dailyComfort} label="Daily" />
+                  <DriveScoreExpanded metric={result.drivingCharacter.overallFun} label="Fun" />
                 </div>
                 {result.drivingCharacter.summary && (
                   <p className="text-zinc-400 text-xs leading-relaxed border-t border-zinc-800 pt-3 mt-1">
@@ -531,6 +601,32 @@ function HomeContent() {
                 )}
               </Card>
             )}
+
+            {/* Worst financial decision */}
+            {result.worstFinancialDecision && (() => {
+              const style = FINANCIAL_RATING_STYLES[result.worstFinancialDecision.rating] ?? { color: "text-zinc-300", bg: "", stripe: "bg-zinc-700" };
+              return (
+                <div className={`rounded-2xl border border-zinc-800 overflow-hidden ${style.bg}`}>
+                  <div className={`h-1 ${style.stripe}`} />
+                  <div className="p-5">
+                    <SectionLabel>Worst Financial Decision Score</SectionLabel>
+                    <p className={`text-3xl font-black mb-4 leading-tight ${style.color}`}>
+                      {result.worstFinancialDecision.rating}
+                    </p>
+                    {result.worstFinancialDecision.reasons?.length > 0 && (
+                      <ul className="space-y-2.5">
+                        {result.worstFinancialDecision.reasons.map((r, i) => (
+                          <li key={i} className="flex gap-2 text-sm text-zinc-300 leading-snug">
+                            <span className={`flex-shrink-0 font-black ${style.color}`}>→</span>
+                            {r}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
 
             {/* Questions to ask */}
             {result.questionsToAsk?.length > 0 && (
