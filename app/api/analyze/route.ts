@@ -376,7 +376,7 @@ export async function POST(req: NextRequest) {
         { role: "user", content },
       ],
       response_format: { type: "json_object" },
-      max_tokens: 3000,
+      max_tokens: 4000,
     });
 
     const raw = response.choices[0].message.content;
