@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 
 type Fault = { title: string; detail: string };
 
@@ -57,7 +58,7 @@ function ScoreBar({ score, invert }: { score: number; invert?: boolean }) {
   );
 }
 
-export default function Home() {
+function HomeContent() {
   const [mode, setMode] = useState<"url" | "images" | "text">("url");
   const [url, setUrl] = useState("");
   const [images, setImages] = useState<{ file: File; dataUrl: string }[]>([]);
@@ -119,19 +120,18 @@ export default function Home() {
     }
   }
 
-  // Handle incoming share target URL (?shared_url=...)
+  // Handle incoming share target URL (?shared_url=...) — reactive to URL changes
+  const searchParams = useSearchParams();
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const sharedUrl = params.get("shared_url") ?? params.get("url");
+    const sharedUrl = searchParams.get("shared_url") ?? searchParams.get("url");
     if (sharedUrl) {
       setUrl(sharedUrl);
       setMode("url");
-      // Clean the URL bar without triggering a reload
       window.history.replaceState({}, "", "/");
       analyse(sharedUrl);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [searchParams]);
 
   const canAnalyse =
     mode === "url" ? url.trim().length > 0
@@ -399,5 +399,13 @@ export default function Home() {
         )}
       </main>
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense>
+      <HomeContent />
+    </Suspense>
   );
 }
