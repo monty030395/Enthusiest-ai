@@ -109,7 +109,12 @@ function HomeContent() {
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error || "Something went wrong.");
+        if (data.error === "BLOCKED") {
+          setMode("images");
+          setError(data.message);
+        } else {
+          setError(data.error || "Something went wrong.");
+        }
       } else {
         setResult(data as Analysis);
       }

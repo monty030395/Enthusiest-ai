@@ -111,6 +111,14 @@ export async function POST(req: NextRequest) {
         const markdown = data.data?.markdown ?? "";
         const rawHtml = data.data?.rawHtml ?? "";
 
+        // Detect bot-blocking responses
+        if (markdown.toLowerCase().includes("access denied") || markdown.toLowerCase().includes("you don't have permission")) {
+          return NextResponse.json(
+            { error: "BLOCKED", message: "Trade Me blocked automated access. Upload screenshots of the listing instead — it takes 10 seconds and gives better results." },
+            { status: 422 }
+          );
+        }
+
         // Extract JSON-LD structured data — Trade Me embeds price, KMs, description here for SEO
         const jsonLd = extractJsonLd(rawHtml);
         const jsonLdText = jsonLd ? `Structured listing data:\n${JSON.stringify(jsonLd, null, 2)}\n\n` : "";
