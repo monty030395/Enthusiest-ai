@@ -102,8 +102,12 @@ async function fetchTradeMeListing(listingId: string): Promise<string> {
     },
   });
 
+  const baseUrl = process.env.TRADEME_SANDBOX === "true"
+    ? "https://api.tmsandbox.co.nz"
+    : "https://api.trademe.co.nz";
+
   const requestData = {
-    url: `https://api.trademe.co.nz/v1/Listings/${listingId}.json`,
+    url: `${baseUrl}/v1/Listings/${listingId}.json`,
     method: "GET",
   };
 
