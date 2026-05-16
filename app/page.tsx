@@ -32,29 +32,47 @@ type Analysis = {
   enthusiastTake: string;
 };
 
-const SCORE_LABELS: { key: keyof Analysis["scores"]; label: string; invertColor?: boolean }[] = [
-  { key: "funFactor", label: "Fun Factor" },
-  { key: "classicPotential", label: "Classic Potential" },
-  { key: "reliabilityRisk", label: "Reliability Risk", invertColor: true },
-  { key: "dailyDrivability", label: "Daily Drivability" },
-  { key: "modPotential", label: "Mod Potential" },
+const SCORES: {
+  key: keyof Analysis["scores"];
+  label: string;
+  invert?: boolean;
+}[] = [
+  { key: "funFactor", label: "Fun" },
+  { key: "classicPotential", label: "Classic" },
+  { key: "reliabilityRisk", label: "Risk", invert: true },
+  { key: "dailyDrivability", label: "Daily" },
+  { key: "modPotential", label: "Mods" },
 ];
 
-function scoreColor(score: number, invert = false) {
-  const val = invert ? 11 - score : score;
-  if (val >= 8) return "text-emerald-400";
-  if (val >= 5) return "text-amber-400";
-  return "text-red-400";
+function scoreTileColor(score: number, invert = false) {
+  const v = invert ? 11 - score : score;
+  if (v >= 8) return "bg-emerald-950 text-emerald-400 border-emerald-800";
+  if (v >= 5) return "bg-amber-950 text-amber-400 border-amber-800";
+  return "bg-red-950 text-red-400 border-red-900";
 }
 
-function ScoreBar({ score, invert }: { score: number; invert?: boolean }) {
-  const color = invert
-    ? score >= 8 ? "bg-red-500" : score >= 5 ? "bg-amber-500" : "bg-emerald-500"
-    : score >= 8 ? "bg-emerald-500" : score >= 5 ? "bg-amber-500" : "bg-red-500";
+function ScoreTile({ score, label, invert }: { score: number; label: string; invert?: boolean }) {
   return (
-    <div className="w-full bg-zinc-800 rounded-full h-1.5 mt-1">
-      <div className={`${color} h-1.5 rounded-full transition-all`} style={{ width: `${score * 10}%` }} />
+    <div className={`flex flex-col items-center justify-center border rounded-xl py-4 px-2 ${scoreTileColor(score, invert)}`}>
+      <span className="text-3xl font-black tabular-nums leading-none">{score}</span>
+      <span className="text-[10px] font-bold uppercase tracking-widest mt-1.5 opacity-70">{label}</span>
     </div>
+  );
+}
+
+function Pill({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="inline-flex items-center px-2.5 py-0.5 rounded-md bg-zinc-800 text-zinc-400 text-xs font-medium">
+      {children}
+    </span>
+  );
+}
+
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-zinc-500 mb-3">
+      {children}
+    </p>
   );
 }
 
@@ -70,14 +88,14 @@ function HomeContent() {
   const [dragging, setDragging] = useState(false);
 
   const addImages = useCallback((files: FileList | File[]) => {
-    const arr = Array.from(files).filter((f) => f.type.startsWith("image/"));
-    arr.forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setImages((prev) => [...prev, { file, dataUrl: e.target!.result as string }]);
-      };
-      reader.readAsDataURL(file);
-    });
+    Array.from(files)
+      .filter((f) => f.type.startsWith("image/"))
+      .forEach((file) => {
+        const reader = new FileReader();
+        reader.onload = (e) =>
+          setImages((prev) => [...prev, { file, dataUrl: e.target!.result as string }]);
+        reader.readAsDataURL(file);
+      });
   }, []);
 
   const handleDrop = useCallback(
@@ -119,21 +137,18 @@ function HomeContent() {
         setResult(data as Analysis);
       }
     } catch {
-      setError("Network error — make sure the dev server is running.");
+      setError("Network error — check your connection and try again.");
     } finally {
       setLoading(false);
     }
   }
 
-  // Handle incoming share target URL — reactive to URL changes
   const searchParams = useSearchParams();
   useEffect(() => {
-    // shared_url/url params come through clean; text param may contain a sentence with the URL embedded
     const directUrl = searchParams.get("shared_url") ?? searchParams.get("url");
     const textParam = searchParams.get("text") ?? "";
     const urlInText = textParam.match(/https?:\/\/[^\s]+/)?.[0];
     const sharedUrl = directUrl ?? urlInText;
-
     if (sharedUrl) {
       setUrl(sharedUrl);
       setMode("url");
@@ -148,203 +163,239 @@ function HomeContent() {
     : mode === "text" ? pastedText.trim().length > 0
     : images.length > 0;
 
+  const modeLabels = { url: "Paste URL", images: "Screenshots", text: "Paste Text" };
+
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100 font-sans">
+    <div className="min-h-screen bg-[#0a0a0a] text-zinc-100 font-sans">
+
       {/* Header */}
-      <header className="border-b border-zinc-800 px-6 py-4">
-        <div className="max-w-3xl mx-auto flex items-baseline gap-3">
-          <h1 className="text-xl font-bold tracking-tight text-white">EnthusiastAI</h1>
-          <span className="text-xs text-zinc-500 font-medium uppercase tracking-widest">NZ Car Copilot</span>
+      <header className="px-6 pt-5 pb-4 border-b border-zinc-800/60">
+        <div className="max-w-3xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1">
+              <span className="text-lg font-black tracking-tight text-white uppercase">Enthusiast</span>
+              <span className="text-lg font-black tracking-tight text-red-500 uppercase">AI</span>
+            </div>
+            <div className="h-4 w-px bg-zinc-700" />
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500">NZ Car Copilot</span>
+          </div>
+          <div className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />
         </div>
       </header>
 
-      <main className="max-w-3xl mx-auto px-6 py-10 space-y-8">
+      <main className="max-w-3xl mx-auto px-5 py-8 space-y-6">
+
         {/* Hero */}
-        <div>
-          <h2 className="text-3xl font-bold text-white leading-tight">
-            Is this car actually worth it?
+        <div className="pt-2">
+          <h2 className="text-4xl font-black text-white leading-[1.1] tracking-tight">
+            Is this car<br />
+            <span className="text-red-500">worth your money?</span>
           </h2>
-          <p className="mt-2 text-zinc-400 text-base">
-            Paste a listing URL or upload screenshots. Get an honest enthusiast take — not generic advice.
+          <p className="mt-3 text-zinc-500 text-sm leading-relaxed max-w-md">
+            Share a listing from Trade Me or upload screenshots. Get a specific, honest enthusiast read — not the generic rubbish you already know.
           </p>
         </div>
 
         {/* Input card */}
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 space-y-5">
-          {/* Mode toggle */}
-          <div className="flex gap-2 flex-wrap">
+        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 backdrop-blur-sm overflow-hidden">
+
+          {/* Mode tabs */}
+          <div className="flex border-b border-zinc-800">
             {(["url", "images", "text"] as const).map((m) => (
               <button
                 key={m}
                 onClick={() => { setMode(m); setError(""); }}
-                className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                className={`flex-1 py-3 text-xs font-bold uppercase tracking-widest transition-colors ${
                   mode === m
-                    ? "bg-red-600 text-white"
-                    : "bg-zinc-800 text-zinc-400 hover:text-white"
+                    ? "text-white border-b-2 border-red-500 bg-zinc-800/40"
+                    : "text-zinc-500 hover:text-zinc-300"
                 }`}
               >
-                {m === "url" ? "Paste URL" : m === "images" ? "Upload Screenshots" : "Paste Listing Text"}
+                {modeLabels[m]}
               </button>
             ))}
           </div>
 
-          {mode === "url" ? (
-            <input
-              type="url"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && canAnalyse && !loading && analyse()}
-              placeholder="https://www.trademe.co.nz/a/motors/cars/..."
-              className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-red-500 transition-colors"
-            />
-          ) : (
-            <div>
-              <div
-                onClick={() => fileInputRef.current?.click()}
-                onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
-                onDragLeave={() => setDragging(false)}
-                onDrop={handleDrop}
-                className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors ${
-                  dragging
-                    ? "border-red-500 bg-red-950/20"
-                    : "border-zinc-700 hover:border-zinc-500"
-                }`}
-              >
-                <p className="text-zinc-400 text-sm">
-                  Drag & drop screenshots here, or{" "}
-                  <span className="text-red-400 font-medium">click to browse</span>
-                </p>
-                <p className="text-zinc-600 text-xs mt-1">
-                  Upload multiple images — listing photos, description, price, specs
-                </p>
-              </div>
+          <div className="p-5 space-y-4">
+            {mode === "url" && (
               <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                multiple
-                className="hidden"
-                onChange={(e) => e.target.files && addImages(e.target.files)}
+                type="url"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && canAnalyse && !loading && analyse()}
+                placeholder="https://www.trademe.co.nz/a/motors/cars/..."
+                className="w-full bg-zinc-800/60 border border-zinc-700 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-red-500/70 focus:bg-zinc-800 transition-all"
               />
-              {images.length > 0 && (
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {images.map((img, i) => (
-                    <div key={i} className="relative group">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={img.dataUrl}
-                        alt={`Screenshot ${i + 1}`}
-                        className="w-16 h-16 object-cover rounded-lg border border-zinc-700"
-                      />
-                      <button
-                        onClick={() => setImages((prev) => prev.filter((_, idx) => idx !== i))}
-                        className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-600 rounded-full text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ))}
+            )}
+
+            {mode === "images" && (
+              <div>
+                <div
+                  onClick={() => fileInputRef.current?.click()}
+                  onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+                  onDragLeave={() => setDragging(false)}
+                  onDrop={handleDrop}
+                  className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all ${
+                    dragging
+                      ? "border-red-500 bg-red-950/20"
+                      : "border-zinc-700 hover:border-zinc-500 hover:bg-zinc-800/30"
+                  }`}
+                >
+                  <p className="text-sm text-zinc-300 font-medium">
+                    Drop screenshots here or <span className="text-red-400">tap to browse</span>
+                  </p>
+                  <p className="text-xs text-zinc-600 mt-1.5">
+                    Screenshot the listing — price, KMs, description, seller notes
+                  </p>
                 </div>
-              )}
-            </div>
-          )}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                  onChange={(e) => e.target.files && addImages(e.target.files)}
+                />
+                {images.length > 0 && (
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {images.map((img, i) => (
+                      <div key={i} className="relative group">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={img.dataUrl}
+                          alt={`Screenshot ${i + 1}`}
+                          className="w-16 h-16 object-cover rounded-lg border border-zinc-700"
+                        />
+                        <button
+                          onClick={() => setImages((prev) => prev.filter((_, idx) => idx !== i))}
+                          className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-600 rounded-full text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity leading-none"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
 
-          {mode === "text" && (
-            <div>
-              <p className="text-xs text-zinc-500 mb-2">
-                On the Trade Me listing, press <kbd className="bg-zinc-800 px-1.5 py-0.5 rounded text-zinc-300">Ctrl+A</kbd> then <kbd className="bg-zinc-800 px-1.5 py-0.5 rounded text-zinc-300">Ctrl+C</kbd> to copy all text, then paste it below.
-              </p>
-              <textarea
-                value={pastedText}
-                onChange={(e) => setPastedText(e.target.value)}
-                placeholder="Paste the full listing text here — title, price, mileage, description, seller notes..."
-                rows={8}
-                className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-red-500 transition-colors resize-none"
-              />
-            </div>
-          )}
+            {mode === "text" && (
+              <div className="space-y-2">
+                <p className="text-xs text-zinc-500">
+                  On the listing page, select all (<kbd className="bg-zinc-800 px-1 py-0.5 rounded text-zinc-300 font-mono text-[10px]">Ctrl+A</kbd>) and copy (<kbd className="bg-zinc-800 px-1 py-0.5 rounded text-zinc-300 font-mono text-[10px]">Ctrl+C</kbd>), then paste below.
+                </p>
+                <textarea
+                  value={pastedText}
+                  onChange={(e) => setPastedText(e.target.value)}
+                  placeholder="Paste the full listing text here..."
+                  rows={7}
+                  className="w-full bg-zinc-800/60 border border-zinc-700 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-red-500/70 transition-all resize-none"
+                />
+              </div>
+            )}
 
-          <button
-            onClick={() => analyse()}
-            disabled={!canAnalyse || loading}
-            className="w-full bg-red-600 hover:bg-red-500 disabled:bg-zinc-800 disabled:text-zinc-600 text-white font-semibold rounded-xl py-3 transition-colors text-sm"
-          >
-            {loading ? "Analysing..." : "Analyse Listing"}
-          </button>
+            {error && (
+              <div className="flex gap-3 bg-amber-950/30 border border-amber-900/60 rounded-xl px-4 py-3">
+                <span className="text-amber-500 flex-shrink-0 font-bold">!</span>
+                <p className="text-amber-200/80 text-sm leading-relaxed">{error}</p>
+              </div>
+            )}
 
-          {error && (
-            <p className="text-red-400 text-sm bg-red-950/30 border border-red-900 rounded-lg px-4 py-3">
-              {error}
-            </p>
-          )}
+            <button
+              onClick={() => analyse()}
+              disabled={!canAnalyse || loading}
+              className="w-full bg-red-600 hover:bg-red-500 active:bg-red-700 disabled:bg-zinc-800 disabled:text-zinc-600 disabled:cursor-not-allowed text-white font-black uppercase tracking-widest rounded-xl py-3.5 transition-all text-xs"
+            >
+              {loading ? "Getting Under the Hood..." : "Analyse Listing"}
+            </button>
+          </div>
         </div>
 
-        {/* Loading state */}
+        {/* Loading */}
         {loading && (
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 text-center space-y-3">
-            <div className="w-8 h-8 border-2 border-red-600 border-t-transparent rounded-full animate-spin mx-auto" />
-            <p className="text-zinc-400 text-sm">Consulting the enthusiast oracle...</p>
+          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-10 flex flex-col items-center gap-4">
+            <div className="relative w-10 h-10">
+              <div className="absolute inset-0 rounded-full border-2 border-zinc-800" />
+              <div className="absolute inset-0 rounded-full border-2 border-t-red-500 animate-spin" />
+            </div>
+            <div className="text-center">
+              <p className="text-white font-bold text-sm">Consulting the oracle</p>
+              <p className="text-zinc-500 text-xs mt-1">Reading the listing, checking the numbers...</p>
+            </div>
           </div>
         )}
 
         {/* Results */}
         {result && !loading && (
           <div className="space-y-4">
-            {/* Vehicle header */}
-            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
-              <div className="flex items-start justify-between gap-4 flex-wrap">
-                <div>
-                  <h3 className="text-2xl font-bold text-white">
-                    {result.vehicle.year} {result.vehicle.make} {result.vehicle.model}
-                    {result.vehicle.variant && (
-                      <span className="text-zinc-400 font-normal"> {result.vehicle.variant}</span>
-                    )}
-                  </h3>
-                  <div className="flex flex-wrap gap-3 mt-2 text-sm text-zinc-400">
-                    {result.vehicle.price && <span className="text-white font-semibold">{result.vehicle.price}</span>}
-                    {result.vehicle.mileage && <span>{result.vehicle.mileage}</span>}
-                    {result.vehicle.transmission && <span>{result.vehicle.transmission}</span>}
-                    {result.vehicle.location && <span>{result.vehicle.location}</span>}
-                  </div>
-                </div>
-              </div>
 
-              {/* Verdict */}
-              <div className="mt-4 pt-4 border-t border-zinc-800">
-                <p className="text-zinc-100 leading-relaxed">{result.verdict}</p>
+            {/* Vehicle header */}
+            <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 overflow-hidden">
+              {/* Red accent bar */}
+              <div className="h-1 bg-gradient-to-r from-red-600 via-red-500 to-transparent" />
+              <div className="p-6">
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500 mb-1">
+                      {result.vehicle.year} {result.vehicle.location && `· ${result.vehicle.location}`}
+                    </p>
+                    <h3 className="text-3xl font-black text-white tracking-tight leading-tight">
+                      {result.vehicle.make} {result.vehicle.model}
+                    </h3>
+                    {result.vehicle.variant && (
+                      <p className="text-zinc-400 font-medium mt-0.5">{result.vehicle.variant}</p>
+                    )}
+                    <div className="flex flex-wrap gap-2 mt-3">
+                      {result.vehicle.mileage && <Pill>{result.vehicle.mileage}</Pill>}
+                      {result.vehicle.transmission && <Pill>{result.vehicle.transmission}</Pill>}
+                    </div>
+                  </div>
+                  {result.vehicle.price && (
+                    <div className="bg-red-600 rounded-xl px-4 py-2 text-right flex-shrink-0">
+                      <p className="text-[9px] font-bold uppercase tracking-widest text-red-200 opacity-80">Asking</p>
+                      <p className="text-xl font-black text-white">{result.vehicle.price}</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Verdict */}
+                <div className="mt-5 pl-4 border-l-2 border-red-600">
+                  <p className="text-zinc-200 leading-relaxed text-sm italic">{result.verdict}</p>
+                </div>
               </div>
             </div>
 
-            {/* Scores */}
-            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
-              <h4 className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-4">Enthusiast Scores</h4>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {SCORE_LABELS.map(({ key, label, invertColor }) => (
-                  <div key={key}>
-                    <div className="flex justify-between items-baseline">
-                      <span className="text-sm text-zinc-300">{label}</span>
-                      <span className={`text-lg font-bold ${scoreColor(result.scores[key], invertColor)}`}>
-                        {result.scores[key]}<span className="text-zinc-600 text-sm font-normal">/10</span>
-                      </span>
-                    </div>
-                    <ScoreBar score={result.scores[key]} invert={invertColor} />
-                  </div>
+            {/* Score tiles */}
+            <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-5">
+              <SectionLabel>Enthusiast Scores</SectionLabel>
+              <div className="grid grid-cols-5 gap-2">
+                {SCORES.map(({ key, label, invert }) => (
+                  <ScoreTile
+                    key={key}
+                    score={result.scores[key]}
+                    label={label}
+                    invert={invert}
+                  />
+                ))}
+              </div>
+              <div className="grid grid-cols-5 gap-2 mt-1.5">
+                {SCORES.map(({ key, label }) => (
+                  <p key={key} className="text-center text-[9px] text-zinc-600 hidden sm:block">{label}</p>
                 ))}
               </div>
             </div>
 
-            {/* Common faults */}
+            {/* Known faults */}
             {result.faults.length > 0 && (
-              <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
-                <h4 className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-4">Known Faults & Watch Points</h4>
+              <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-5">
+                <SectionLabel>Known Faults & Watch Points</SectionLabel>
                 <ul className="space-y-3">
                   {result.faults.map((fault, i) => (
-                    <li key={i} className="flex gap-3">
-                      <span className="text-red-500 mt-0.5 flex-shrink-0">▸</span>
+                    <li key={i} className="flex gap-3 pl-3 border-l border-red-800">
                       <div>
-                        <span className="font-medium text-zinc-200">{fault.title}</span>
+                        <p className="font-bold text-zinc-200 text-sm">{fault.title}</p>
                         {fault.detail && (
-                          <p className="text-zinc-400 text-sm mt-0.5">{fault.detail}</p>
+                          <p className="text-zinc-500 text-xs mt-0.5 leading-relaxed">{fault.detail}</p>
                         )}
                       </div>
                     </li>
@@ -353,37 +404,29 @@ function HomeContent() {
               </div>
             )}
 
-            {/* Three column info */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {result.priceAnalysis && (
-                <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5">
-                  <h4 className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-2">Price</h4>
-                  <p className="text-zinc-300 text-sm leading-relaxed">{result.priceAnalysis}</p>
+            {/* Price / Spec / Classic */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {[
+                { label: "Price Check", content: result.priceAnalysis },
+                { label: "Spec & Rarity", content: result.specNotes },
+                { label: "Future Classic", content: result.classicPotential },
+              ].filter((s) => s.content).map((section) => (
+                <div key={section.label} className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-4">
+                  <SectionLabel>{section.label}</SectionLabel>
+                  <p className="text-zinc-300 text-xs leading-relaxed">{section.content}</p>
                 </div>
-              )}
-              {result.specNotes && (
-                <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5">
-                  <h4 className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-2">Spec & Rarity</h4>
-                  <p className="text-zinc-300 text-sm leading-relaxed">{result.specNotes}</p>
-                </div>
-              )}
-              {result.classicPotential && (
-                <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5">
-                  <h4 className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-2">Future Classic</h4>
-                  <p className="text-zinc-300 text-sm leading-relaxed">{result.classicPotential}</p>
-                </div>
-              )}
+              ))}
             </div>
 
-            {/* Questions to ask */}
+            {/* Questions */}
             {result.questionsToAsk.length > 0 && (
-              <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
-                <h4 className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mb-4">Questions to Ask the Seller</h4>
-                <ol className="space-y-2">
+              <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-5">
+                <SectionLabel>Ask the Seller</SectionLabel>
+                <ol className="space-y-2.5">
                   {result.questionsToAsk.map((q, i) => (
-                    <li key={i} className="flex gap-3 text-sm text-zinc-300">
-                      <span className="text-zinc-600 font-mono w-5 flex-shrink-0">{i + 1}.</span>
-                      {q}
+                    <li key={i} className="flex gap-3 text-sm">
+                      <span className="text-red-600 font-black w-4 flex-shrink-0 tabular-nums">{i + 1}</span>
+                      <span className="text-zinc-300 leading-snug">{q}</span>
                     </li>
                   ))}
                 </ol>
@@ -392,19 +435,27 @@ function HomeContent() {
 
             {/* Enthusiast take */}
             {result.enthusiastTake && (
-              <div className="bg-red-950/20 border border-red-900/50 rounded-2xl p-6">
-                <h4 className="text-xs font-semibold text-red-400 uppercase tracking-widest mb-2">The Enthusiast Take</h4>
-                <p className="text-zinc-200 leading-relaxed">{result.enthusiastTake}</p>
+              <div className="rounded-2xl bg-zinc-900 border border-zinc-700 overflow-hidden">
+                <div className="bg-red-600 px-5 py-2.5 flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-white/60" />
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white">
+                    The Enthusiast Take
+                  </span>
+                </div>
+                <div className="px-5 py-4">
+                  <p className="text-zinc-100 leading-relaxed text-sm">{result.enthusiastTake}</p>
+                </div>
               </div>
             )}
 
-            {/* Analyse another */}
+            {/* Reset */}
             <button
               onClick={() => { setResult(null); setUrl(""); setImages([]); setPastedText(""); }}
-              className="w-full border border-zinc-700 hover:border-zinc-500 text-zinc-400 hover:text-white rounded-xl py-3 text-sm transition-colors"
+              className="w-full border border-zinc-800 hover:border-zinc-600 text-zinc-500 hover:text-zinc-300 rounded-xl py-3 text-xs font-bold uppercase tracking-widest transition-all"
             >
-              Analyse another listing
+              Analyse Another Listing
             </button>
+
           </div>
         )}
       </main>
