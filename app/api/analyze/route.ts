@@ -71,38 +71,53 @@ export async function POST(req: NextRequest) {
   const content: ContentPart[] = [];
 
   if (url) {
+    const firecrawlKey = process.env.FIRECRAWL_API_KEY;
     try {
-      // Jina Reader converts any URL to clean markdown — much better than raw HTML scraping
-      const jinaUrl = `https://r.jina.ai/${url}`;
-      const res = await fetch(jinaUrl, {
-        headers: {
-          Accept: "text/plain",
-          "X-Return-Format": "markdown",
-        },
-        signal: AbortSignal.timeout(20000),
-      });
+      let text = "";
 
-      if (!res.ok) {
-        return NextResponse.json(
-          {
-            error: `Could not read listing (${res.status}). Try uploading screenshots instead.`,
+      if (firecrawlKey) {
+        // Firecrawl renders JavaScript — captures price, KMs, description properly
+        const res = await fetch("https://api.firecrawl.dev/v1/scrape", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${firecrawlKey}`,
+            "Content-Type": "application/json",
           },
-          { status: 400 }
-        );
+          body: JSON.stringify({ url, formats: ["markdown"] }),
+          signal: AbortSignal.timeout(30000),
+        });
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          console.error("Firecrawl error:", err);
+          return NextResponse.json(
+            { error: "Could not read listing. Try uploading screenshots instead." },
+            { status: 400 }
+          );
+        }
+
+        const data = await res.json();
+        text = (data.data?.markdown ?? "").slice(0, 15000);
+      } else {
+        // Fallback to Jina if no Firecrawl key configured
+        const res = await fetch(`https://r.jina.ai/${url}`, {
+          headers: { Accept: "text/plain", "X-Return-Format": "markdown" },
+          signal: AbortSignal.timeout(20000),
+        });
+        if (!res.ok) {
+          return NextResponse.json(
+            { error: "Could not read listing. Try uploading screenshots instead." },
+            { status: 400 }
+          );
+        }
+        text = (await res.text()).slice(0, 15000);
       }
 
-      const text = (await res.text()).slice(0, 15000);
-      console.log("Jina content preview:", text.slice(0, 500));
-      content.push({
-        type: "text",
-        text: `Car listing from ${url}:\n\n${text}`,
-      });
+      console.log("Content preview:", text.slice(0, 300));
+      content.push({ type: "text", text: `Car listing from ${url}:\n\n${text}` });
     } catch {
       return NextResponse.json(
-        {
-          error:
-            "Could not reach that URL. Try uploading screenshots of the listing instead.",
-        },
+        { error: "Could not reach that URL. Try uploading screenshots instead." },
         { status: 400 }
       );
     }

@@ -122,11 +122,7 @@ function HomeContent() {
 
   // Handle incoming share target URL — reactive to URL changes
   const searchParams = useSearchParams();
-  const [debugParams, setDebugParams] = useState<string>("");
   useEffect(() => {
-    const raw = searchParams.toString();
-    if (raw) setDebugParams(raw);
-
     // shared_url/url params come through clean; text param may contain a sentence with the URL embedded
     const directUrl = searchParams.get("shared_url") ?? searchParams.get("url");
     const textParam = searchParams.get("text") ?? "";
@@ -167,13 +163,6 @@ function HomeContent() {
             Paste a listing URL or upload screenshots. Get an honest enthusiast take — not generic advice.
           </p>
         </div>
-
-        {/* Share target debug — remove once confirmed working */}
-        {debugParams && (
-          <div className="bg-zinc-800 border border-zinc-600 rounded-xl px-4 py-3 text-xs text-zinc-400 break-all">
-            <span className="text-zinc-500">Received params: </span>{debugParams}
-          </div>
-        )}
 
         {/* Input card */}
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 space-y-5">
