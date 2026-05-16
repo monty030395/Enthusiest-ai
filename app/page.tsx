@@ -163,6 +163,12 @@ function Card({ children, className = "" }: { children: React.ReactNode; classNa
   );
 }
 
+function isSpecified(value: string | undefined): boolean {
+  if (!value) return false;
+  const lower = value.toLowerCase().trim();
+  return !["not provided", "not specified", "unknown", "n/a", "-", ""].includes(lower);
+}
+
 function Pill({ children }: { children: React.ReactNode }) {
   return (
     <span className="inline-flex items-center px-2.5 py-0.5 rounded-md bg-zinc-800 text-zinc-400 text-xs font-medium">
@@ -455,8 +461,8 @@ function HomeContent() {
 
                 {/* Pills + label badge + owner vibe badge — all inline, wraps naturally */}
                 <div className="flex flex-wrap items-center gap-2">
-                  {result.vehicle.mileage && <Pill>{result.vehicle.mileage}</Pill>}
-                  {result.vehicle.transmission && <Pill>{result.vehicle.transmission}</Pill>}
+                  {isSpecified(result.vehicle.mileage) && <Pill>{result.vehicle.mileage}</Pill>}
+                  {isSpecified(result.vehicle.transmission) && <Pill>{result.vehicle.transmission}</Pill>}
                   {result.label && (
                     <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg ${LABEL_STYLES[result.label] ?? "bg-zinc-700 text-white"}`}>
                       {result.label}
@@ -663,7 +669,7 @@ function HomeContent() {
 
             {/* Reset */}
             <button
-              onClick={() => { setResult(null); setUrl(""); setImages([]); setPastedText(""); }}
+              onClick={() => { setResult(null); setUrl(""); setImages([]); setPastedText(""); if (fileInputRef.current) fileInputRef.current.value = ""; }}
               className="w-full border border-zinc-800 hover:border-zinc-600 text-zinc-500 hover:text-zinc-300 rounded-xl py-3 text-xs font-bold uppercase tracking-widest transition-all"
             >
               Analyse Another Listing
