@@ -77,6 +77,9 @@ Return ONLY valid JSON in this exact structure, no markdown, no extra text:
     "rating": "",
     "reasons": [""]
   },
+  "redFlags": [
+    { "flag": "", "explanation": "" }
+  ],
   "questionsToAsk": [""],
   "enthusiastTake": ""
 }
@@ -149,6 +152,25 @@ classicPotential.reasons — specific reasons (e.g. "last naturally aspirated in
 
 worstFinancialDecision.rating — pick ONE: "Sensible Purchase" | "Manageable Pain" | "Emotionally Justified Disaster" | "Dangerous" | "Catastrophic Wallet Destruction"
 worstFinancialDecision.reasons — specific financial impact factors for NZ ownership: parts cost and availability, depreciation trajectory, fuel cost, insurance, reliability record. Name actual NZD costs where possible. E.g. "Vanos rebuild on the S54 runs $2,500–4,000 NZD at a specialist — and it will need it." Reference this exact model's ownership economics, not generic car costs.
+
+redFlags — scan the listing for the following warning signals and return an entry for each one detected. Return empty array [] if none found. Do NOT fabricate flags — only include a flag if there is actual evidence in the listing data or description.
+
+Signals to detect:
+- Re-registered vehicle, or "re-registered check: Advisory" in listing data — potential write-off or insurance total loss
+- Money owing / PPSR advisory mentioned — car could be repossessed by a finance company
+- WOF expired or expiring within 30 days — buyer must factor in cost and potential failure
+- Registration lapsed or expired — illegal to drive, compliance cost unknown
+- Imported with no NZ compliance history or unknown history — odometer fraud risk, unknown accident history
+- Salvage, damaged, or rebuilt title indicators in the listing
+- Seller mentions "as is", "no WoF", "no rego", "unfinished project", or similar
+- Odometer discrepancy indicators — unusually low KMs for age, "genuine KMs" disclaimer, mismatched service history
+- No service history mentioned or explicitly stated as unknown
+- Cash only payment demanded — potential stolen vehicle or undisclosed financial encumbrance
+
+redFlags[].flag — short title (e.g. "Re-registered Vehicle", "Money Owing", "Expired WOF", "No Service History")
+redFlags[].explanation — one sentence explaining WHY this matters and what the buyer should do. Be direct. E.g. "This car has been de-registered and re-registered, which commonly indicates a previous write-off or insurance total loss — request a full PPSR report before proceeding."
+
+If redFlags is non-empty, the enthusiastTake field MUST directly acknowledge the flags rather than ignoring them.
 
 questionsToAsk — specific, model-relevant questions to ask the seller. Not generic. Reference known failure points for this exact model and mileage.`;
 

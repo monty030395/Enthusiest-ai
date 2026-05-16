@@ -36,6 +36,7 @@ type Analysis = {
   };
   classicPotential: { score: number; reasons: string[] };
   worstFinancialDecision: { rating: string; reasons: string[] };
+  redFlags: { flag: string; explanation: string }[];
   questionsToAsk: string[];
   enthusiastTake: string;
 };
@@ -501,6 +502,29 @@ function HomeContent() {
                 )}
               </div>
             </Card>
+
+            {/* Red flags — shown first, impossible to miss */}
+            {result.redFlags?.length > 0 && (
+              <div className="rounded-2xl border border-red-600 overflow-hidden bg-red-950/40">
+                <div className="bg-red-700 px-5 py-3 flex items-center gap-2.5">
+                  <span className="text-white text-sm">⚠️</span>
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white">
+                    Red Flags — Read Before Buying
+                  </span>
+                </div>
+                <ul className="divide-y divide-red-900/50">
+                  {result.redFlags.map((f, i) => (
+                    <li key={i} className="px-5 py-4 flex gap-3">
+                      <span className="text-red-400 flex-shrink-0 text-base leading-tight mt-0.5">⚠</span>
+                      <div>
+                        <p className="font-black text-red-200 text-sm">{f.flag}</p>
+                        <p className="text-red-300/80 text-xs mt-1 leading-relaxed">{f.explanation}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             {/* Spec significance */}
             {result.specSignificance?.length > 0 && (
