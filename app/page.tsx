@@ -61,6 +61,44 @@ function DriveScore({ score, label }: { score: number; label: string }) {
   );
 }
 
+function WheelSpinner() {
+  const spokes = [0, 72, 144, 216, 288];
+  return (
+    <svg className="animate-spin w-14 h-14" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* Tyre */}
+      <circle cx="24" cy="24" r="22" stroke="#27272a" strokeWidth="4" />
+      {/* Rim outer lip */}
+      <circle cx="24" cy="24" r="18.5" stroke="#3f3f46" strokeWidth="1" />
+      {/* Barrel */}
+      <circle cx="24" cy="24" r="13" stroke="#dc2626" strokeWidth="1.5" />
+      {/* 5 spokes — from hub edge to barrel */}
+      {spokes.map((angle) => (
+        <line
+          key={angle}
+          x1="24" y1="19.5"
+          x2="24" y2="11"
+          stroke="#dc2626"
+          strokeWidth="2"
+          strokeLinecap="round"
+          transform={`rotate(${angle} 24 24)`}
+        />
+      ))}
+      {/* Lug nuts at spoke tips */}
+      {spokes.map((angle) => {
+        const rad = (angle - 90) * (Math.PI / 180);
+        const r = 13;
+        const cx = 24 + r * Math.cos(rad);
+        const cy = 24 + r * Math.sin(rad);
+        return <circle key={`nut-${angle}`} cx={cx} cy={cy} r="1.5" fill="#dc2626" />;
+      })}
+      {/* Hub */}
+      <circle cx="24" cy="24" r="5" fill="#18181b" stroke="#dc2626" strokeWidth="1.5" />
+      {/* Centre bolt */}
+      <circle cx="24" cy="24" r="1.8" fill="#dc2626" />
+    </svg>
+  );
+}
+
 function PainScore({ score }: { score: number }) {
   const color = score >= 8 ? "text-red-400" : score >= 5 ? "text-amber-400" : "text-emerald-400";
   const label = score >= 8 ? "High Pain" : score >= 5 ? "Moderate" : "Low Pain";
@@ -330,11 +368,8 @@ function HomeContent() {
 
         {/* Loading */}
         {loading && (
-          <Card className="p-10 flex flex-col items-center gap-4">
-            <div className="relative w-10 h-10">
-              <div className="absolute inset-0 rounded-full border-2 border-zinc-800" />
-              <div className="absolute inset-0 rounded-full border-2 border-t-red-500 animate-spin" />
-            </div>
+          <Card className="p-10 flex flex-col items-center gap-5">
+            <WheelSpinner />
             <div className="text-center">
               <p className="text-white font-bold text-sm">Consulting the oracle</p>
               <p className="text-zinc-500 text-xs mt-1">Reading the listing, checking the numbers...</p>
