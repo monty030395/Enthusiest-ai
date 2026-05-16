@@ -58,13 +58,16 @@ const PRICE_ASSESSMENT_STYLES: Record<string, string> = {
 };
 
 const OWNER_VIBE_STYLES: Record<string, string> = {
-  "Mature Enthusiast Owner":   "bg-blue-900 text-blue-200",
+  "Mature Enthusiast Owner":     "bg-blue-900 text-blue-200",
   "Deferred Maintenance Energy": "bg-amber-900 text-amber-200",
-  "Drift Missile History":     "bg-orange-900 text-orange-200",
-  "Rich Dentist Spec":         "bg-purple-900 text-purple-200",
-  "Grandpa-Owned Gem":         "bg-emerald-900 text-emerald-200",
-  "TikTok Build":              "bg-pink-900 text-pink-200",
-  "Weekend Warrior":           "bg-sky-900 text-sky-200",
+  "Drift Missile History":       "bg-orange-900 text-orange-200",
+  "Rich Dentist Spec":           "bg-purple-900 text-purple-200",
+  "Grandpa-Owned Gem":           "bg-emerald-900 text-emerald-200",
+  "TikTok Build":                "bg-pink-900 text-pink-200",
+  "Weekend Warrior":             "bg-sky-900 text-sky-200",
+  "Motivated Seller":            "bg-teal-900 text-teal-200",
+  "Optimistic Dreamer":          "bg-rose-900 text-rose-200",
+  "Dealer Dressed as Private":   "bg-zinc-700 text-zinc-300",
 };
 
 const TAX_LEVEL_STYLES: Record<string, { badge: string; icon: string }> = {

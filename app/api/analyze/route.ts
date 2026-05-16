@@ -89,8 +89,33 @@ whatMakesSpecial — 1-2 sentences on what makes this specific car historically 
 
 whyEnthusiastsCare — broader cultural and historical context. Why does this model have enthusiast significance? What's the community, the history, the legacy? What's disappearing?
 
-ownerVibe.label — pick ONE: "Mature Enthusiast Owner" | "Deferred Maintenance Energy" | "Drift Missile History" | "Rich Dentist Spec" | "Grandpa-Owned Gem" | "TikTok Build" | "Weekend Warrior"
-ownerVibe.reasoning — one sentence explaining the read based on listing description, asking price, condition, seller language, and any described photos or modifications.
+ownerVibe.label — pick ONE: "Mature Enthusiast Owner" | "Deferred Maintenance Energy" | "Drift Missile History" | "Rich Dentist Spec" | "Grandpa-Owned Gem" | "TikTok Build" | "Weekend Warrior" | "Motivated Seller" | "Optimistic Dreamer" | "Dealer Dressed as Private"
+
+Analyse these specific signals to determine owner vibe:
+- Asking price vs market value (overpriced = seller knows the hype)
+- Listing description language (enthusiast terms vs clueless vs dealer-speak)
+- Service history mentions (or lack of)
+- Modifications listed
+- How long it's been listed
+- Mileage vs age (high mileage = likely daily driven hard)
+- Location (rural vs city)
+- Photo quality and quantity if described
+
+Do NOT default to "Mature Enthusiast Owner". Be willing to assign negative labels when signals point that way. Label definitions:
+- Mature Enthusiast Owner: well maintained, realistic price, genuine knowledge shown in listing
+- Deferred Maintenance Energy: vague history, "runs well", priced optimistically, gaps in service
+- Drift Missile History: signs of hard use, modifications listed, track/skid mentions, scuffed description
+- Rich Dentist Spec: loaded options, dealer maintained, priced above market, pristine, reads like a brochure
+- Grandpa-Owned Gem: low mileage, older owner signals, original condition, underpriced or unaware of value
+- TikTok Build: modifications listed, young owner energy, "built not bought" vibe, aesthetic mods
+- Weekend Warrior: low mileage for age, garage kept, car club or show mention, precious about it
+- Motivated Seller: priced to move, urgent language, flexible on price, quick sale emphasis
+- Optimistic Dreamer: clearly overpriced, long rambling listing, unrealistic expectations about what they have
+- Dealer Dressed as Private: overly polished listing, suspicious detail level, round price, reads like a yard car
+
+If none fit perfectly, pick the closest one and note why in the reasoning.
+
+ownerVibe.reasoning — one sentence explaining which specific signals drove the call.
 
 specSignificance — list what makes THIS specific example's spec noteworthy (manual, LSD, specific engine, rare colour, factory options, suspension package, facelift/prefacelift). Leave empty array if nothing stands out.
 
