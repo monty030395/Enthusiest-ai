@@ -14,6 +14,8 @@ type Analysis = {
     mileage: string;
     price: string;
     transmission: string;
+    colour: string;
+    importStatus: string;
     location: string;
   };
   label: string;
@@ -436,10 +438,12 @@ function HomeContent() {
               <div className="h-1 bg-gradient-to-r from-red-600 via-red-500 to-transparent" />
               <div className="p-6 space-y-5">
 
-                {/* Year / location + price (always side-by-side, price never wraps) */}
+                {/* Year / import status / location + price */}
                 <div className="flex items-start justify-between gap-3">
                   <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500 pt-1">
-                    {result.vehicle.year}{result.vehicle.location ? ` · ${result.vehicle.location}` : ""}
+                    {result.vehicle.year}
+                    {isSpecified(result.vehicle.importStatus) ? ` · ${result.vehicle.importStatus}` : ""}
+                    {isSpecified(result.vehicle.location) ? ` · ${result.vehicle.location}` : ""}
                   </p>
                   {result.vehicle.price && (
                     <div className="bg-red-600 rounded-xl px-4 py-2 text-right flex-shrink-0">
@@ -463,6 +467,7 @@ function HomeContent() {
                 <div className="flex flex-wrap items-center gap-2">
                   {isSpecified(result.vehicle.mileage) && <Pill>{result.vehicle.mileage}</Pill>}
                   {isSpecified(result.vehicle.transmission) && <Pill>{result.vehicle.transmission}</Pill>}
+                  {isSpecified(result.vehicle.colour) && <Pill>{result.vehicle.colour}</Pill>}
                   {result.label && (
                     <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg ${LABEL_STYLES[result.label] ?? "bg-zinc-700 text-white"}`}>
                       {result.label}

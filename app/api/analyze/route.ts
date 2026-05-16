@@ -33,6 +33,8 @@ Return ONLY valid JSON in this exact structure, no markdown, no extra text:
     "mileage": "",
     "price": "",
     "transmission": "",
+    "colour": "",
+    "importStatus": "",
     "location": ""
   },
   "label": "",
@@ -80,6 +82,10 @@ Return ONLY valid JSON in this exact structure, no markdown, no extra text:
 }
 
 Field definitions:
+
+vehicle.colour — exterior colour as listed. Leave empty string if not mentioned.
+vehicle.importStatus — pick ONE: "NZ New" | "JDM Import" | "Grey Import" | "UK Import" | "Australian Import" | "Unknown". Critical NZ context — determines compliance history, odometer reliability, parts availability, and value. NZ New cars have full compliance history; JDM/grey imports carry odometer fraud risk and may have unknown history.
+vehicle.location — city or region (e.g. "Auckland", "Wellington", "Canterbury"). Leave empty if not mentioned.
 
 label — pick ONE: "Hidden Gem" | "Future Classic" | "Enthusiast Tax Victim" | "Cheap Thrill" | "Money Pit" | "Peak Daily Driver" | "Overrated" | "Underrated"
 
