@@ -51,6 +51,18 @@ Score definitions (all 1-10):
 - modPotential: how well supported and modifiable the platform is`;
 
 
+function extractJsonLd(html: string): object | null {
+  const matches = [...html.matchAll(/<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)];
+  for (const match of matches) {
+    try {
+      return JSON.parse(match[1]);
+    } catch {
+      continue;
+    }
+  }
+  return null;
+}
+
 export async function POST(req: NextRequest) {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
@@ -76,14 +88,13 @@ export async function POST(req: NextRequest) {
       let text = "";
 
       if (firecrawlKey) {
-        // Firecrawl renders JavaScript — captures price, KMs, description properly
         const res = await fetch("https://api.firecrawl.dev/v1/scrape", {
           method: "POST",
           headers: {
             Authorization: `Bearer ${firecrawlKey}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ url, formats: ["markdown"] }),
+          body: JSON.stringify({ url, formats: ["markdown", "rawHtml"] }),
           signal: AbortSignal.timeout(30000),
         });
 
@@ -97,7 +108,15 @@ export async function POST(req: NextRequest) {
         }
 
         const data = await res.json();
-        text = (data.data?.markdown ?? "").slice(0, 15000);
+        const markdown = data.data?.markdown ?? "";
+        const rawHtml = data.data?.rawHtml ?? "";
+
+        // Extract JSON-LD structured data — Trade Me embeds price, KMs, description here for SEO
+        const jsonLd = extractJsonLd(rawHtml);
+        const jsonLdText = jsonLd ? `Structured listing data:\n${JSON.stringify(jsonLd, null, 2)}\n\n` : "";
+
+        text = (jsonLdText + markdown).slice(0, 15000);
+        console.log("JSON-LD found:", !!jsonLd, "| markdown length:", markdown.length);
       } else {
         // Fallback to Jina if no Firecrawl key configured
         const res = await fetch(`https://r.jina.ai/${url}`, {
