@@ -1,0 +1,26 @@
+{
+  "name": "EnthusiastAI",
+  "short_name": "EnthusiastAI",
+  "description": "AI car-buying copilot for NZ enthusiasts",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#09090b",
+  "theme_color": "#dc2626",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "share_target": {
+    "action": "/",
+    "method": "GET",
+    "params": {
+      "url": "shared_url",
+      "title": "title",
+      "text": "text"
+    }
+  }
+}
