@@ -141,6 +141,7 @@ function HomeContent() {
   const [error, setError] = useState("");
   const [result, setResult] = useState<Analysis | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const resultsRef = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState(false);
 
   const addImages = useCallback((files: FileList | File[]) => {
@@ -167,6 +168,7 @@ function HomeContent() {
     setError("");
     setResult(null);
     setLoading(true);
+    setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
     try {
       const body = sharedUrl
         ? { url: sharedUrl }
@@ -366,6 +368,9 @@ function HomeContent() {
           </div>
         </div>
 
+        {/* Results anchor — scroll target */}
+        <div ref={resultsRef} />
+
         {/* Loading */}
         {loading && (
           <Card className="p-10 flex flex-col items-center gap-5">
@@ -386,37 +391,38 @@ function HomeContent() {
               <div className="h-1 bg-gradient-to-r from-red-600 via-red-500 to-transparent" />
               <div className="p-6 space-y-5">
 
-                {/* Make / model / label row */}
-                <div className="flex flex-wrap items-start justify-between gap-4">
-                  <div>
-                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500 mb-1">
-                      {result.vehicle.year}{result.vehicle.location ? ` · ${result.vehicle.location}` : ""}
-                    </p>
-                    <h3 className="text-3xl font-black text-white tracking-tight leading-tight">
-                      {result.vehicle.make} {result.vehicle.model}
-                    </h3>
-                    {result.vehicle.variant && (
-                      <p className="text-zinc-400 font-medium mt-0.5">{result.vehicle.variant}</p>
-                    )}
-                    <div className="flex flex-wrap gap-2 mt-3">
-                      {result.vehicle.mileage && <Pill>{result.vehicle.mileage}</Pill>}
-                      {result.vehicle.transmission && <Pill>{result.vehicle.transmission}</Pill>}
+                {/* Year / location + price (always side-by-side, price never wraps) */}
+                <div className="flex items-start justify-between gap-3">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500 pt-1">
+                    {result.vehicle.year}{result.vehicle.location ? ` · ${result.vehicle.location}` : ""}
+                  </p>
+                  {result.vehicle.price && (
+                    <div className="bg-red-600 rounded-xl px-4 py-2 text-right flex-shrink-0">
+                      <p className="text-[9px] font-bold uppercase tracking-widest text-red-200 opacity-80">Asking</p>
+                      <p className="text-xl font-black text-white">{result.vehicle.price}</p>
                     </div>
-                  </div>
+                  )}
+                </div>
 
-                  <div className="flex flex-col items-end gap-2">
-                    {result.vehicle.price && (
-                      <div className="bg-red-600 rounded-xl px-4 py-2 text-right">
-                        <p className="text-[9px] font-bold uppercase tracking-widest text-red-200 opacity-80">Asking</p>
-                        <p className="text-xl font-black text-white">{result.vehicle.price}</p>
-                      </div>
-                    )}
-                    {result.label && (
-                      <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg ${LABEL_STYLES[result.label] ?? "bg-zinc-700 text-white"}`}>
-                        {result.label}
-                      </span>
-                    )}
-                  </div>
+                {/* Make / model */}
+                <div>
+                  <h3 className="text-3xl font-black text-white tracking-tight leading-tight">
+                    {result.vehicle.make} {result.vehicle.model}
+                  </h3>
+                  {result.vehicle.variant && (
+                    <p className="text-zinc-400 font-medium mt-0.5">{result.vehicle.variant}</p>
+                  )}
+                </div>
+
+                {/* Pills + label badge — all inline, wraps naturally */}
+                <div className="flex flex-wrap items-center gap-2">
+                  {result.vehicle.mileage && <Pill>{result.vehicle.mileage}</Pill>}
+                  {result.vehicle.transmission && <Pill>{result.vehicle.transmission}</Pill>}
+                  {result.label && (
+                    <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg ${LABEL_STYLES[result.label] ?? "bg-zinc-700 text-white"}`}>
+                      {result.label}
+                    </span>
+                  )}
                 </div>
 
                 {/* Verdict pull-quote */}
