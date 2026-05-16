@@ -255,7 +255,7 @@ export default function Home() {
           )}
 
           <button
-            onClick={analyse}
+            onClick={() => analyse()}
             disabled={!canAnalyse || loading}
             className="w-full bg-red-600 hover:bg-red-500 disabled:bg-zinc-800 disabled:text-zinc-600 text-white font-semibold rounded-xl py-3 transition-colors text-sm"
           >
