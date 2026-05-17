@@ -44,7 +44,7 @@ type Analysis = {
 const LABEL_STYLES: Record<string, string> = {
   "Hidden Gem":            "bg-emerald-600 text-white",
   "Future Classic":        "bg-amber-500 text-black",
-  "Enthusiast Tax Victim": "bg-orange-600 text-white",
+  "Premium Asking Price":  "bg-orange-600 text-white",
   "Cheap Thrill":          "bg-sky-600 text-white",
   "Money Pit":             "bg-red-700 text-white",
   "Peak Daily Driver":     "bg-zinc-600 text-white",
@@ -57,7 +57,7 @@ const PRICE_ASSESSMENT_STYLES: Record<string, string> = {
   "Underpriced":         "text-emerald-400",
   "Premium Justified":   "text-amber-400",
   "Overpriced":          "text-red-400",
-  "Enthusiast Tax":      "text-orange-400",
+  "Paying the Premium":  "text-orange-400",
 };
 
 const OWNER_VIBE_STYLES: Record<string, string> = {
@@ -560,7 +560,7 @@ function HomeContent() {
             {/* Enthusiast tax */}
             {result.enthusiastTax && (
               <Card className="p-5">
-                <SectionLabel>Enthusiast Tax</SectionLabel>
+                <SectionLabel>Price Reality Check</SectionLabel>
                 <div className="mb-4">
                   <span className={`text-sm font-black uppercase tracking-widest px-3 py-1.5 rounded-lg ${TAX_LEVEL_STYLES[result.enthusiastTax.level]?.badge ?? "bg-zinc-700 text-zinc-300"}`}>
                     {result.enthusiastTax.level}
@@ -647,7 +647,7 @@ function HomeContent() {
                 <div className={`rounded-2xl border border-zinc-800 overflow-hidden ${style.bg}`}>
                   <div className={`h-1 ${style.stripe}`} />
                   <div className="p-5">
-                    <SectionLabel>Worst Financial Decision Score</SectionLabel>
+                    <SectionLabel>Wallet Damage Rating</SectionLabel>
                     <p className={`text-3xl font-black mb-4 leading-tight ${style.color}`}>
                       {result.worstFinancialDecision.rating}
                     </p>

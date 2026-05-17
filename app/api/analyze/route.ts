@@ -90,7 +90,7 @@ vehicle.colour — exterior colour as listed. Leave empty string if not mentione
 vehicle.importStatus — pick ONE: "NZ New" | "JDM Import" | "Grey Import" | "UK Import" | "Australian Import" | "Unknown". Critical NZ context — determines compliance history, odometer reliability, parts availability, and value. NZ New cars have full compliance history; JDM/grey imports carry odometer fraud risk and may have unknown history.
 vehicle.location — city or region (e.g. "Auckland", "Wellington", "Canterbury"). Leave empty if not mentioned.
 
-label — pick ONE: "Hidden Gem" | "Future Classic" | "Enthusiast Tax Victim" | "Cheap Thrill" | "Money Pit" | "Peak Daily Driver" | "Overrated" | "Underrated"
+label — pick ONE: "Hidden Gem" | "Future Classic" | "Premium Asking Price" | "Cheap Thrill" | "Money Pit" | "Peak Daily Driver" | "Overrated" | "Underrated"
 
 verdict — one punchy sentence. Not "good car." More like: "Overpriced because the seller knows what they have, but the spec justifies a small premium." Or: "Last of the naturally aspirated era — buy it before everyone else figures that out."
 
@@ -128,8 +128,8 @@ ownerVibe.reasoning — one sentence explaining which specific signals drove the
 
 specSignificance — list what makes THIS specific example's spec noteworthy (manual, LSD, specific engine, rare colour, factory options, suspension package, facelift/prefacelift). Leave empty array if nothing stands out.
 
-priceVerdict.assessment — one of: "Fair" | "Overpriced" | "Underpriced" | "Premium Justified" | "Enthusiast Tax"
-priceVerdict.reason — the WHY behind the price. Not just market average — is it enthusiast tax? rare spec premium? high-risk mileage discount? neglected pricing?
+priceVerdict.assessment — one of: "Fair" | "Overpriced" | "Underpriced" | "Premium Justified" | "Paying the Premium"
+priceVerdict.reason — the WHY behind the price. Not just market average — is it paying the premium? rare spec premium? high-risk mileage discount? neglected pricing?
 
 enthusiastTax.level — pick ONE: "None" | "Mild" | "Moderate" | "High" | "Extreme"
 enthusiastTax.reasons — specific reasons why this car commands or doesn't command an enthusiast premium. E.g. "manual gearbox adds $3–5k over equivalent auto in NZ", "declining NZ supply as JDM import pool dries up", "collector hype on this generation outpacing actual value", "rare factory colour documented from new", "seller clearly aware of enthusiast demand and priced accordingly". Be specific — name the factor and explain it.
