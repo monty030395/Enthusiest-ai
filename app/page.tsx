@@ -162,11 +162,14 @@ function WheelSpinner() {
 
 function PainScore({ score }: { score: number }) {
   const color = score >= 8 ? "text-red-400" : score >= 5 ? "text-amber-400" : "text-emerald-400";
+  const bg = score >= 8 ? "bg-red-950/50 border border-red-900/50" : score >= 5 ? "bg-amber-950/30 border border-amber-900/30" : "bg-emerald-950/20 border border-emerald-900/20";
   const label = score >= 8 ? "High Pain" : score >= 5 ? "Moderate" : "Low Pain";
   return (
-    <div className="flex items-center gap-2">
-      <span className={`text-4xl font-black tabular-nums ${color}`}>{score}<span className="text-lg text-zinc-700">/10</span></span>
-      <span className={`text-xs font-bold uppercase tracking-widest ${color}`}>{label}</span>
+    <div className={`flex items-center gap-4 rounded-xl px-4 py-3 ${bg}`}>
+      <span className={`text-6xl font-black tabular-nums leading-none ${color}`}>
+        {score}<span className="text-zinc-600 text-xl font-normal">/10</span>
+      </span>
+      <span className={`text-sm font-black uppercase tracking-widest ${color}`}>{label}</span>
     </div>
   );
 }
@@ -663,6 +666,55 @@ function HomeContent() {
                   </div>
                 )}
 
+                {/* Performance Specs */}
+                {result.performanceSpecs?.engine && (
+                  <div className="bg-zinc-800/30 rounded-xl border border-zinc-800 p-4">
+                    <SectionLabel>Performance Specs</SectionLabel>
+                    <p className="text-zinc-200 font-bold text-sm mb-4">{result.performanceSpecs.engine}</p>
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+                      {result.performanceSpecs.powerKw > 0 && (
+                        <div>
+                          <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 mb-0.5">Power</p>
+                          <p className="text-zinc-100 font-black text-sm tabular-nums">
+                            {result.performanceSpecs.powerKw}kW
+                            {result.performanceSpecs.powerHp > 0 && <span className="text-zinc-500 font-normal"> / {result.performanceSpecs.powerHp}hp</span>}
+                          </p>
+                        </div>
+                      )}
+                      {result.performanceSpecs.torqueNm > 0 && (
+                        <div>
+                          <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 mb-0.5">Torque</p>
+                          <p className="text-zinc-100 font-black text-sm tabular-nums">
+                            {result.performanceSpecs.torqueNm}Nm
+                            {result.performanceSpecs.torqueRpm && <span className="text-zinc-500 font-normal"> @ {result.performanceSpecs.torqueRpm}rpm</span>}
+                          </p>
+                        </div>
+                      )}
+                      {result.performanceSpecs.zeroToHundred && (
+                        <div>
+                          <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 mb-0.5">0–100 km/h</p>
+                          <p className="text-zinc-100 font-black text-sm">{result.performanceSpecs.zeroToHundred}</p>
+                        </div>
+                      )}
+                      {result.performanceSpecs.kerbWeightKg > 0 && (
+                        <div>
+                          <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 mb-0.5">Kerb Weight</p>
+                          <p className="text-zinc-100 font-black text-sm tabular-nums">{result.performanceSpecs.kerbWeightKg}kg</p>
+                        </div>
+                      )}
+                      {result.performanceSpecs.drivetrain && (
+                        <div>
+                          <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 mb-0.5">Drivetrain</p>
+                          <p className="text-zinc-100 font-black text-sm">{result.performanceSpecs.drivetrain}</p>
+                        </div>
+                      )}
+                    </div>
+                    {result.performanceSpecs.jdmNote && (
+                      <p className="text-amber-500/80 text-xs mt-4 pt-3 border-t border-zinc-800 leading-snug">{result.performanceSpecs.jdmNote}</p>
+                    )}
+                  </div>
+                )}
+
                 {/* Score chips — tap to scroll to detail tile */}
                 <div className="flex gap-2.5">
                   <ScoreChip
@@ -796,12 +848,12 @@ function HomeContent() {
                     <PainScore score={result.ownershipPain.score} />
                   </div>
                   {result.ownershipPain.issues?.length > 0 && (
-                    <ul className="space-y-3">
+                    <ul className="space-y-4 mt-2">
                       {result.ownershipPain.issues.map((issue, i) => (
-                        <li key={i} className="pl-3 border-l border-red-900">
-                          <p className="font-bold text-zinc-200 text-sm">{issue.title}</p>
+                        <li key={i} className="pl-4 border-l-2 border-red-800">
+                          <p className="font-black text-zinc-100 text-sm">{issue.title}</p>
                           {issue.detail && (
-                            <p className="text-zinc-500 text-xs mt-0.5 leading-relaxed">{issue.detail}</p>
+                            <p className="text-zinc-400 text-xs mt-1 leading-relaxed">{issue.detail}</p>
                           )}
                         </li>
                       ))}
@@ -836,54 +888,6 @@ function HomeContent() {
             {/* ── DRIVE TILE ────────────────────────────────────── */}
             <div id="drive" ref={driveTileRef} className="scroll-mt-4 space-y-4">
               <TileHeader label="Drive" score={driveScore} />
-
-              {result.performanceSpecs?.engine && (
-                <Card className="p-5">
-                  <SectionLabel>Performance Specs</SectionLabel>
-                  <p className="text-zinc-200 font-bold text-sm mb-4">{result.performanceSpecs.engine}</p>
-                  <div className="grid grid-cols-2 gap-x-4 gap-y-3">
-                    {result.performanceSpecs.powerKw > 0 && (
-                      <div>
-                        <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 mb-0.5">Power</p>
-                        <p className="text-zinc-100 font-black text-sm tabular-nums">
-                          {result.performanceSpecs.powerKw}kW
-                          {result.performanceSpecs.powerHp > 0 && <span className="text-zinc-500 font-normal"> / {result.performanceSpecs.powerHp}hp</span>}
-                        </p>
-                      </div>
-                    )}
-                    {result.performanceSpecs.torqueNm > 0 && (
-                      <div>
-                        <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 mb-0.5">Torque</p>
-                        <p className="text-zinc-100 font-black text-sm tabular-nums">
-                          {result.performanceSpecs.torqueNm}Nm
-                          {result.performanceSpecs.torqueRpm && <span className="text-zinc-500 font-normal"> @ {result.performanceSpecs.torqueRpm}rpm</span>}
-                        </p>
-                      </div>
-                    )}
-                    {result.performanceSpecs.zeroToHundred && (
-                      <div>
-                        <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 mb-0.5">0–100 km/h</p>
-                        <p className="text-zinc-100 font-black text-sm">{result.performanceSpecs.zeroToHundred}</p>
-                      </div>
-                    )}
-                    {result.performanceSpecs.kerbWeightKg > 0 && (
-                      <div>
-                        <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 mb-0.5">Kerb Weight</p>
-                        <p className="text-zinc-100 font-black text-sm tabular-nums">{result.performanceSpecs.kerbWeightKg}kg</p>
-                      </div>
-                    )}
-                    {result.performanceSpecs.drivetrain && (
-                      <div>
-                        <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 mb-0.5">Drivetrain</p>
-                        <p className="text-zinc-100 font-black text-sm">{result.performanceSpecs.drivetrain}</p>
-                      </div>
-                    )}
-                  </div>
-                  {result.performanceSpecs.jdmNote && (
-                    <p className="text-amber-500/80 text-xs mt-4 pt-3 border-t border-zinc-800 leading-snug">{result.performanceSpecs.jdmNote}</p>
-                  )}
-                </Card>
-              )}
 
               {result.drivingCharacter && (
                 <Card className="p-5">
