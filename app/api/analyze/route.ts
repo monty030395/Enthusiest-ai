@@ -80,8 +80,27 @@ Return ONLY valid JSON in this exact structure, no markdown, no extra text:
   "redFlags": [
     { "flag": "", "explanation": "" }
   ],
+  "modPotential": {
+    "relevance": "",
+    "powerCeiling": "",
+    "firstMods": [""],
+    "handlingUpgrades": "",
+    "partsEcosystem": "",
+    "collectorRisk": ""
+  },
   "questionsToAsk": [""],
-  "enthusiastTake": ""
+  "enthusiastTake": "",
+  "performanceSpecs": {
+    "engine": "",
+    "powerKw": 0,
+    "powerHp": 0,
+    "torqueNm": 0,
+    "torqueRpm": "",
+    "zeroToHundred": "",
+    "kerbWeightKg": 0,
+    "drivetrain": "",
+    "jdmNote": ""
+  }
 }
 
 Field definitions:
@@ -90,7 +109,7 @@ vehicle.colour — exterior colour as listed. Leave empty string if not mentione
 vehicle.importStatus — pick ONE: "NZ New" | "JDM Import" | "Grey Import" | "UK Import" | "Australian Import" | "Unknown". Critical NZ context — determines compliance history, odometer reliability, parts availability, and value. NZ New cars have full compliance history; JDM/grey imports carry odometer fraud risk and may have unknown history.
 vehicle.location — city or region (e.g. "Auckland", "Wellington", "Canterbury"). Leave empty if not mentioned.
 
-label — pick ONE: "Hidden Gem" | "Future Classic" | "Enthusiast Tax Victim" | "Cheap Thrill" | "Money Pit" | "Peak Daily Driver" | "Overrated" | "Underrated"
+label — pick ONE: "Hidden Gem" | "Future Classic" | "Premium Asking Price" | "Cheap Thrill" | "Money Pit" | "Peak Daily Driver" | "Overrated" | "Underrated"
 
 verdict — one punchy sentence. Not "good car." More like: "Overpriced because the seller knows what they have, but the spec justifies a small premium." Or: "Last of the naturally aspirated era — buy it before everyone else figures that out."
 
@@ -128,8 +147,8 @@ ownerVibe.reasoning — one sentence explaining which specific signals drove the
 
 specSignificance — list what makes THIS specific example's spec noteworthy (manual, LSD, specific engine, rare colour, factory options, suspension package, facelift/prefacelift). Leave empty array if nothing stands out.
 
-priceVerdict.assessment — one of: "Fair" | "Overpriced" | "Underpriced" | "Premium Justified" | "Enthusiast Tax"
-priceVerdict.reason — the WHY behind the price. Not just market average — is it enthusiast tax? rare spec premium? high-risk mileage discount? neglected pricing?
+priceVerdict.assessment — one of: "Fair" | "Overpriced" | "Underpriced" | "Premium Justified" | "Paying the Premium"
+priceVerdict.reason — the WHY behind the price. Not just market average — is it paying the premium? rare spec premium? high-risk mileage discount? neglected pricing?
 
 enthusiastTax.level — pick ONE: "None" | "Mild" | "Moderate" | "High" | "Extreme"
 enthusiastTax.reasons — specific reasons why this car commands or doesn't command an enthusiast premium. E.g. "manual gearbox adds $3–5k over equivalent auto in NZ", "declining NZ supply as JDM import pool dries up", "collector hype on this generation outpacing actual value", "rare factory colour documented from new", "seller clearly aware of enthusiast demand and priced accordingly". Be specific — name the factor and explain it.
@@ -172,7 +191,25 @@ redFlags[].explanation — one sentence explaining WHY this matters and what the
 
 If redFlags is non-empty, the enthusiastTake field MUST directly acknowledge the flags rather than ignoring them.
 
-questionsToAsk — specific, model-relevant questions to ask the seller. Not generic. Reference known failure points for this exact model and mileage.`;
+questionsToAsk — specific, model-relevant questions to ask the seller. Not generic. Reference known failure points for this exact model and mileage.
+
+performanceSpecs — confirmed factory figures for this exact make/model/variant/year. Use only known specs — do not estimate or approximate.
+performanceSpecs.engine — engine name and configuration (e.g. "SR20DET 2.0L Turbo I4", "M54B30 3.0L NA I6", "4G63T 2.0L Turbo I4"). Be specific to this exact variant.
+performanceSpecs.powerKw — factory power output in kW as a number (e.g. 147). Use 0 if unknown.
+performanceSpecs.powerHp — factory power in hp/PS as a number (e.g. 197). Use 0 if unknown.
+performanceSpecs.torqueNm — factory torque in Nm as a number (e.g. 275). Use 0 if unknown.
+performanceSpecs.torqueRpm — rpm at which peak torque is produced (e.g. "3200", "2000–4500"). Leave empty string if unknown.
+performanceSpecs.zeroToHundred — factory 0–100 km/h time as a string (e.g. "5.4s"). Leave empty string if unknown.
+performanceSpecs.kerbWeightKg — factory kerb weight in kg as a number (e.g. 1270). Use 0 if unknown.
+performanceSpecs.drivetrain — layout and driven wheels (e.g. "FR, RWD", "FF, FWD", "4WD, AWD", "MR, RWD"). Be specific.
+performanceSpecs.jdmNote — if JDM and NZ-new specs differ for this model (e.g. detuned for NZ compliance, different power rating), call it out in one short sentence. Leave empty string if specs are the same or unknown.
+
+modPotential.relevance — pick ONE: "high" | "medium" | "low". High = strong mod culture, abundant aftermarket, active NZ community (WRX/EJ engines, RB engines, SR20, Honda B/K series, 2JZ, BMW M engines, Golf R/GTI). Medium = some mod potential but limited NZ support or niche platform. Low = car should not be modified — either a collectible that loses value when modified, or a platform with no meaningful aftermarket in NZ.
+modPotential.powerCeiling — one sentence on realistic power potential and rough NZD cost to get there. E.g. "Stage 2 tune and upgraded TMIC push this to 230kW — budget $4,000–6,000 NZD for a reliable street build." Leave empty string if relevance is "low".
+modPotential.firstMods — 2–3 essential first modifications for this platform. Prioritise reliability and foundation over cosmetics. Be specific to the engine and generation. E.g. "EJ257 catch can ($200–400 NZD) to address oil ingestion before any power mods" or "Silicone intake hose on the EJ20 — factory rubber cracks past 150,000km and causes lean misfires." Leave empty array if relevance is "low".
+modPotential.handlingUpgrades — one sentence on coilover, brake, and LSD options available for this platform in NZ. Name specific brands where relevant. Leave empty string if relevance is "low".
+modPotential.partsEcosystem — one sentence on NZ and international aftermarket support quality. Name key suppliers or communities where relevant. Leave empty string if relevance is "low".
+modPotential.collectorRisk — one sentence on whether modding hurts resale or collectible value. Be direct — if this car should stay stock, say so and why.`;
 
 
 
@@ -404,13 +441,14 @@ export async function POST(req: NextRequest) {
         { role: "user", content },
       ],
       response_format: { type: "json_object" },
-      max_tokens: 4000,
+      max_tokens: 6000,
     });
 
     const raw = response.choices[0].message.content;
     if (!raw) throw new Error("Empty response from OpenAI");
 
     const result = JSON.parse(raw);
+    console.log("modPotential:", JSON.stringify(result.modPotential ?? null));
     return NextResponse.json(result);
   } catch (err) {
     console.error("OpenAI error:", err);
