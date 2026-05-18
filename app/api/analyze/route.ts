@@ -81,7 +81,18 @@ Return ONLY valid JSON in this exact structure, no markdown, no extra text:
     { "flag": "", "explanation": "" }
   ],
   "questionsToAsk": [""],
-  "enthusiastTake": ""
+  "enthusiastTake": "",
+  "performanceSpecs": {
+    "engine": "",
+    "powerKw": 0,
+    "powerHp": 0,
+    "torqueNm": 0,
+    "torqueRpm": "",
+    "zeroToHundred": "",
+    "kerbWeightKg": 0,
+    "drivetrain": "",
+    "jdmNote": ""
+  }
 }
 
 Field definitions:
@@ -172,7 +183,18 @@ redFlags[].explanation — one sentence explaining WHY this matters and what the
 
 If redFlags is non-empty, the enthusiastTake field MUST directly acknowledge the flags rather than ignoring them.
 
-questionsToAsk — specific, model-relevant questions to ask the seller. Not generic. Reference known failure points for this exact model and mileage.`;
+questionsToAsk — specific, model-relevant questions to ask the seller. Not generic. Reference known failure points for this exact model and mileage.
+
+performanceSpecs — confirmed factory figures for this exact make/model/variant/year. Use only known specs — do not estimate or approximate.
+performanceSpecs.engine — engine name and configuration (e.g. "SR20DET 2.0L Turbo I4", "M54B30 3.0L NA I6", "4G63T 2.0L Turbo I4"). Be specific to this exact variant.
+performanceSpecs.powerKw — factory power output in kW as a number (e.g. 147). Use 0 if unknown.
+performanceSpecs.powerHp — factory power in hp/PS as a number (e.g. 197). Use 0 if unknown.
+performanceSpecs.torqueNm — factory torque in Nm as a number (e.g. 275). Use 0 if unknown.
+performanceSpecs.torqueRpm — rpm at which peak torque is produced (e.g. "3200", "2000–4500"). Leave empty string if unknown.
+performanceSpecs.zeroToHundred — factory 0–100 km/h time as a string (e.g. "5.4s"). Leave empty string if unknown.
+performanceSpecs.kerbWeightKg — factory kerb weight in kg as a number (e.g. 1270). Use 0 if unknown.
+performanceSpecs.drivetrain — layout and driven wheels (e.g. "FR, RWD", "FF, FWD", "4WD, AWD", "MR, RWD"). Be specific.
+performanceSpecs.jdmNote — if JDM and NZ-new specs differ for this model (e.g. detuned for NZ compliance, different power rating), call it out in one short sentence. Leave empty string if specs are the same or unknown.`;
 
 
 

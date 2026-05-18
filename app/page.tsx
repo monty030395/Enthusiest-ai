@@ -39,6 +39,17 @@ type Analysis = {
   redFlags: { flag: string; explanation: string }[];
   questionsToAsk: string[];
   enthusiastTake: string;
+  performanceSpecs?: {
+    engine: string;
+    powerKw: number;
+    powerHp: number;
+    torqueNm: number;
+    torqueRpm: string;
+    zeroToHundred: string;
+    kerbWeightKg: number;
+    drivetrain: string;
+    jdmNote: string;
+  };
 };
 
 const LABEL_STYLES: Record<string, string> = {
@@ -502,6 +513,55 @@ function HomeContent() {
                 )}
               </div>
             </Card>
+
+            {/* Performance specs */}
+            {result.performanceSpecs?.engine && (
+              <Card className="p-5">
+                <SectionLabel>Performance Specs</SectionLabel>
+                <p className="text-zinc-200 font-bold text-sm mb-4">{result.performanceSpecs.engine}</p>
+                <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+                  {result.performanceSpecs.powerKw > 0 && (
+                    <div>
+                      <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 mb-0.5">Power</p>
+                      <p className="text-zinc-100 font-black text-sm tabular-nums">
+                        {result.performanceSpecs.powerKw}kW
+                        {result.performanceSpecs.powerHp > 0 && <span className="text-zinc-500 font-normal"> / {result.performanceSpecs.powerHp}hp</span>}
+                      </p>
+                    </div>
+                  )}
+                  {result.performanceSpecs.torqueNm > 0 && (
+                    <div>
+                      <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 mb-0.5">Torque</p>
+                      <p className="text-zinc-100 font-black text-sm tabular-nums">
+                        {result.performanceSpecs.torqueNm}Nm
+                        {result.performanceSpecs.torqueRpm && <span className="text-zinc-500 font-normal"> @ {result.performanceSpecs.torqueRpm}rpm</span>}
+                      </p>
+                    </div>
+                  )}
+                  {result.performanceSpecs.zeroToHundred && (
+                    <div>
+                      <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 mb-0.5">0–100 km/h</p>
+                      <p className="text-zinc-100 font-black text-sm">{result.performanceSpecs.zeroToHundred}</p>
+                    </div>
+                  )}
+                  {result.performanceSpecs.kerbWeightKg > 0 && (
+                    <div>
+                      <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 mb-0.5">Kerb Weight</p>
+                      <p className="text-zinc-100 font-black text-sm tabular-nums">{result.performanceSpecs.kerbWeightKg}kg</p>
+                    </div>
+                  )}
+                  {result.performanceSpecs.drivetrain && (
+                    <div>
+                      <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 mb-0.5">Drivetrain</p>
+                      <p className="text-zinc-100 font-black text-sm">{result.performanceSpecs.drivetrain}</p>
+                    </div>
+                  )}
+                </div>
+                {result.performanceSpecs.jdmNote && (
+                  <p className="text-amber-500/80 text-xs mt-4 pt-3 border-t border-zinc-800 leading-snug">{result.performanceSpecs.jdmNote}</p>
+                )}
+              </Card>
+            )}
 
             {/* Red flags — shown first, impossible to miss */}
             {result.redFlags?.length > 0 && (
