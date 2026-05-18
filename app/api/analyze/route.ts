@@ -80,6 +80,14 @@ Return ONLY valid JSON in this exact structure, no markdown, no extra text:
   "redFlags": [
     { "flag": "", "explanation": "" }
   ],
+  "modPotential": {
+    "relevance": "",
+    "powerCeiling": "",
+    "firstMods": [""],
+    "handlingUpgrades": "",
+    "partsEcosystem": "",
+    "collectorRisk": ""
+  },
   "questionsToAsk": [""],
   "enthusiastTake": "",
   "performanceSpecs": {
@@ -92,14 +100,6 @@ Return ONLY valid JSON in this exact structure, no markdown, no extra text:
     "kerbWeightKg": 0,
     "drivetrain": "",
     "jdmNote": ""
-  },
-  "modPotential": {
-    "relevance": "",
-    "powerCeiling": "",
-    "firstMods": [""],
-    "handlingUpgrades": "",
-    "partsEcosystem": "",
-    "collectorRisk": ""
   }
 }
 
@@ -441,13 +441,14 @@ export async function POST(req: NextRequest) {
         { role: "user", content },
       ],
       response_format: { type: "json_object" },
-      max_tokens: 4000,
+      max_tokens: 6000,
     });
 
     const raw = response.choices[0].message.content;
     if (!raw) throw new Error("Empty response from OpenAI");
 
     const result = JSON.parse(raw);
+    console.log("modPotential:", JSON.stringify(result.modPotential ?? null));
     return NextResponse.json(result);
   } catch (err) {
     console.error("OpenAI error:", err);
