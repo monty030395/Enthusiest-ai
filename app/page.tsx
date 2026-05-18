@@ -50,6 +50,14 @@ type Analysis = {
     drivetrain: string;
     jdmNote: string;
   };
+  modPotential?: {
+    relevance: string;
+    powerCeiling: string;
+    firstMods: string[];
+    handlingUpgrades: string;
+    partsEcosystem: string;
+    collectorRisk: string;
+  };
 };
 
 const LABEL_STYLES: Record<string, string> = {
@@ -244,6 +252,75 @@ function ScoreChip({
       </span>
       <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-500">{label}</span>
     </button>
+  );
+}
+
+function ModPotentialCard({ data }: { data: NonNullable<Analysis["modPotential"]> }) {
+  const [expanded, setExpanded] = useState(false);
+
+  if (data.relevance === "low") return null;
+
+  const isCollapsed = data.relevance === "medium" && !expanded;
+
+  return (
+    <Card className="overflow-hidden">
+      <div className="p-5">
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-zinc-500">Mod Potential</p>
+          {data.relevance === "medium" && (
+            <button
+              onClick={() => setExpanded(!expanded)}
+              className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 hover:text-zinc-300 transition-colors flex items-center gap-1"
+            >
+              {expanded ? "Less ▲" : "More ▼"}
+            </button>
+          )}
+        </div>
+
+        {data.powerCeiling && (
+          <p className="text-zinc-300 text-sm leading-relaxed">{data.powerCeiling}</p>
+        )}
+
+        {!isCollapsed && (
+          <div className="space-y-4 mt-4">
+            {data.firstMods?.length > 0 && (
+              <div>
+                <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 mb-2">First Mods</p>
+                <ul className="space-y-1.5">
+                  {data.firstMods.map((mod, i) => (
+                    <li key={i} className="flex gap-2 text-sm text-zinc-400 leading-snug">
+                      <span className="text-red-500 flex-shrink-0 font-black">+</span>
+                      {mod}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {data.handlingUpgrades && (
+              <div>
+                <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 mb-1">Handling Upgrades</p>
+                <p className="text-zinc-400 text-sm leading-relaxed">{data.handlingUpgrades}</p>
+              </div>
+            )}
+
+            {data.partsEcosystem && (
+              <div>
+                <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 mb-1">Parts Ecosystem</p>
+                <p className="text-zinc-400 text-sm leading-relaxed">{data.partsEcosystem}</p>
+              </div>
+            )}
+
+            {data.collectorRisk && (
+              <div>
+                <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 mb-1">Collector Risk</p>
+                <p className="text-zinc-400 text-sm leading-relaxed">{data.collectorRisk}</p>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </Card>
   );
 }
 
@@ -823,6 +900,10 @@ function HomeContent() {
                     </p>
                   )}
                 </Card>
+              )}
+
+              {result.modPotential && (
+                <ModPotentialCard data={result.modPotential} />
               )}
 
               {result.whyEnthusiastsCare && (

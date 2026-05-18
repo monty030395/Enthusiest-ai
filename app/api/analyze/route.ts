@@ -92,6 +92,14 @@ Return ONLY valid JSON in this exact structure, no markdown, no extra text:
     "kerbWeightKg": 0,
     "drivetrain": "",
     "jdmNote": ""
+  },
+  "modPotential": {
+    "relevance": "",
+    "powerCeiling": "",
+    "firstMods": [""],
+    "handlingUpgrades": "",
+    "partsEcosystem": "",
+    "collectorRisk": ""
   }
 }
 
@@ -194,7 +202,14 @@ performanceSpecs.torqueRpm — rpm at which peak torque is produced (e.g. "3200"
 performanceSpecs.zeroToHundred — factory 0–100 km/h time as a string (e.g. "5.4s"). Leave empty string if unknown.
 performanceSpecs.kerbWeightKg — factory kerb weight in kg as a number (e.g. 1270). Use 0 if unknown.
 performanceSpecs.drivetrain — layout and driven wheels (e.g. "FR, RWD", "FF, FWD", "4WD, AWD", "MR, RWD"). Be specific.
-performanceSpecs.jdmNote — if JDM and NZ-new specs differ for this model (e.g. detuned for NZ compliance, different power rating), call it out in one short sentence. Leave empty string if specs are the same or unknown.`;
+performanceSpecs.jdmNote — if JDM and NZ-new specs differ for this model (e.g. detuned for NZ compliance, different power rating), call it out in one short sentence. Leave empty string if specs are the same or unknown.
+
+modPotential.relevance — pick ONE: "high" | "medium" | "low". High = strong mod culture, abundant aftermarket, active NZ community (WRX/EJ engines, RB engines, SR20, Honda B/K series, 2JZ, BMW M engines, Golf R/GTI). Medium = some mod potential but limited NZ support or niche platform. Low = car should not be modified — either a collectible that loses value when modified, or a platform with no meaningful aftermarket in NZ.
+modPotential.powerCeiling — one sentence on realistic power potential and rough NZD cost to get there. E.g. "Stage 2 tune and upgraded TMIC push this to 230kW — budget $4,000–6,000 NZD for a reliable street build." Leave empty string if relevance is "low".
+modPotential.firstMods — 2–3 essential first modifications for this platform. Prioritise reliability and foundation over cosmetics. Be specific to the engine and generation. E.g. "EJ257 catch can ($200–400 NZD) to address oil ingestion before any power mods" or "Silicone intake hose on the EJ20 — factory rubber cracks past 150,000km and causes lean misfires." Leave empty array if relevance is "low".
+modPotential.handlingUpgrades — one sentence on coilover, brake, and LSD options available for this platform in NZ. Name specific brands where relevant. Leave empty string if relevance is "low".
+modPotential.partsEcosystem — one sentence on NZ and international aftermarket support quality. Name key suppliers or communities where relevant. Leave empty string if relevance is "low".
+modPotential.collectorRisk — one sentence on whether modding hurts resale or collectible value. Be direct — if this car should stay stock, say so and why.`;
 
 
 
