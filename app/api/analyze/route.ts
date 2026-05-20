@@ -45,6 +45,15 @@ Return ONLY valid JSON in this exact structure, no markdown, no extra text:
     "label": "",
     "reasoning": ""
   },
+  "carsCoffee": {
+    "rating": "",
+    "description": ""
+  },
+  "communityCredibility": {
+    "rating": "",
+    "description": ""
+  },
+  "socialStanding": "",
   "specSignificance": [
     { "item": "", "note": "" }
   ],
@@ -55,6 +64,10 @@ Return ONLY valid JSON in this exact structure, no markdown, no extra text:
   "enthusiastTax": {
     "level": "",
     "reasons": [""]
+  },
+  "priceOutlook": {
+    "trend": "",
+    "reason": ""
   },
   "ownershipPain": {
     "score": 0,
@@ -72,6 +85,14 @@ Return ONLY valid JSON in this exact structure, no markdown, no extra text:
   "classicPotential": {
     "score": 0,
     "reasons": [""]
+  },
+  "regretRisk": {
+    "level": "",
+    "reason": ""
+  },
+  "marketTrend": {
+    "trend": "",
+    "reason": ""
   },
   "worstFinancialDecision": {
     "rating": "",
@@ -209,7 +230,24 @@ modPotential.powerCeiling — one sentence on realistic power potential and roug
 modPotential.firstMods — 2–3 essential first modifications for this platform. Prioritise reliability and foundation over cosmetics. Be specific to the engine and generation. E.g. "EJ257 catch can ($200–400 NZD) to address oil ingestion before any power mods" or "Silicone intake hose on the EJ20 — factory rubber cracks past 150,000km and causes lean misfires." Leave empty array if relevance is "low".
 modPotential.handlingUpgrades — one sentence on coilover, brake, and LSD options available for this platform in NZ. Name specific brands where relevant. Leave empty string if relevance is "low".
 modPotential.partsEcosystem — one sentence on NZ and international aftermarket support quality. Name key suppliers or communities where relevant. Leave empty string if relevance is "low".
-modPotential.collectorRisk — one sentence on whether modding hurts resale or collectible value. Be direct — if this car should stay stock, say so and why.`;
+modPotential.collectorRisk — one sentence on whether modding hurts resale or collectible value. Be direct — if this car should stay stock, say so and why.
+
+priceOutlook.trend — pick ONE: "Stable" | "Rising" | "Falling". Where are values for this specific model heading in NZ?
+priceOutlook.reason — one sentence on why values are moving that way. E.g. "Manual E46s are rising as the last analogue BMWs — NZ supply is tightening faster than demand." Based on enthusiast market trends, not live data.
+
+carsCoffee.rating — pick ONE: "High" | "Medium" | "Low". How much attention does this car genuinely get at a NZ Cars & Coffee event?
+carsCoffee.description — one honest sentence. Some cars are crowd-pullers, others get walked past. Be real about it.
+
+communityCredibility.rating — pick ONE: "High" | "Medium" | "Low". How respected is this car in the NZ enthusiast community — forums, clubs, events, social media?
+communityCredibility.description — one sentence on its standing. E.g. "The E46 M3 community is one of the most active in NZ — parts knowledge, specialists, and group buys are all accessible." Or if it's low, say why it doesn't command respect.
+
+socialStanding — one punchy sentence capturing this car's overall social currency in the enthusiast world. Make it quotable. E.g. "The car that makes WRX owners look twice and Honda guys quietly jealous." Be specific to this model.
+
+regretRisk.level — pick ONE: "Low" | "Medium" | "High" | "Extreme". Likelihood a typical buyer will regret this purchase within 12 months.
+regretRisk.reason — one sentence on the specific factors that could turn this purchase sour. Reference real risks for this model and condition.
+
+marketTrend.trend — pick ONE: "Stable" | "Rising" | "Falling". Direction of this model's market value in NZ over the next 2–3 years.
+marketTrend.reason — one sentence on the investment trajectory. E.g. "Values have plateaued — enthusiast floor is firm but high km and common availability cap any upside."`;
 
 
 
@@ -441,7 +479,7 @@ export async function POST(req: NextRequest) {
         { role: "user", content },
       ],
       response_format: { type: "json_object" },
-      max_tokens: 6000,
+      max_tokens: 8000,
     });
 
     const raw = response.choices[0].message.content;

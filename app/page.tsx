@@ -37,6 +37,12 @@ type Analysis = {
   classicPotential: { score: number; reasons: string[] };
   worstFinancialDecision: { rating: string; reasons: string[] };
   redFlags: { flag: string; explanation: string }[];
+  priceOutlook?: { trend: string; reason: string };
+  carsCoffee?: { rating: string; description: string };
+  communityCredibility?: { rating: string; description: string };
+  socialStanding?: string;
+  regretRisk?: { level: string; reason: string };
+  marketTrend?: { trend: string; reason: string };
   questionsToAsk: string[];
   enthusiastTake: string;
   performanceSpecs?: {
@@ -98,6 +104,20 @@ const TAX_LEVEL_STYLES: Record<string, { badge: string; icon: string }> = {
   "Moderate": { badge: "bg-amber-900 text-amber-200",       icon: "text-amber-500" },
   "High":     { badge: "bg-orange-900 text-orange-200",     icon: "text-orange-500" },
   "Extreme":  { badge: "bg-red-900 text-red-200",           icon: "text-red-500" },
+};
+
+const RATING_BADGE_STYLES: Record<string, string> = {
+  "High":    "bg-red-900/60 text-red-300 border border-red-800/50",
+  "Medium":  "bg-amber-900/60 text-amber-300 border border-amber-800/50",
+  "Low":     "bg-emerald-900/60 text-emerald-300 border border-emerald-800/50",
+  "Extreme": "bg-red-900/80 text-red-200 border border-red-700/50",
+};
+
+const TREND_BADGE_STYLES: Record<string, string> = {
+  "Stable":   "bg-zinc-800 text-zinc-300 border border-zinc-700",
+  "Rising":   "bg-emerald-900/60 text-emerald-300 border border-emerald-800/50",
+  "Falling":  "bg-red-900/60 text-red-300 border border-red-800/50",
+  "Declining":"bg-red-900/60 text-red-300 border border-red-800/50",
 };
 
 const FINANCIAL_RATING_STYLES: Record<string, { color: string; bg: string; stripe: string }> = {
@@ -768,6 +788,19 @@ function HomeContent() {
                 </Card>
               )}
 
+              {result.priceOutlook && (
+                <Card className="p-5">
+                  <div className="flex items-start justify-between gap-3 mb-2">
+                    <SectionLabel>Price Outlook</SectionLabel>
+                    <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md ${TREND_BADGE_STYLES[result.priceOutlook.trend] ?? "bg-zinc-800 text-zinc-300 border border-zinc-700"}`}>
+                      {result.priceOutlook.trend}
+                    </span>
+                  </div>
+                  <p className="text-zinc-400 text-sm leading-relaxed">{result.priceOutlook.reason}</p>
+                  <p className="text-zinc-600 text-[10px] mt-2">Based on enthusiast market trends, not live pricing data.</p>
+                </Card>
+              )}
+
               {result.worstFinancialDecision && (() => {
                 const style = FINANCIAL_RATING_STYLES[result.worstFinancialDecision.rating] ?? { color: "text-zinc-300", bg: "", stripe: "bg-zinc-700" };
                 return (
@@ -839,6 +872,45 @@ function HomeContent() {
                 </Card>
               )}
 
+              {/* Cars & Coffee + Community Credibility */}
+              {(result.carsCoffee || result.communityCredibility) && (
+                <Card className="p-5 space-y-4">
+                  {result.carsCoffee && (
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <SectionLabel>Cars &amp; Coffee</SectionLabel>
+                        <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md ${RATING_BADGE_STYLES[result.carsCoffee.rating] ?? "bg-zinc-800 text-zinc-300"}`}>
+                          {result.carsCoffee.rating}
+                        </span>
+                      </div>
+                      <p className="text-zinc-400 text-sm leading-relaxed">{result.carsCoffee.description}</p>
+                    </div>
+                  )}
+                  {result.carsCoffee && result.communityCredibility && (
+                    <div className="h-px bg-zinc-800" />
+                  )}
+                  {result.communityCredibility && (
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <SectionLabel>Community Credibility</SectionLabel>
+                        <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md ${RATING_BADGE_STYLES[result.communityCredibility.rating] ?? "bg-zinc-800 text-zinc-300"}`}>
+                          {result.communityCredibility.rating}
+                        </span>
+                      </div>
+                      <p className="text-zinc-400 text-sm leading-relaxed">{result.communityCredibility.description}</p>
+                    </div>
+                  )}
+                  {result.socialStanding && (
+                    <>
+                      <div className="h-px bg-zinc-800" />
+                      <p className="text-zinc-400 text-sm italic leading-relaxed pl-3 border-l-2 border-red-600/60">
+                        {result.socialStanding}
+                      </p>
+                    </>
+                  )}
+                </Card>
+              )}
+
               {/* Mod potential */}
               {result.modPotential && <ModPotentialCard data={result.modPotential} />}
 
@@ -901,6 +973,37 @@ function HomeContent() {
                     ))}
                   </ul>
                 </div>
+              )}
+
+              {/* Regret Risk + Market Trend */}
+              {(result.regretRisk || result.marketTrend) && (
+                <Card className="p-5 space-y-4">
+                  {result.regretRisk && (
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <SectionLabel>Regret Risk</SectionLabel>
+                        <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md ${RATING_BADGE_STYLES[result.regretRisk.level] ?? "bg-zinc-800 text-zinc-300"}`}>
+                          {result.regretRisk.level}
+                        </span>
+                      </div>
+                      <p className="text-zinc-400 text-sm leading-relaxed">{result.regretRisk.reason}</p>
+                    </div>
+                  )}
+                  {result.regretRisk && result.marketTrend && (
+                    <div className="h-px bg-zinc-800" />
+                  )}
+                  {result.marketTrend && (
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <SectionLabel>Market Trend</SectionLabel>
+                        <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md ${TREND_BADGE_STYLES[result.marketTrend.trend] ?? "bg-zinc-800 text-zinc-300"}`}>
+                          {result.marketTrend.trend}
+                        </span>
+                      </div>
+                      <p className="text-zinc-400 text-sm leading-relaxed">{result.marketTrend.reason}</p>
+                    </div>
+                  )}
+                </Card>
               )}
 
               {/* Future classic potential */}
