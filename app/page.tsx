@@ -108,16 +108,21 @@ const FINANCIAL_RATING_STYLES: Record<string, { color: string; bg: string; strip
   "Catastrophic Wallet Destruction": { color: "text-red-300",     bg: "bg-red-950/50",     stripe: "bg-red-500" },
 };
 
-function DriveScoreExpanded({ metric, label }: { metric: DriveMetric; label: string }) {
-  const color = metric.score >= 8 ? "text-emerald-400" : metric.score >= 6 ? "text-amber-400" : metric.score >= 4 ? "text-zinc-300" : "text-red-400";
+// Single-column drive row — matches mockup layout
+function DriveScoreRow({ metric, label }: { metric: DriveMetric; label: string }) {
+  const color =
+    metric.score >= 7 ? "text-emerald-400"
+    : metric.score >= 5 ? "text-amber-400"
+    : "text-red-500";
   return (
-    <div className="bg-zinc-800/40 rounded-xl p-4 space-y-2">
-      <div className="flex items-baseline gap-1.5">
-        <span className={`text-2xl font-black tabular-nums ${color}`}>{metric.score}</span>
-        <span className="text-zinc-600 text-sm">/10</span>
-        <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 ml-1">{label}</span>
+    <div className="flex items-start gap-4 py-3 border-b border-zinc-800/60 last:border-0">
+      <span className={`text-xl font-black tabular-nums min-w-[28px] leading-none pt-0.5 ${color}`}>
+        {metric.score}
+      </span>
+      <div>
+        <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-1.5">{label}</p>
+        <p className="text-zinc-400 text-sm leading-relaxed">{metric.description}</p>
       </div>
-      <p className="text-zinc-300 text-sm leading-relaxed">{metric.description}</p>
     </div>
   );
 }
@@ -126,25 +131,12 @@ function WheelSpinner() {
   const spokes = [0, 72, 144, 216, 288];
   return (
     <svg className="animate-spin w-14 h-14" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-      {/* Tyre */}
       <circle cx="24" cy="24" r="22" stroke="#27272a" strokeWidth="4" />
-      {/* Rim outer lip */}
       <circle cx="24" cy="24" r="18.5" stroke="#3f3f46" strokeWidth="1" />
-      {/* Barrel */}
       <circle cx="24" cy="24" r="13" stroke="#dc2626" strokeWidth="1.5" />
-      {/* 5 spokes — from hub edge to barrel */}
       {spokes.map((angle) => (
-        <line
-          key={angle}
-          x1="24" y1="19.5"
-          x2="24" y2="11"
-          stroke="#dc2626"
-          strokeWidth="2"
-          strokeLinecap="round"
-          transform={`rotate(${angle} 24 24)`}
-        />
+        <line key={angle} x1="24" y1="19.5" x2="24" y2="11" stroke="#dc2626" strokeWidth="2" strokeLinecap="round" transform={`rotate(${angle} 24 24)`} />
       ))}
-      {/* Lug nuts at spoke tips */}
       {spokes.map((angle) => {
         const rad = (angle - 90) * (Math.PI / 180);
         const r = 13;
@@ -152,25 +144,9 @@ function WheelSpinner() {
         const cy = 24 + r * Math.sin(rad);
         return <circle key={`nut-${angle}`} cx={cx} cy={cy} r="1.5" fill="#dc2626" />;
       })}
-      {/* Hub */}
       <circle cx="24" cy="24" r="5" fill="#18181b" stroke="#dc2626" strokeWidth="1.5" />
-      {/* Centre bolt */}
       <circle cx="24" cy="24" r="1.8" fill="#dc2626" />
     </svg>
-  );
-}
-
-function PainScore({ score }: { score: number }) {
-  const color = score >= 8 ? "text-red-400" : score >= 5 ? "text-amber-400" : "text-emerald-400";
-  const bg = score >= 8 ? "bg-red-950/50 border border-red-900/50" : score >= 5 ? "bg-amber-950/30 border border-amber-900/30" : "bg-emerald-950/20 border border-emerald-900/20";
-  const label = score >= 8 ? "High Pain" : score >= 5 ? "Moderate" : "Low Pain";
-  return (
-    <div className={`flex items-center gap-4 rounded-xl px-4 py-3 ${bg}`}>
-      <span className={`text-6xl font-black tabular-nums leading-none ${color}`}>
-        {score}<span className="text-zinc-600 text-xl font-normal">/10</span>
-      </span>
-      <span className={`text-sm font-black uppercase tracking-widest ${color}`}>{label}</span>
-    </div>
   );
 }
 
@@ -196,7 +172,7 @@ function isSpecified(value: string | undefined): boolean {
 
 function Pill({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-flex items-center px-2.5 py-0.5 rounded-md bg-zinc-800 text-zinc-400 text-xs font-medium">
+    <span className="inline-flex items-center px-2.5 py-0.5 rounded-md bg-zinc-800 text-zinc-300 text-xs font-medium">
       {children}
     </span>
   );
@@ -215,13 +191,7 @@ function computeValueScore(a: Analysis): number | null {
   return Math.max(1, Math.min(10, b + (adj[a.enthusiastTax?.level] ?? 0)));
 }
 
-function computeOwnershipScore(a: Analysis): number | null {
-  const pain = a.ownershipPain?.score;
-  if (pain == null) return null;
-  return Math.max(1, Math.min(10, 10 - pain));
-}
-
-function computeDriveScore(a: Analysis): number | null {
+function computeCharacterScore(a: Analysis): number | null {
   const dc = a.drivingCharacter;
   if (!dc) return null;
   const scores = [
@@ -234,11 +204,39 @@ function computeDriveScore(a: Analysis): number | null {
   return Math.round(scores.reduce((acc, s) => acc + s, 0) / scores.length);
 }
 
-function ScoreChip({
-  label, score, onClick,
-}: {
-  label: string; score: number | null; onClick: () => void;
-}) {
+function computeInvestmentScore(a: Analysis): number | null {
+  const pain = a.ownershipPain?.score;
+  const classic = a.classicPotential?.score;
+  if (pain == null && classic == null) return null;
+  const painScore = pain != null ? Math.max(1, Math.min(10, 10 - pain)) : null;
+  const classicScore = classic ?? null;
+  if (painScore != null && classicScore != null) {
+    return Math.max(1, Math.min(10, Math.round(painScore * 0.6 + classicScore * 0.4)));
+  }
+  return painScore ?? classicScore;
+}
+
+function getQuip(section: "value" | "character" | "investment", score: number | null): string {
+  if (score === null) return "";
+  if (section === "value") {
+    if (score <= 3) return "Mate, just don't.";
+    if (score <= 5) return "Priced with optimism.";
+    if (score <= 7) return "Numbers stack up.";
+    return "Genuine bargain.";
+  }
+  if (section === "character") {
+    if (score <= 3) return "It tries, we guess.";
+    if (score <= 5) return "There's some there.";
+    if (score <= 7) return "Worth the trouble.";
+    return "Sweet as, no notes.";
+  }
+  if (score <= 3) return "Hard pass.";
+  if (score <= 5) return "Coin flip territory.";
+  if (score <= 7) return "Could work out.";
+  return "Actually sensible.";
+}
+
+function ScoreChip({ label, score, onClick }: { label: string; score: number | null; onClick: () => void }) {
   const numColor =
     score === null ? "text-zinc-500"
     : score >= 7 ? "text-emerald-400"
@@ -260,11 +258,8 @@ function ScoreChip({
 
 function ModPotentialCard({ data }: { data: NonNullable<Analysis["modPotential"]> }) {
   const [expanded, setExpanded] = useState(false);
-
   if (data.relevance === "low") return null;
-
   const isCollapsed = data.relevance === "medium" && !expanded;
-
   return (
     <Card className="overflow-hidden">
       <div className="p-5">
@@ -279,11 +274,9 @@ function ModPotentialCard({ data }: { data: NonNullable<Analysis["modPotential"]
             </button>
           )}
         </div>
-
         {data.powerCeiling && (
           <p className="text-zinc-300 text-sm leading-relaxed">{data.powerCeiling}</p>
         )}
-
         {!isCollapsed && (
           <div className="space-y-4 mt-4">
             {data.firstMods?.length > 0 && (
@@ -299,21 +292,18 @@ function ModPotentialCard({ data }: { data: NonNullable<Analysis["modPotential"]
                 </ul>
               </div>
             )}
-
             {data.handlingUpgrades && (
               <div>
                 <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 mb-1">Handling Upgrades</p>
                 <p className="text-zinc-400 text-sm leading-relaxed">{data.handlingUpgrades}</p>
               </div>
             )}
-
             {data.partsEcosystem && (
               <div>
                 <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 mb-1">Parts Ecosystem</p>
                 <p className="text-zinc-400 text-sm leading-relaxed">{data.partsEcosystem}</p>
               </div>
             )}
-
             {data.collectorRisk && (
               <div>
                 <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 mb-1">Collector Risk</p>
@@ -327,18 +317,23 @@ function ModPotentialCard({ data }: { data: NonNullable<Analysis["modPotential"]
   );
 }
 
-function TileHeader({ label, score }: { label: string; score: number | null }) {
+function TileHeader({ label, score, quip }: { label: string; score: number | null; quip?: string }) {
   const numColor =
     score === null ? "text-zinc-600"
     : score >= 7 ? "text-emerald-500"
     : score >= 5 ? "text-amber-500"
     : "text-red-500";
   return (
-    <div className="flex items-center gap-3 pt-2">
-      <span className="text-[10px] font-black uppercase tracking-[0.2em] text-red-500">{label}</span>
-      <div className="flex-1 h-px bg-zinc-800" />
-      {score !== null && (
-        <span className={`text-xs font-black tabular-nums ${numColor}`}>{score}/10</span>
+    <div className="pt-2 space-y-1">
+      <div className="flex items-center gap-3">
+        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-red-500">{label}</span>
+        <div className="flex-1 h-px bg-zinc-800" />
+        {score !== null && (
+          <span className={`text-xs font-black tabular-nums ${numColor}`}>{score}/10</span>
+        )}
+      </div>
+      {quip && (
+        <p className="text-xs italic text-zinc-600 pl-0.5">{quip}</p>
       )}
     </div>
   );
@@ -355,13 +350,13 @@ function HomeContent() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
   const valueTileRef = useRef<HTMLDivElement>(null);
-  const ownershipTileRef = useRef<HTMLDivElement>(null);
-  const driveTileRef = useRef<HTMLDivElement>(null);
+  const characterTileRef = useRef<HTMLDivElement>(null);
+  const investmentTileRef = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState(false);
 
   const valueScore = result ? computeValueScore(result) : null;
-  const ownershipScore = result ? computeOwnershipScore(result) : null;
-  const driveScore = result ? computeDriveScore(result) : null;
+  const characterScore = result ? computeCharacterScore(result) : null;
+  const investmentScore = result ? computeInvestmentScore(result) : null;
 
   const addImages = useCallback((files: FileList | File[]) => {
     Array.from(files)
@@ -475,7 +470,6 @@ function HomeContent() {
 
         {/* Input card */}
         <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 overflow-hidden">
-          {/* Mode tabs */}
           <div className="flex border-b border-zinc-800">
             {(["url", "images", "text"] as const).map((m) => (
               <button
@@ -587,7 +581,7 @@ function HomeContent() {
           </div>
         </div>
 
-        {/* Results anchor — scroll target */}
+        {/* Results anchor */}
         <div ref={resultsRef} />
 
         {/* Loading */}
@@ -601,16 +595,16 @@ function HomeContent() {
           </Card>
         )}
 
-        {/* Results */}
+        {/* ── RESULTS ──────────────────────────────────────────── */}
         {result && !loading && (
           <div className="space-y-4">
 
-            {/* ── HERO TILE ─────────────────────────────────────── */}
+            {/* ── HERO TILE ───────────────────────────────────── */}
             <Card className="overflow-hidden">
               <div className="h-1 bg-gradient-to-r from-red-600 via-red-500 to-transparent" />
               <div className="p-6 space-y-5">
 
-                {/* Year / import status / location + price */}
+                {/* Year / import / location + price */}
                 <div className="flex items-start justify-between gap-3">
                   <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500 pt-1">
                     {result.vehicle.year}
@@ -625,7 +619,7 @@ function HomeContent() {
                   )}
                 </div>
 
-                {/* Make / model */}
+                {/* Make / model / variant */}
                 <div>
                   <h3 className="text-3xl font-black text-white tracking-tight leading-tight">
                     {result.vehicle.make} {result.vehicle.model}
@@ -635,7 +629,7 @@ function HomeContent() {
                   )}
                 </div>
 
-                {/* Pills + label badge + owner vibe */}
+                {/* Spec pills + label badge + owner vibe */}
                 <div className="flex flex-wrap items-center gap-2">
                   {isSpecified(result.vehicle.mileage) && <Pill>{result.vehicle.mileage}</Pill>}
                   {isSpecified(result.vehicle.transmission) && <Pill>{result.vehicle.transmission}</Pill>}
@@ -652,7 +646,7 @@ function HomeContent() {
                   )}
                 </div>
 
-                {/* What Makes Special — italic pull-quote */}
+                {/* Pull-quote */}
                 {result.whatMakesSpecial && (
                   <div className="pl-4 border-l-[3px] border-red-500">
                     <p className="text-white text-base font-medium italic leading-snug">{result.whatMakesSpecial}</p>
@@ -666,7 +660,7 @@ function HomeContent() {
                   </div>
                 )}
 
-                {/* Performance Specs */}
+                {/* Performance specs */}
                 {result.performanceSpecs?.engine && (
                   <div className="bg-zinc-800/30 rounded-xl border border-zinc-800 p-4">
                     <SectionLabel>Performance Specs</SectionLabel>
@@ -715,7 +709,7 @@ function HomeContent() {
                   </div>
                 )}
 
-                {/* Score chips — tap to scroll to detail tile */}
+                {/* Score chips — tap to scroll */}
                 <div className="flex gap-2.5">
                   <ScoreChip
                     label="Value"
@@ -723,23 +717,23 @@ function HomeContent() {
                     onClick={() => valueTileRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
                   />
                   <ScoreChip
-                    label="Ownership"
-                    score={ownershipScore}
-                    onClick={() => ownershipTileRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                    label="Character"
+                    score={characterScore}
+                    onClick={() => characterTileRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
                   />
                   <ScoreChip
-                    label="Drive"
-                    score={driveScore}
-                    onClick={() => driveTileRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                    label="Investment"
+                    score={investmentScore}
+                    onClick={() => investmentTileRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
                   />
                 </div>
 
               </div>
             </Card>
 
-            {/* ── VALUE TILE ────────────────────────────────────── */}
+            {/* ── VALUE TILE ──────────────────────────────────── */}
             <div id="value" ref={valueTileRef} className="scroll-mt-4 space-y-4">
-              <TileHeader label="Value" score={valueScore} />
+              <TileHeader label="Value" score={valueScore} quip={getQuip("value", valueScore)} />
 
               {result.priceVerdict && (
                 <Card className="p-5">
@@ -798,62 +792,86 @@ function HomeContent() {
                   </div>
                 );
               })()}
+            </div>
 
-              {result.specSignificance?.length > 0 && (
-                <Card className="p-5">
-                  <SectionLabel>Spec Significance</SectionLabel>
-                  <ul className="space-y-2">
-                    {result.specSignificance.map((s, i) => (
-                      <li key={i} className="flex gap-3">
-                        <span className="text-red-500 flex-shrink-0 font-black mt-0.5">+</span>
-                        <div>
-                          <span className="font-bold text-zinc-200 text-sm">{s.item}</span>
-                          {s.note && <p className="text-zinc-500 text-xs mt-0.5">{s.note}</p>}
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </Card>
-              )}
+            {/* ── CHARACTER TILE ──────────────────────────────── */}
+            <div id="character" ref={characterTileRef} className="scroll-mt-4 space-y-4">
+              <TileHeader label="Character" score={characterScore} quip={getQuip("character", characterScore)} />
 
-              {result.classicPotential && (
+              {/* Driving character — single column rows */}
+              {result.drivingCharacter && (
                 <Card className="p-5">
-                  <SectionLabel>Future Classic Potential</SectionLabel>
-                  <div className="flex items-baseline gap-2 mb-3">
-                    <span className="text-4xl font-black text-amber-400 tabular-nums">{result.classicPotential.score}</span>
-                    <span className="text-zinc-600 text-lg">/10</span>
+                  <SectionLabel>Driving Character</SectionLabel>
+                  <div className="space-y-0">
+                    <DriveScoreRow metric={result.drivingCharacter.steeringFeel} label="Steering" />
+                    <DriveScoreRow metric={result.drivingCharacter.engineCharacter} label="Engine" />
+                    <DriveScoreRow metric={result.drivingCharacter.dailyComfort} label="Daily" />
+                    <DriveScoreRow metric={result.drivingCharacter.overallFun} label="Fun" />
                   </div>
-                  {result.classicPotential.reasons?.length > 0 && (
-                    <ul className="space-y-1.5">
-                      {result.classicPotential.reasons.map((r, i) => (
-                        <li key={i} className="flex gap-2 text-xs text-zinc-400">
-                          <span className="text-amber-600 flex-shrink-0">▸</span>
-                          {r}
-                        </li>
-                      ))}
-                    </ul>
+                  {result.drivingCharacter.summary && (
+                    <p className="text-zinc-400 text-xs leading-relaxed border-t border-zinc-800 pt-3 mt-1">
+                      {result.drivingCharacter.summary}
+                    </p>
                   )}
                 </Card>
               )}
+
+              {/* Why enthusiasts care */}
+              {result.whyEnthusiastsCare && (
+                <Card className="p-5">
+                  <SectionLabel>Why Enthusiasts Care</SectionLabel>
+                  <p className="text-zinc-300 text-sm leading-relaxed">{result.whyEnthusiastsCare}</p>
+                </Card>
+              )}
+
+              {/* Owner vibe */}
+              {result.ownerVibe?.label && (
+                <Card className="p-5">
+                  <SectionLabel>Owner Vibe</SectionLabel>
+                  <div className="mb-3">
+                    <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full ${OWNER_VIBE_STYLES[result.ownerVibe.label] ?? "bg-zinc-700 text-zinc-300"}`}>
+                      {result.ownerVibe.label}
+                    </span>
+                  </div>
+                  {result.ownerVibe.reasoning && (
+                    <p className="text-zinc-400 text-sm leading-relaxed">{result.ownerVibe.reasoning}</p>
+                  )}
+                </Card>
+              )}
+
+              {/* Mod potential */}
+              {result.modPotential && <ModPotentialCard data={result.modPotential} />}
+
             </div>
 
-            {/* ── OWNERSHIP TILE ────────────────────────────────── */}
-            <div id="ownership" ref={ownershipTileRef} className="scroll-mt-4 space-y-4">
-              <TileHeader label="Ownership" score={ownershipScore} />
+            {/* ── INVESTMENT TILE ─────────────────────────────── */}
+            <div id="investment" ref={investmentTileRef} className="scroll-mt-4 space-y-4">
+              <TileHeader label="Investment" score={investmentScore} quip={getQuip("investment", investmentScore)} />
 
+              {/* Ownership pain — failure points with red left border */}
               {result.ownershipPain && (
                 <Card className="p-5">
-                  <SectionLabel>Ownership Pain Index</SectionLabel>
-                  <div className="mb-4">
-                    <PainScore score={result.ownershipPain.score} />
+                  <div className="flex items-start justify-between mb-4 gap-4">
+                    <div>
+                      <SectionLabel>Reliability Risk</SectionLabel>
+                      <div className="flex items-baseline gap-2">
+                        <span className={`text-5xl font-black tabular-nums leading-none ${result.ownershipPain.score >= 8 ? "text-red-400" : result.ownershipPain.score >= 5 ? "text-amber-400" : "text-emerald-400"}`}>
+                          {result.ownershipPain.score}
+                        </span>
+                        <span className="text-zinc-600 text-lg">/10</span>
+                      </div>
+                      <p className={`text-xs font-bold uppercase tracking-widest mt-1 ${result.ownershipPain.score >= 8 ? "text-red-500" : result.ownershipPain.score >= 5 ? "text-amber-500" : "text-emerald-500"}`}>
+                        {result.ownershipPain.score >= 8 ? "High Pain" : result.ownershipPain.score >= 5 ? "Moderate" : "Low Pain"}
+                      </p>
+                    </div>
                   </div>
                   {result.ownershipPain.issues?.length > 0 && (
-                    <ul className="space-y-4 mt-2">
+                    <ul className="space-y-3 mt-1">
                       {result.ownershipPain.issues.map((issue, i) => (
-                        <li key={i} className="pl-4 border-l-2 border-red-800">
+                        <li key={i} className="pl-3 border-l-[3px] border-red-600 py-1">
                           <p className="font-black text-zinc-100 text-sm">{issue.title}</p>
                           {issue.detail && (
-                            <p className="text-zinc-400 text-xs mt-1 leading-relaxed">{issue.detail}</p>
+                            <p className="text-zinc-500 text-xs mt-1 leading-relaxed">{issue.detail}</p>
                           )}
                         </li>
                       ))}
@@ -862,6 +880,7 @@ function HomeContent() {
                 </Card>
               )}
 
+              {/* Red flags */}
               {result.redFlags?.length > 0 && (
                 <div className="rounded-2xl border border-red-600 overflow-hidden bg-red-950/40">
                   <div className="bg-red-700 px-5 py-3 flex items-center gap-2.5">
@@ -883,79 +902,96 @@ function HomeContent() {
                   </ul>
                 </div>
               )}
-            </div>
 
-            {/* ── DRIVE TILE ────────────────────────────────────── */}
-            <div id="drive" ref={driveTileRef} className="scroll-mt-4 space-y-4">
-              <TileHeader label="Drive" score={driveScore} />
-
-              {result.drivingCharacter && (
+              {/* Future classic potential */}
+              {result.classicPotential && (
                 <Card className="p-5">
-                  <SectionLabel>Driving Character</SectionLabel>
-                  <div className="grid grid-cols-2 gap-3 mb-4">
-                    <DriveScoreExpanded metric={result.drivingCharacter.steeringFeel} label="Steering" />
-                    <DriveScoreExpanded metric={result.drivingCharacter.engineCharacter} label="Engine" />
-                    <DriveScoreExpanded metric={result.drivingCharacter.dailyComfort} label="Daily" />
-                    <DriveScoreExpanded metric={result.drivingCharacter.overallFun} label="Fun" />
+                  <SectionLabel>Future Classic Potential</SectionLabel>
+                  <div className="flex items-baseline gap-2 mb-3">
+                    <span className="text-4xl font-black text-amber-400 tabular-nums">{result.classicPotential.score}</span>
+                    <span className="text-zinc-600 text-lg">/10</span>
                   </div>
-                  {result.drivingCharacter.summary && (
-                    <p className="text-zinc-400 text-xs leading-relaxed border-t border-zinc-800 pt-3 mt-1">
-                      {result.drivingCharacter.summary}
-                    </p>
+                  {result.classicPotential.reasons?.length > 0 && (
+                    <ul className="space-y-1.5">
+                      {result.classicPotential.reasons.map((r, i) => (
+                        <li key={i} className="flex gap-2 text-xs text-zinc-400">
+                          <span className="text-amber-600 flex-shrink-0">▸</span>
+                          {r}
+                        </li>
+                      ))}
+                    </ul>
                   )}
                 </Card>
               )}
+            </div>
 
-              {result.modPotential && (
-                <ModPotentialCard data={result.modPotential} />
-              )}
-
-              {result.whyEnthusiastsCare && (
+            {/* ── SPEC SIGNIFICANCE ───────────────────────────── */}
+            {result.specSignificance?.length > 0 && (
+              <div className="space-y-3">
+                <div className="flex items-center gap-3 pt-2">
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-red-500">Spec Significance</span>
+                  <div className="flex-1 h-px bg-zinc-800" />
+                </div>
                 <Card className="p-5">
-                  <SectionLabel>Why Enthusiasts Care</SectionLabel>
-                  <p className="text-zinc-300 text-sm leading-relaxed">{result.whyEnthusiastsCare}</p>
+                  <ul className="space-y-3">
+                    {result.specSignificance.map((s, i) => (
+                      <li key={i} className="flex gap-3">
+                        <span className="text-red-500 flex-shrink-0 font-black mt-0.5">+</span>
+                        <div>
+                          <span className="font-bold text-zinc-200 text-sm">{s.item}</span>
+                          {s.note && <p className="text-zinc-500 text-xs mt-0.5 leading-relaxed">{s.note}</p>}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
                 </Card>
-              )}
+              </div>
+            )}
 
-              {result.whatMakesSpecial && (
+            {/* ── ASK THE SELLER ──────────────────────────────── */}
+            {result.questionsToAsk?.length > 0 && (
+              <div className="space-y-3">
+                <div className="flex items-center gap-3 pt-2">
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-red-500">Ask the Seller</span>
+                  <div className="flex-1 h-px bg-zinc-800" />
+                </div>
                 <Card className="p-5">
-                  <SectionLabel>What Makes This Special</SectionLabel>
-                  <p className="text-zinc-300 text-sm leading-relaxed italic">{result.whatMakesSpecial}</p>
-                </Card>
-              )}
-
-              {result.questionsToAsk?.length > 0 && (
-                <Card className="p-5">
-                  <SectionLabel>Ask the Seller</SectionLabel>
-                  <ol className="space-y-2.5">
+                  <ol className="space-y-3">
                     {result.questionsToAsk.map((q, i) => (
-                      <li key={i} className="flex gap-3 text-sm">
+                      <li key={i} className="flex gap-3 text-sm border-b border-zinc-800/60 pb-3 last:border-0 last:pb-0">
                         <span className="text-red-600 font-black w-4 flex-shrink-0 tabular-nums">{i + 1}</span>
                         <span className="text-zinc-300 leading-snug">{q}</span>
                       </li>
                     ))}
                   </ol>
                 </Card>
-              )}
+              </div>
+            )}
 
-              {result.enthusiastTake && (
-                <div className="rounded-2xl bg-zinc-900 border border-zinc-700 overflow-hidden">
-                  <div className="bg-red-600 px-5 py-2.5 flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 rounded-full bg-white/60" />
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white">
-                      The Enthusiast Take
-                    </span>
-                  </div>
-                  <div className="px-5 py-4">
-                    <p className="text-zinc-100 leading-relaxed text-sm">{result.enthusiastTake}</p>
-                  </div>
+            {/* ── THE ENTHUSIAST TAKE ─────────────────────────── */}
+            {result.enthusiastTake && (
+              <div className="rounded-2xl bg-zinc-900 border border-zinc-700 overflow-hidden">
+                <div className="bg-red-600 px-5 py-2.5 flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-white/60" />
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white">
+                    The Enthusiast Take
+                  </span>
                 </div>
-              )}
-            </div>
+                <div className="px-5 py-4">
+                  <p className="text-zinc-100 leading-relaxed text-sm">{result.enthusiastTake}</p>
+                </div>
+              </div>
+            )}
 
             {/* Reset */}
             <button
-              onClick={() => { setResult(null); setUrl(""); setImages([]); setPastedText(""); if (fileInputRef.current) fileInputRef.current.value = ""; }}
+              onClick={() => {
+                setResult(null);
+                setUrl("");
+                setImages([]);
+                setPastedText("");
+                if (fileInputRef.current) fileInputRef.current.value = "";
+              }}
               className="w-full border border-zinc-800 hover:border-zinc-600 text-zinc-500 hover:text-zinc-300 rounded-xl py-3 text-xs font-bold uppercase tracking-widest transition-all"
             >
               Analyse Another Listing
