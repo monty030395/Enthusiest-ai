@@ -925,14 +925,8 @@ function HomeContent() {
                 <Card className="p-5">
                   <div className="flex items-center justify-between mb-4">
                     <SectionLabel>Reliability Risk</SectionLabel>
-                    <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md ${
-                      result.ownershipPain.score >= 8
-                        ? "bg-red-900/60 text-red-300 border border-red-800/50"
-                        : result.ownershipPain.score >= 5
-                        ? "bg-amber-900/60 text-amber-300 border border-amber-800/50"
-                        : "bg-emerald-900/60 text-emerald-300 border border-emerald-800/50"
-                    }`}>
-                      {result.ownershipPain.score >= 8 ? "High Pain" : result.ownershipPain.score >= 5 ? "Moderate" : "Low Pain"}
+                    <span className="text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md bg-amber-900/60 text-amber-300 border border-amber-800/50">
+                      ⚠ {result.ownershipPain.score >= 8 ? "High" : result.ownershipPain.score >= 5 ? "Moderate" : "Low"} Reliability Risk
                     </span>
                   </div>
                   {result.ownershipPain.issues?.length > 0 && (
