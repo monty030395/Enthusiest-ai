@@ -860,8 +860,8 @@ function HomeContent() {
               {/* Owner vibe */}
               {result.ownerVibe?.label && (
                 <Card className="p-5">
-                  <SectionLabel>Owner Vibe</SectionLabel>
-                  <div className="mb-3">
+                  <div className="flex items-center justify-between mb-3">
+                    <SectionLabel>Owner Vibe</SectionLabel>
                     <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full ${OWNER_VIBE_STYLES[result.ownerVibe.label] ?? "bg-zinc-700 text-zinc-300"}`}>
                       {result.ownerVibe.label}
                     </span>
@@ -923,19 +923,17 @@ function HomeContent() {
               {/* Ownership pain — failure points with red left border */}
               {result.ownershipPain && (
                 <Card className="p-5">
-                  <div className="flex items-start justify-between mb-4 gap-4">
-                    <div>
-                      <SectionLabel>Reliability Risk</SectionLabel>
-                      <div className="flex items-baseline gap-2">
-                        <span className={`text-5xl font-black tabular-nums leading-none ${result.ownershipPain.score >= 8 ? "text-red-400" : result.ownershipPain.score >= 5 ? "text-amber-400" : "text-emerald-400"}`}>
-                          {result.ownershipPain.score}
-                        </span>
-                        <span className="text-zinc-600 text-lg">/10</span>
-                      </div>
-                      <p className={`text-xs font-bold uppercase tracking-widest mt-1 ${result.ownershipPain.score >= 8 ? "text-red-500" : result.ownershipPain.score >= 5 ? "text-amber-500" : "text-emerald-500"}`}>
-                        {result.ownershipPain.score >= 8 ? "High Pain" : result.ownershipPain.score >= 5 ? "Moderate" : "Low Pain"}
-                      </p>
-                    </div>
+                  <div className="flex items-center justify-between mb-4">
+                    <SectionLabel>Reliability Risk</SectionLabel>
+                    <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md ${
+                      result.ownershipPain.score >= 8
+                        ? "bg-red-900/60 text-red-300 border border-red-800/50"
+                        : result.ownershipPain.score >= 5
+                        ? "bg-amber-900/60 text-amber-300 border border-amber-800/50"
+                        : "bg-emerald-900/60 text-emerald-300 border border-emerald-800/50"
+                    }`}>
+                      {result.ownershipPain.score >= 8 ? "High Pain" : result.ownershipPain.score >= 5 ? "Moderate" : "Low Pain"}
+                    </span>
                   </div>
                   {result.ownershipPain.issues?.length > 0 && (
                     <ul className="space-y-3 mt-1">
@@ -1009,10 +1007,12 @@ function HomeContent() {
               {/* Future classic potential */}
               {result.classicPotential && (
                 <Card className="p-5">
-                  <SectionLabel>Future Classic Potential</SectionLabel>
-                  <div className="flex items-baseline gap-2 mb-3">
-                    <span className="text-4xl font-black text-amber-400 tabular-nums">{result.classicPotential.score}</span>
-                    <span className="text-zinc-600 text-lg">/10</span>
+                  <div className="flex items-center justify-between mb-3">
+                    <SectionLabel>Future Classic Potential</SectionLabel>
+                    <span className="text-xl font-black text-amber-400 tabular-nums">
+                      {result.classicPotential.score}
+                      <span className="text-zinc-600 text-xs font-normal">/10</span>
+                    </span>
                   </div>
                   {result.classicPotential.reasons?.length > 0 && (
                     <ul className="space-y-1.5">
