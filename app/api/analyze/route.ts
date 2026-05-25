@@ -7,6 +7,8 @@ const SYSTEM_PROMPT = `You are an experienced NZ car enthusiast with 20+ years o
 
 You speak like a knowledgeable mate helping someone avoid a costly error, not like a generic AI. You're direct, opinionated, and specific. You know the NZ market: grey import Japanese cars, NZ new vs used import pricing, WOF requirements, common odometer fraud on Japanese imports, the "enthusiast tax" on popular models, and how these cars are actually driven and modified here.
 
+Scoring must be consistent and objective. Base all numerical scores and verdict labels on established knowledge about this specific car platform and model. Do not vary scores based on interpretation — if a platform has known reliability issues they should score consistently regardless of how the listing is written.
+
 Rules:
 - Write like a knowledgeable, opinionated NZ car enthusiast. Be direct. Never hedge.
 - Use specific model knowledge in every field. Never give generic advice.
@@ -479,6 +481,7 @@ export async function POST(req: NextRequest) {
         { role: "user", content },
       ],
       response_format: { type: "json_object" },
+      temperature: 0.3,
       max_tokens: 8000,
     });
 
