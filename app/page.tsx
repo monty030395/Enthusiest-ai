@@ -695,18 +695,22 @@ function HomeContent() {
                   {isSpecified(result.vehicle.colour) && <Pill>{result.vehicle.colour}</Pill>}
                   {result.label && (
                     <button
+                      title="Tap to view details"
                       onClick={() => priceVerdictRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
-                      className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg cursor-pointer active:scale-95 transition-all hover:brightness-125 ${LABEL_STYLES[result.label] ?? "bg-zinc-700 text-white"}`}
+                      className={`inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg cursor-pointer ring-1 ring-white/20 hover:brightness-110 active:scale-95 transition-all ${LABEL_STYLES[result.label] ?? "bg-zinc-700 text-white"}`}
                     >
                       {result.label}
+                      <span className="opacity-70 text-[9px] leading-none">↓</span>
                     </button>
                   )}
                   {result.ownerVibe?.label && (
                     <button
+                      title="Tap to view details"
                       onClick={() => ownerVibeRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
-                      className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full cursor-pointer active:scale-95 transition-all hover:brightness-125 ${OWNER_VIBE_STYLES[result.ownerVibe.label] ?? "bg-zinc-700 text-zinc-300"}`}
+                      className={`inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full cursor-pointer ring-1 ring-white/20 hover:brightness-110 active:scale-95 transition-all ${OWNER_VIBE_STYLES[result.ownerVibe.label] ?? "bg-zinc-700 text-zinc-300"}`}
                     >
                       {result.ownerVibe.label}
+                      <span className="opacity-70 text-[9px] leading-none">↓</span>
                     </button>
                   )}
                 </div>
@@ -907,6 +911,7 @@ function HomeContent() {
               {/* Owner vibe */}
               {result.ownerVibe?.label && (
                 <div ref={ownerVibeRef} className="scroll-mt-4">
+<<<<<<< HEAD
                   <Card className="p-5">
                     <SectionLabel>Owner Vibe</SectionLabel>
                     <div className="mb-3">
@@ -918,6 +923,19 @@ function HomeContent() {
                       <p className="text-zinc-400 text-sm leading-relaxed">{result.ownerVibe.reasoning}</p>
                     )}
                   </Card>
+=======
+                <Card className="p-5">
+                  <SectionLabel>Owner Vibe</SectionLabel>
+                  <div className="mb-3">
+                    <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full ${OWNER_VIBE_STYLES[result.ownerVibe.label] ?? "bg-zinc-700 text-zinc-300"}`}>
+                      {result.ownerVibe.label}
+                    </span>
+                  </div>
+                  {result.ownerVibe.reasoning && (
+                    <p className="text-zinc-400 text-sm leading-relaxed">{result.ownerVibe.reasoning}</p>
+                  )}
+                </Card>
+>>>>>>> fecee90 (feat: make hero card tappable badges visually interactive)
                 </div>
               )}
 
