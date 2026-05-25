@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "EnthusiastAI — NZ Car Buying Copilot",
+  title: "Motormind — NZ Car Buying Copilot",
   description: "AI-powered enthusiast analysis for NZ car listings. Paste a URL or upload screenshots.",
   manifest: "/manifest.json",
 };

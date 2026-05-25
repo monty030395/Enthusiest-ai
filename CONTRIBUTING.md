@@ -1,4 +1,4 @@
-# Contributing to EnthusiastAI
+# Contributing to Motormind
 
 ## Branch structure
 
