@@ -868,7 +868,7 @@ function HomeContent() {
 
               {result.priceOutlook && (
                 <Card className="p-5">
-                  <div className="flex items-start justify-between gap-3 mb-2">
+                  <div className="mb-2">
                     <SectionLabel>Price Outlook</SectionLabel>
                     <VerdictBadge verdict={result.priceOutlook.trend} />
                   </div>
@@ -953,7 +953,7 @@ function HomeContent() {
                 <Card className="p-5 space-y-4">
                   {result.carsCoffee && (
                     <div>
-                      <div className="flex items-center justify-between mb-2">
+                      <div className="mb-2">
                         <SectionLabel>Cars &amp; Coffee</SectionLabel>
                         <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md ${RATING_BADGE_STYLES[result.carsCoffee.rating] ?? "bg-zinc-800 text-zinc-300"}`}>
                           {result.carsCoffee.rating}
@@ -967,7 +967,7 @@ function HomeContent() {
                   )}
                   {result.communityCredibility && (
                     <div>
-                      <div className="flex items-center justify-between mb-2">
+                      <div className="mb-2">
                         <SectionLabel>Community Credibility</SectionLabel>
                         <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md ${RATING_BADGE_STYLES[result.communityCredibility.rating] ?? "bg-zinc-800 text-zinc-300"}`}>
                           {result.communityCredibility.rating}
@@ -1046,7 +1046,7 @@ function HomeContent() {
                 <Card className="p-5 space-y-4">
                   {result.regretRisk && (
                     <div>
-                      <div className="flex items-center justify-between mb-2">
+                      <div className="mb-2">
                         <SectionLabel>Regret Risk</SectionLabel>
                         <VerdictBadge verdict={result.regretRisk.level} />
                       </div>
@@ -1058,7 +1058,7 @@ function HomeContent() {
                   )}
                   {result.marketTrend && (
                     <div>
-                      <div className="flex items-center justify-between mb-2">
+                      <div className="mb-2">
                         <SectionLabel>Market Trend</SectionLabel>
                         <VerdictBadge verdict={result.marketTrend.trend} />
                       </div>
