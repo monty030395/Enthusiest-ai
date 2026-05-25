@@ -64,6 +64,12 @@ type Analysis = {
     partsEcosystem: string;
     collectorRisk: string;
   };
+  alternatives?: {
+    name: string;
+    whySuited: string;
+    howDiffers: string;
+    priceRange: string;
+  }[];
 };
 
 const LABEL_STYLES: Record<string, string> = {
@@ -1120,6 +1126,35 @@ function HomeContent() {
                       </li>
                     ))}
                   </ol>
+                </Card>
+              </div>
+            )}
+
+            {/* ── YOU MIGHT ALSO CONSIDER ─────────────────────── */}
+            {result.alternatives && result.alternatives.length > 0 && (
+              <div className="space-y-3">
+                <div className="flex items-center gap-3 pt-2">
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-red-500">You Might Also Consider</span>
+                  <div className="flex-1 h-px bg-zinc-800" />
+                </div>
+                <Card className="p-5 space-y-4">
+                  {result.alternatives.map((alt, i) => (
+                    <div key={i} className={i > 0 ? "pt-4 border-t border-zinc-800" : ""}>
+                      <div className="flex items-start justify-between gap-3 mb-2">
+                        <p className="font-black text-zinc-100 text-sm leading-snug">{alt.name}</p>
+                        {alt.priceRange && (
+                          <span className="flex-shrink-0 text-[10px] font-bold text-zinc-400 bg-zinc-800 px-2.5 py-1 rounded-md whitespace-nowrap">
+                            {alt.priceRange}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-zinc-400 text-sm leading-relaxed">{alt.whySuited}</p>
+                      <p className="text-zinc-500 text-xs leading-relaxed mt-1">{alt.howDiffers}</p>
+                    </div>
+                  ))}
+                  <p className="text-zinc-600 text-[10px] leading-relaxed pt-2 border-t border-zinc-800/60">
+                    These are AI suggestions based on general market knowledge — not live Trade Me listings. Availability and pricing may vary.
+                  </p>
                 </Card>
               </div>
             )}
