@@ -911,7 +911,6 @@ function HomeContent() {
               {/* Owner vibe */}
               {result.ownerVibe?.label && (
                 <div ref={ownerVibeRef} className="scroll-mt-4">
-<<<<<<< HEAD
                   <Card className="p-5">
                     <SectionLabel>Owner Vibe</SectionLabel>
                     <div className="mb-3">
@@ -923,19 +922,6 @@ function HomeContent() {
                       <p className="text-zinc-400 text-sm leading-relaxed">{result.ownerVibe.reasoning}</p>
                     )}
                   </Card>
-=======
-                <Card className="p-5">
-                  <SectionLabel>Owner Vibe</SectionLabel>
-                  <div className="mb-3">
-                    <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full ${OWNER_VIBE_STYLES[result.ownerVibe.label] ?? "bg-zinc-700 text-zinc-300"}`}>
-                      {result.ownerVibe.label}
-                    </span>
-                  </div>
-                  {result.ownerVibe.reasoning && (
-                    <p className="text-zinc-400 text-sm leading-relaxed">{result.ownerVibe.reasoning}</p>
-                  )}
-                </Card>
->>>>>>> fecee90 (feat: make hero card tappable badges visually interactive)
                 </div>
               )}
 
