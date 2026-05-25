@@ -81,10 +81,10 @@ export default function PrivacyPage() {
           <p className="text-zinc-400 text-sm leading-relaxed">
             Privacy questions can be sent to{" "}
             <a
-              href="mailto:hello@enthusiastai.co.nz"
+              href="mailto:monty.wood1289@gmail.com"
               className="text-zinc-300 underline underline-offset-2 hover:text-white transition-colors"
             >
-              hello@enthusiastai.co.nz
+              monty.wood1289@gmail.com
             </a>
           </p>
         </section>
