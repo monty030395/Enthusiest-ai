@@ -450,6 +450,8 @@ function HomeContent() {
   const ownerVibeRef = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState(false);
   const [inputCollapsed, setInputCollapsed] = useState(false);
+  const [urlHint, setUrlHint] = useState("");
+  const [urlHintVisible, setUrlHintVisible] = useState(false);
 
   useEffect(() => {
     if (!result) return;
@@ -465,6 +467,8 @@ function HomeContent() {
     setImages([]);
     setPastedText("");
     setError("");
+    setUrlHint("");
+    setUrlHintVisible(false);
     if (fileInputRef.current) fileInputRef.current.value = "";
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
@@ -493,13 +497,13 @@ function HomeContent() {
     [addImages]
   );
 
-  async function analyse() {
+  async function analyse(textOverride?: string) {
     setError("");
     setResult(null);
     setLoading(true);
     try {
       const body = mode === "text"
-        ? { pastedText }
+        ? { pastedText: textOverride ?? pastedText }
         : { images: images.map((i) => i.dataUrl) };
 
       const res = await fetch("/api/analyze", {
@@ -526,6 +530,24 @@ function HomeContent() {
     }
   }
 
+
+  function handlePaste(e: React.ClipboardEvent<HTMLTextAreaElement>) {
+    const content = e.clipboardData.getData("text");
+    if (content.includes("trademe.co.nz")) {
+      e.preventDefault();
+      setPastedText("");
+      setUrlHint("Open that listing in Trade Me, copy the full description text and paste it here — we'll handle the rest.");
+      setUrlHintVisible(false);
+      setTimeout(() => setUrlHintVisible(true), 10);
+    } else if (content.length > 50 && !content.startsWith("http")) {
+      setUrlHint("");
+      setUrlHintVisible(false);
+      setTimeout(() => analyse(content), 100);
+    } else {
+      setUrlHint("");
+      setUrlHintVisible(false);
+    }
+  }
 
   const canAnalyse = mode === "text" ? pastedText.trim().length > 0 : images.length > 0;
 
@@ -643,11 +665,24 @@ function HomeContent() {
                 </p>
                 <textarea
                   value={pastedText}
-                  onChange={(e) => setPastedText(e.target.value)}
+                  onChange={(e) => {
+                    setPastedText(e.target.value);
+                    if (urlHint) { setUrlHint(""); setUrlHintVisible(false); }
+                  }}
+                  onPaste={handlePaste}
                   placeholder="Paste the full listing text here..."
                   rows={7}
                   className="w-full bg-zinc-800/60 border border-zinc-700 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-red-500/70 transition-all resize-none"
                 />
+                {urlHint && (
+                  <div
+                    className="flex gap-2.5 bg-amber-950/40 border border-amber-800/50 rounded-xl px-4 py-3 transition-opacity duration-300"
+                    style={{ opacity: urlHintVisible ? 1 : 0 }}
+                  >
+                    <span className="text-amber-400 flex-shrink-0 font-bold">→</span>
+                    <p className="text-amber-200/80 text-sm leading-relaxed">{urlHint}</p>
+                  </div>
+                )}
               </div>
             )}
 
