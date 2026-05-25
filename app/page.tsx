@@ -72,44 +72,72 @@ type Analysis = {
   }[];
 };
 
-const LABEL_STYLES: Record<string, string> = {
-  "Hidden Gem":            "bg-emerald-600 text-white",
-  "Future Classic":        "bg-amber-500 text-black",
-  "Premium Asking Price":  "bg-orange-600 text-white",
-  "Cheap Thrill":          "bg-sky-600 text-white",
-  "Money Pit":             "bg-red-700 text-white",
-  "Peak Daily Driver":     "bg-zinc-600 text-white",
-  "Overrated":             "bg-rose-700 text-white",
-  "Underrated":            "bg-teal-600 text-white",
+// ── Verdict badge colour system ───────────────────────────────
+type VerdictTheme = { bg: string; border: string; text: string };
+const V_RED:     VerdictTheme = { bg: "#3d1212", border: "#7f1d1d", text: "#f87171" };
+const V_AMBER:   VerdictTheme = { bg: "#2d1a00", border: "#854f0b", text: "#fbbf24" };
+const V_GREEN:   VerdictTheme = { bg: "#0d2410", border: "#3b6d11", text: "#86efac" };
+const V_BLUE:    VerdictTheme = { bg: "#0c1e36", border: "#185fa5", text: "#60a5fa" };
+const V_NEUTRAL: VerdictTheme = { bg: "#27272a", border: "#3f3f46", text: "#a1a1aa" };
+
+const VERDICT_THEME_MAP: Record<string, VerdictTheme> = {
+  // Hero labels
+  "Hidden Gem": V_GREEN, "Future Classic": V_GREEN, "Underrated": V_GREEN,
+  "Premium Asking Price": V_AMBER, "Overrated": V_AMBER,
+  "Cheap Thrill": V_BLUE, "Peak Daily Driver": V_BLUE,
+  "Money Pit": V_RED,
+  // Price assessment
+  "Fair": V_GREEN, "Underpriced": V_GREEN, "Premium Justified": V_GREEN,
+  "Overpriced": V_RED, "Paying the Premium": V_AMBER,
+  // Enthusiast tax level
+  "None": V_BLUE, "Mild": V_AMBER, "Moderate": V_AMBER,
+  "High": V_RED, "Extreme": V_RED,
+  // Price / market trend
+  "Stable": V_BLUE, "Rising": V_GREEN, "Falling": V_RED, "Declining": V_RED,
+  // Wallet damage rating
+  "Sensible Purchase": V_GREEN,
+  "Manageable Pain": V_AMBER,
+  "Emotionally Justified Disaster": V_AMBER,
+  "Dangerous": V_RED,
+  "Catastrophic Wallet Destruction": V_RED,
+  // Reliability risk derived labels
+  "Low Pain": V_GREEN, "High Pain": V_RED,
+  // Regret risk level  ("Moderate" and "High" already covered above)
+  "Low": V_GREEN, "Medium": V_AMBER,
+  // Owner vibe
+  "Mature Enthusiast Owner": V_GREEN, "Grandpa-Owned Gem": V_GREEN,
+  "Weekend Warrior": V_BLUE, "Rich Dentist Spec": V_BLUE,
+  "Motivated Seller": V_AMBER, "Deferred Maintenance Energy": V_AMBER,
+  "Drift Missile History": V_AMBER, "TikTok Build": V_AMBER,
+  "Optimistic Dreamer": V_AMBER, "Dealer Dressed as Private": V_RED,
 };
 
-const PRICE_ASSESSMENT_STYLES: Record<string, string> = {
-  "Fair":                "text-emerald-400",
-  "Underpriced":         "text-emerald-400",
-  "Premium Justified":   "text-amber-400",
-  "Overpriced":          "text-red-400",
-  "Paying the Premium":  "text-orange-400",
-};
+function verdictBadgeStyle(verdict: string) {
+  const t = VERDICT_THEME_MAP[verdict] ?? V_NEUTRAL;
+  return {
+    display: "inline-block" as const,
+    backgroundColor: t.bg,
+    border: `1px solid ${t.border}`,
+    color: t.text,
+    fontSize: "10px",
+    fontWeight: 700,
+    letterSpacing: "0.14em",
+    textTransform: "uppercase" as const,
+    padding: "4px 10px",
+    borderRadius: "3px",
+  };
+}
 
-const OWNER_VIBE_STYLES: Record<string, string> = {
-  "Mature Enthusiast Owner":     "bg-blue-900 text-blue-200",
-  "Deferred Maintenance Energy": "bg-amber-900 text-amber-200",
-  "Drift Missile History":       "bg-orange-900 text-orange-200",
-  "Rich Dentist Spec":           "bg-purple-900 text-purple-200",
-  "Grandpa-Owned Gem":           "bg-emerald-900 text-emerald-200",
-  "TikTok Build":                "bg-pink-900 text-pink-200",
-  "Weekend Warrior":             "bg-sky-900 text-sky-200",
-  "Motivated Seller":            "bg-teal-900 text-teal-200",
-  "Optimistic Dreamer":          "bg-rose-900 text-rose-200",
-  "Dealer Dressed as Private":   "bg-zinc-700 text-zinc-300",
-};
+function VerdictBadge({ verdict }: { verdict: string }) {
+  return <span style={verdictBadgeStyle(verdict)}>{verdict}</span>;
+}
 
-const TAX_LEVEL_STYLES: Record<string, { badge: string; icon: string }> = {
-  "None":     { badge: "bg-zinc-700 text-zinc-300",         icon: "text-zinc-500" },
-  "Mild":     { badge: "bg-emerald-900 text-emerald-200",   icon: "text-emerald-500" },
-  "Moderate": { badge: "bg-amber-900 text-amber-200",       icon: "text-amber-500" },
-  "High":     { badge: "bg-orange-900 text-orange-200",     icon: "text-orange-500" },
-  "Extreme":  { badge: "bg-red-900 text-red-200",           icon: "text-red-500" },
+const TAX_LEVEL_STYLES: Record<string, { icon: string }> = {
+  "None":     { icon: "text-zinc-500" },
+  "Mild":     { icon: "text-emerald-500" },
+  "Moderate": { icon: "text-amber-500" },
+  "High":     { icon: "text-orange-500" },
+  "Extreme":  { icon: "text-red-500" },
 };
 
 const RATING_BADGE_STYLES: Record<string, string> = {
@@ -119,12 +147,6 @@ const RATING_BADGE_STYLES: Record<string, string> = {
   "Extreme": "bg-red-900/80 text-red-200 border border-red-700/50",
 };
 
-const TREND_BADGE_STYLES: Record<string, string> = {
-  "Stable":   "bg-zinc-800 text-zinc-300 border border-zinc-700",
-  "Rising":   "bg-emerald-900/60 text-emerald-300 border border-emerald-800/50",
-  "Falling":  "bg-red-900/60 text-red-300 border border-red-800/50",
-  "Declining":"bg-red-900/60 text-red-300 border border-red-800/50",
-};
 
 const FINANCIAL_RATING_STYLES: Record<string, { color: string; bg: string; stripe: string }> = {
   "Sensible Purchase":               { color: "text-emerald-400", bg: "",                  stripe: "bg-emerald-600" },
@@ -133,6 +155,7 @@ const FINANCIAL_RATING_STYLES: Record<string, { color: string; bg: string; strip
   "Dangerous":                       { color: "text-red-400",     bg: "bg-red-950/30",     stripe: "bg-red-600" },
   "Catastrophic Wallet Destruction": { color: "text-red-300",     bg: "bg-red-950/50",     stripe: "bg-red-500" },
 };
+// color key kept for the → arrow bullets in wallet damage reasons
 
 // Single-column drive row — matches mockup layout
 function DriveScoreRow({ metric, label }: { metric: DriveMetric; label: string }) {
@@ -703,7 +726,8 @@ function HomeContent() {
                     <button
                       title="Tap to view details"
                       onClick={() => priceVerdictRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
-                      className={`inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg cursor-pointer ring-1 ring-white/20 hover:brightness-110 active:scale-95 transition-all ${LABEL_STYLES[result.label] ?? "bg-zinc-700 text-white"}`}
+                      style={verdictBadgeStyle(result.label)}
+                      className="inline-flex items-center gap-1.5 cursor-pointer hover:brightness-110 active:scale-95 transition-all"
                     >
                       {result.label}
                       <span className="opacity-70 text-[9px] leading-none">↓</span>
@@ -713,7 +737,8 @@ function HomeContent() {
                     <button
                       title="Tap to view details"
                       onClick={() => ownerVibeRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
-                      className={`inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full cursor-pointer ring-1 ring-white/20 hover:brightness-110 active:scale-95 transition-all ${OWNER_VIBE_STYLES[result.ownerVibe.label] ?? "bg-zinc-700 text-zinc-300"}`}
+                      style={verdictBadgeStyle(result.ownerVibe.label)}
+                      className="inline-flex items-center gap-1.5 cursor-pointer hover:brightness-110 active:scale-95 transition-all"
                     >
                       {result.ownerVibe.label}
                       <span className="opacity-70 text-[9px] leading-none">↓</span>
@@ -814,10 +839,8 @@ function HomeContent() {
                 <div ref={priceVerdictRef} className="scroll-mt-4">
                   <Card className="p-5">
                     <SectionLabel>Price Analysis</SectionLabel>
-                    <div className="flex items-baseline gap-3 mb-2">
-                      <span className={`text-xl font-black ${PRICE_ASSESSMENT_STYLES[result.priceVerdict.assessment] ?? "text-zinc-300"}`}>
-                        {result.priceVerdict.assessment}
-                      </span>
+                    <div className="mb-2">
+                      <VerdictBadge verdict={result.priceVerdict.assessment} />
                     </div>
                     <p className="text-zinc-400 text-sm leading-relaxed">{result.priceVerdict.reason}</p>
                   </Card>
@@ -828,9 +851,7 @@ function HomeContent() {
                 <Card className="p-5">
                   <SectionLabel>Price Reality Check</SectionLabel>
                   <div className="mb-4">
-                    <span className={`text-sm font-black uppercase tracking-widest px-3 py-1.5 rounded-lg ${TAX_LEVEL_STYLES[result.enthusiastTax.level]?.badge ?? "bg-zinc-700 text-zinc-300"}`}>
-                      {result.enthusiastTax.level}
-                    </span>
+                    <VerdictBadge verdict={result.enthusiastTax.level} />
                   </div>
                   {result.enthusiastTax.reasons?.length > 0 && (
                     <ul className="space-y-2">
@@ -849,9 +870,7 @@ function HomeContent() {
                 <Card className="p-5">
                   <div className="flex items-start justify-between gap-3 mb-2">
                     <SectionLabel>Price Outlook</SectionLabel>
-                    <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md ${TREND_BADGE_STYLES[result.priceOutlook.trend] ?? "bg-zinc-800 text-zinc-300 border border-zinc-700"}`}>
-                      {result.priceOutlook.trend}
-                    </span>
+                    <VerdictBadge verdict={result.priceOutlook.trend} />
                   </div>
                   <p className="text-zinc-400 text-sm leading-relaxed">{result.priceOutlook.reason}</p>
                   <p className="text-zinc-600 text-[10px] mt-2">Based on enthusiast market trends, not live pricing data.</p>
@@ -865,9 +884,9 @@ function HomeContent() {
                     <div className={`h-1 ${style.stripe}`} />
                     <div className="p-5">
                       <SectionLabel>Wallet Damage Rating</SectionLabel>
-                      <p className={`text-3xl font-black mb-4 leading-tight ${style.color}`}>
-                        {result.worstFinancialDecision.rating}
-                      </p>
+                      <div className="mb-4">
+                        <VerdictBadge verdict={result.worstFinancialDecision.rating} />
+                      </div>
                       {result.worstFinancialDecision.reasons?.length > 0 && (
                         <ul className="space-y-2.5">
                           {result.worstFinancialDecision.reasons.map((r, i) => (
@@ -920,9 +939,7 @@ function HomeContent() {
                   <Card className="p-5">
                     <SectionLabel>Owner Vibe</SectionLabel>
                     <div className="mb-3">
-                      <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full ${OWNER_VIBE_STYLES[result.ownerVibe.label] ?? "bg-zinc-700 text-zinc-300"}`}>
-                        {result.ownerVibe.label}
-                      </span>
+                      <VerdictBadge verdict={result.ownerVibe.label} />
                     </div>
                     {result.ownerVibe.reasoning && (
                       <p className="text-zinc-400 text-sm leading-relaxed">{result.ownerVibe.reasoning}</p>
@@ -991,9 +1008,9 @@ function HomeContent() {
                         </span>
                         <span className="text-zinc-600 text-lg">/10</span>
                       </div>
-                      <p className={`text-xs font-bold uppercase tracking-widest mt-1 ${result.ownershipPain.score >= 8 ? "text-red-500" : result.ownershipPain.score >= 5 ? "text-amber-500" : "text-emerald-500"}`}>
-                        {result.ownershipPain.score >= 8 ? "High Pain" : result.ownershipPain.score >= 5 ? "Moderate" : "Low Pain"}
-                      </p>
+                      <div className="mt-1">
+                        <VerdictBadge verdict={result.ownershipPain.score >= 8 ? "High Pain" : result.ownershipPain.score >= 5 ? "Moderate" : "Low Pain"} />
+                      </div>
                     </div>
                   </div>
                   {result.ownershipPain.issues?.length > 0 && (
@@ -1041,9 +1058,7 @@ function HomeContent() {
                     <div>
                       <div className="flex items-center justify-between mb-2">
                         <SectionLabel>Regret Risk</SectionLabel>
-                        <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md ${RATING_BADGE_STYLES[result.regretRisk.level] ?? "bg-zinc-800 text-zinc-300"}`}>
-                          {result.regretRisk.level}
-                        </span>
+                        <VerdictBadge verdict={result.regretRisk.level} />
                       </div>
                       <p className="text-zinc-400 text-sm leading-relaxed">{result.regretRisk.reason}</p>
                     </div>
@@ -1055,9 +1070,7 @@ function HomeContent() {
                     <div>
                       <div className="flex items-center justify-between mb-2">
                         <SectionLabel>Market Trend</SectionLabel>
-                        <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md ${TREND_BADGE_STYLES[result.marketTrend.trend] ?? "bg-zinc-800 text-zinc-300"}`}>
-                          {result.marketTrend.trend}
-                        </span>
+                        <VerdictBadge verdict={result.marketTrend.trend} />
                       </div>
                       <p className="text-zinc-400 text-sm leading-relaxed">{result.marketTrend.reason}</p>
                     </div>
