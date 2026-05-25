@@ -999,19 +999,9 @@ function HomeContent() {
               {/* Ownership pain — failure points with red left border */}
               {result.ownershipPain && (
                 <Card className="p-5">
-                  <div className="flex items-start justify-between mb-4 gap-4">
-                    <div>
-                      <SectionLabel>Reliability Risk</SectionLabel>
-                      <div className="flex items-baseline gap-2">
-                        <span className={`text-5xl font-black tabular-nums leading-none ${result.ownershipPain.score >= 8 ? "text-red-400" : result.ownershipPain.score >= 5 ? "text-amber-400" : "text-emerald-400"}`}>
-                          {result.ownershipPain.score}
-                        </span>
-                        <span className="text-zinc-600 text-lg">/10</span>
-                      </div>
-                      <div className="mt-1">
-                        <VerdictBadge verdict={result.ownershipPain.score >= 8 ? "High Pain" : result.ownershipPain.score >= 5 ? "Moderate" : "Low Pain"} />
-                      </div>
-                    </div>
+                  <div className="mb-4">
+                    <SectionLabel>Reliability Risk</SectionLabel>
+                    <VerdictBadge verdict={result.ownershipPain.score >= 8 ? "High Pain" : result.ownershipPain.score >= 5 ? "Moderate" : "Low Pain"} />
                   </div>
                   {result.ownershipPain.issues?.length > 0 && (
                     <ul className="space-y-3 mt-1">
