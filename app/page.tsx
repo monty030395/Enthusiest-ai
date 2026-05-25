@@ -112,8 +112,7 @@ const VERDICT_THEME_MAP: Record<string, VerdictTheme> = {
   "Optimistic Dreamer": V_AMBER, "Dealer Dressed as Private": V_RED,
 };
 
-function verdictBadgeStyle(verdict: string) {
-  const t = VERDICT_THEME_MAP[verdict] ?? V_NEUTRAL;
+function themeToStyle(t: VerdictTheme) {
   return {
     display: "inline-block" as const,
     backgroundColor: t.bg,
@@ -128,8 +127,20 @@ function verdictBadgeStyle(verdict: string) {
   };
 }
 
+function verdictBadgeStyle(verdict: string) {
+  return themeToStyle(VERDICT_THEME_MAP[verdict] ?? V_NEUTRAL);
+}
+
 function VerdictBadge({ verdict }: { verdict: string }) {
   return <span style={verdictBadgeStyle(verdict)}>{verdict}</span>;
+}
+
+const RATING_THEME_MAP: Record<string, VerdictTheme> = {
+  "High": V_GREEN, "Medium": V_BLUE, "Low": V_AMBER,
+};
+
+function RatingBadge({ rating }: { rating: string }) {
+  return <span style={themeToStyle(RATING_THEME_MAP[rating] ?? V_NEUTRAL)}>{rating}</span>;
 }
 
 const TAX_LEVEL_STYLES: Record<string, { icon: string }> = {
@@ -140,12 +151,6 @@ const TAX_LEVEL_STYLES: Record<string, { icon: string }> = {
   "Extreme":  { icon: "text-red-500" },
 };
 
-const RATING_BADGE_STYLES: Record<string, string> = {
-  "High":    "bg-red-900/60 text-red-300 border border-red-800/50",
-  "Medium":  "bg-amber-900/60 text-amber-300 border border-amber-800/50",
-  "Low":     "bg-emerald-900/60 text-emerald-300 border border-emerald-800/50",
-  "Extreme": "bg-red-900/80 text-red-200 border border-red-700/50",
-};
 
 
 const FINANCIAL_RATING_STYLES: Record<string, { color: string; bg: string; stripe: string }> = {
@@ -955,9 +960,7 @@ function HomeContent() {
                     <div>
                       <div className="flex items-center justify-between mb-2">
                         <SectionLabel>Cars &amp; Coffee</SectionLabel>
-                        <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md ${RATING_BADGE_STYLES[result.carsCoffee.rating] ?? "bg-zinc-800 text-zinc-300"}`}>
-                          {result.carsCoffee.rating}
-                        </span>
+                        <RatingBadge rating={result.carsCoffee.rating} />
                       </div>
                       <p className="text-zinc-400 text-sm leading-relaxed">{result.carsCoffee.description}</p>
                     </div>
@@ -969,9 +972,7 @@ function HomeContent() {
                     <div>
                       <div className="flex items-center justify-between mb-2">
                         <SectionLabel>Community Credibility</SectionLabel>
-                        <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md ${RATING_BADGE_STYLES[result.communityCredibility.rating] ?? "bg-zinc-800 text-zinc-300"}`}>
-                          {result.communityCredibility.rating}
-                        </span>
+                        <RatingBadge rating={result.communityCredibility.rating} />
                       </div>
                       <p className="text-zinc-400 text-sm leading-relaxed">{result.communityCredibility.description}</p>
                     </div>
