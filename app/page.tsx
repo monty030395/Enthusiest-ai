@@ -838,8 +838,8 @@ function HomeContent() {
               {result.priceVerdict && (
                 <div ref={priceVerdictRef} className="scroll-mt-4">
                   <Card className="p-5">
-                    <SectionLabel>Price Analysis</SectionLabel>
-                    <div className="mb-2">
+                    <div className="flex items-center justify-between mb-2">
+                      <SectionLabel>Price Analysis</SectionLabel>
                       <VerdictBadge verdict={result.priceVerdict.assessment} />
                     </div>
                     <p className="text-zinc-400 text-sm leading-relaxed">{result.priceVerdict.reason}</p>
@@ -849,8 +849,8 @@ function HomeContent() {
 
               {result.enthusiastTax && (
                 <Card className="p-5">
-                  <SectionLabel>Price Reality Check</SectionLabel>
-                  <div className="mb-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <SectionLabel>Price Reality Check</SectionLabel>
                     <VerdictBadge verdict={result.enthusiastTax.level} />
                   </div>
                   {result.enthusiastTax.reasons?.length > 0 && (
@@ -868,7 +868,7 @@ function HomeContent() {
 
               {result.priceOutlook && (
                 <Card className="p-5">
-                  <div className="mb-2">
+                  <div className="flex items-center justify-between mb-2">
                     <SectionLabel>Price Outlook</SectionLabel>
                     <VerdictBadge verdict={result.priceOutlook.trend} />
                   </div>
@@ -883,8 +883,8 @@ function HomeContent() {
                   <div className={`rounded-2xl border border-zinc-800 overflow-hidden ${style.bg}`}>
                     <div className={`h-1 ${style.stripe}`} />
                     <div className="p-5">
-                      <SectionLabel>Wallet Damage Rating</SectionLabel>
-                      <div className="mb-4">
+                      <div className="flex items-center justify-between mb-4">
+                        <SectionLabel>Wallet Damage Rating</SectionLabel>
                         <VerdictBadge verdict={result.worstFinancialDecision.rating} />
                       </div>
                       {result.worstFinancialDecision.reasons?.length > 0 && (
@@ -937,8 +937,8 @@ function HomeContent() {
               {result.ownerVibe?.label && (
                 <div ref={ownerVibeRef} className="scroll-mt-4">
                   <Card className="p-5">
-                    <SectionLabel>Owner Vibe</SectionLabel>
-                    <div className="mb-3">
+                    <div className="flex items-center justify-between mb-3">
+                      <SectionLabel>Owner Vibe</SectionLabel>
                       <VerdictBadge verdict={result.ownerVibe.label} />
                     </div>
                     {result.ownerVibe.reasoning && (
@@ -953,7 +953,7 @@ function HomeContent() {
                 <Card className="p-5 space-y-4">
                   {result.carsCoffee && (
                     <div>
-                      <div className="mb-2">
+                      <div className="flex items-center justify-between mb-2">
                         <SectionLabel>Cars &amp; Coffee</SectionLabel>
                         <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md ${RATING_BADGE_STYLES[result.carsCoffee.rating] ?? "bg-zinc-800 text-zinc-300"}`}>
                           {result.carsCoffee.rating}
@@ -967,7 +967,7 @@ function HomeContent() {
                   )}
                   {result.communityCredibility && (
                     <div>
-                      <div className="mb-2">
+                      <div className="flex items-center justify-between mb-2">
                         <SectionLabel>Community Credibility</SectionLabel>
                         <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md ${RATING_BADGE_STYLES[result.communityCredibility.rating] ?? "bg-zinc-800 text-zinc-300"}`}>
                           {result.communityCredibility.rating}
@@ -999,7 +999,7 @@ function HomeContent() {
               {/* Ownership pain — failure points with red left border */}
               {result.ownershipPain && (
                 <Card className="p-5">
-                  <div className="mb-4">
+                  <div className="flex items-center justify-between mb-4">
                     <SectionLabel>Reliability Risk</SectionLabel>
                     <VerdictBadge verdict={result.ownershipPain.score >= 8 ? "High Pain" : result.ownershipPain.score >= 5 ? "Moderate" : "Low Pain"} />
                   </div>
@@ -1046,7 +1046,7 @@ function HomeContent() {
                 <Card className="p-5 space-y-4">
                   {result.regretRisk && (
                     <div>
-                      <div className="mb-2">
+                      <div className="flex items-center justify-between mb-2">
                         <SectionLabel>Regret Risk</SectionLabel>
                         <VerdictBadge verdict={result.regretRisk.level} />
                       </div>
@@ -1058,7 +1058,7 @@ function HomeContent() {
                   )}
                   {result.marketTrend && (
                     <div>
-                      <div className="mb-2">
+                      <div className="flex items-center justify-between mb-2">
                         <SectionLabel>Market Trend</SectionLabel>
                         <VerdictBadge verdict={result.marketTrend.trend} />
                       </div>
