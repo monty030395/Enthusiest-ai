@@ -465,8 +465,8 @@ function HomeContent() {
         <div className="max-w-3xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1">
-              <span className="text-lg font-black tracking-tight text-white uppercase">Enthusiast</span>
-              <span className="text-lg font-black tracking-tight text-red-500 uppercase">AI</span>
+              <span className="text-lg font-black tracking-tight text-white uppercase">Motor</span>
+              <span className="text-lg font-black tracking-tight text-red-500 uppercase">mind</span>
             </div>
             <div className="h-4 w-px bg-zinc-700" />
             <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500">NZ Car Copilot</span>
