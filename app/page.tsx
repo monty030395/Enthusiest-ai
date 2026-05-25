@@ -69,6 +69,8 @@ type Analysis = {
     howDiffers: string;
     priceRange: string;
   }[];
+  investmentScore?: number;
+  vibeScore?: number;
 };
 
 // ── Verdict badge colour system ───────────────────────────────
@@ -434,33 +436,6 @@ function TileHeader({ label, score, quip }: { label: string; score: number | nul
   );
 }
 
-function WorthItHeader({ valueScore, investmentScore }: { valueScore: number | null; investmentScore: number | null }) {
-  function scoreColor(s: number | null) {
-    if (s === null) return "text-zinc-600";
-    return s >= 7 ? "text-emerald-500" : s >= 5 ? "text-amber-500" : "text-red-500";
-  }
-  return (
-    <div className="pt-2 space-y-2">
-      <div className="flex items-center gap-3">
-        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-red-500">Worth It?</span>
-        <div className="flex-1 h-px bg-zinc-800" />
-      </div>
-      <div className="flex items-center gap-3 pl-0.5">
-        <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-600">Value</span>
-        <span className={`text-sm font-black tabular-nums ${scoreColor(valueScore)}`}>
-          {valueScore !== null ? valueScore : "?"}
-          <span className="text-zinc-700 text-xs font-normal">/10</span>
-        </span>
-        <span className="text-zinc-700 px-1">·</span>
-        <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-600">Investment</span>
-        <span className={`text-sm font-black tabular-nums ${scoreColor(investmentScore)}`}>
-          {investmentScore !== null ? investmentScore : "?"}
-          <span className="text-zinc-700 text-xs font-normal">/10</span>
-        </span>
-      </div>
-    </div>
-  );
-}
 
 function HomeContent() {
   const [mode, setMode] = useState<"text" | "images">("text");
@@ -501,9 +476,7 @@ function HomeContent() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  const valueScore = result ? computeValueScore(result) : null;
   const characterScore = result ? computeCharacterScore(result) : null;
-  const investmentScore = result ? computeInvestmentScore(result) : null;
 
   const addImages = useCallback((files: FileList | File[]) => {
     Array.from(files)
@@ -887,8 +860,8 @@ function HomeContent() {
                 {/* Score chips — tap to scroll */}
                 <div className="flex gap-2.5">
                   <ScoreChip
-                    label="Worth It?"
-                    score={valueScore}
+                    label="Investment"
+                    score={result.investmentScore ?? null}
                     onClick={() => valueTileRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
                   />
                   <ScoreChip
@@ -897,8 +870,8 @@ function HomeContent() {
                     onClick={() => characterTileRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
                   />
                   <ScoreChip
-                    label="Extras"
-                    score={null}
+                    label="The Vibe"
+                    score={result.vibeScore ?? null}
                     onClick={() => investmentTileRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
                   />
                 </div>
@@ -906,9 +879,9 @@ function HomeContent() {
               </div>
             </Card>
 
-            {/* ── SECTION 1: WORTH IT? ────────────────────────── */}
-            <div id="worth-it" ref={valueTileRef} className="scroll-mt-4 space-y-4">
-              <WorthItHeader valueScore={valueScore} investmentScore={investmentScore} />
+            {/* ── SECTION 1: INVESTMENT ───────────────────────── */}
+            <div id="investment" ref={valueTileRef} className="scroll-mt-4 space-y-4">
+              <TileHeader label="Investment" score={result.investmentScore ?? null} quip={getQuip("investment", result.investmentScore ?? null)} />
 
               {/* Price Analysis */}
               {result.priceVerdict && (
@@ -980,13 +953,6 @@ function HomeContent() {
                   </div>
                 );
               })()}
-
-              {/* ── Investment sub-divider ── */}
-              <div className="flex items-center gap-3 pt-1">
-                <div className="flex-1 h-px bg-zinc-800/60" />
-                <span className="text-[9px] font-bold uppercase tracking-[0.15em] text-zinc-700">investment</span>
-                <div className="flex-1 h-px bg-zinc-800/60" />
-              </div>
 
               {/* Reliability Risk */}
               {result.ownershipPain && (
@@ -1100,9 +1066,9 @@ function HomeContent() {
               {result.modPotential && <ModPotentialCard data={result.modPotential} />}
             </div>
 
-            {/* ── SECTION 3: ENTHUSIAST EXTRAS ────────────────── */}
-            <div id="enthusiast-extras" ref={investmentTileRef} className="scroll-mt-4 space-y-4">
-              <TileHeader label="Enthusiast Extras" score={null} />
+            {/* ── SECTION 3: THE VIBE ─────────────────────────── */}
+            <div id="the-vibe" ref={investmentTileRef} className="scroll-mt-4 space-y-4">
+              <TileHeader label="The Vibe" score={result.vibeScore ?? null} />
 
               {/* Owner Vibe */}
               {result.ownerVibe?.label && (
