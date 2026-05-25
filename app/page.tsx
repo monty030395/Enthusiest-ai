@@ -434,6 +434,34 @@ function TileHeader({ label, score, quip }: { label: string; score: number | nul
   );
 }
 
+function WorthItHeader({ valueScore, investmentScore }: { valueScore: number | null; investmentScore: number | null }) {
+  function scoreColor(s: number | null) {
+    if (s === null) return "text-zinc-600";
+    return s >= 7 ? "text-emerald-500" : s >= 5 ? "text-amber-500" : "text-red-500";
+  }
+  return (
+    <div className="pt-2 space-y-2">
+      <div className="flex items-center gap-3">
+        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-red-500">Worth It?</span>
+        <div className="flex-1 h-px bg-zinc-800" />
+      </div>
+      <div className="flex items-center gap-3 pl-0.5">
+        <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-600">Value</span>
+        <span className={`text-sm font-black tabular-nums ${scoreColor(valueScore)}`}>
+          {valueScore !== null ? valueScore : "?"}
+          <span className="text-zinc-700 text-xs font-normal">/10</span>
+        </span>
+        <span className="text-zinc-700 px-1">·</span>
+        <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-600">Investment</span>
+        <span className={`text-sm font-black tabular-nums ${scoreColor(investmentScore)}`}>
+          {investmentScore !== null ? investmentScore : "?"}
+          <span className="text-zinc-700 text-xs font-normal">/10</span>
+        </span>
+      </div>
+    </div>
+  );
+}
+
 function HomeContent() {
   const [mode, setMode] = useState<"text" | "images">("text");
   const [images, setImages] = useState<{ file: File; dataUrl: string }[]>([]);
@@ -878,10 +906,11 @@ function HomeContent() {
               </div>
             </Card>
 
-            {/* ── VALUE TILE ──────────────────────────────────── */}
-            <div id="value" ref={valueTileRef} className="scroll-mt-4 space-y-4">
-              <TileHeader label="Value" score={valueScore} quip={getQuip("value", valueScore)} />
+            {/* ── SECTION 1: WORTH IT? ────────────────────────── */}
+            <div id="worth-it" ref={valueTileRef} className="scroll-mt-4 space-y-4">
+              <WorthItHeader valueScore={valueScore} investmentScore={investmentScore} />
 
+              {/* Price Analysis */}
               {result.priceVerdict && (
                 <div ref={priceVerdictRef} className="scroll-mt-4">
                   <Card className="p-5">
@@ -894,6 +923,7 @@ function HomeContent() {
                 </div>
               )}
 
+              {/* Price Reality Check */}
               {result.enthusiastTax && (
                 <Card className="p-5">
                   <div className="flex items-center justify-between mb-4">
@@ -913,6 +943,7 @@ function HomeContent() {
                 </Card>
               )}
 
+              {/* Price Outlook */}
               {result.priceOutlook && (
                 <Card className="p-5">
                   <div className="flex items-center justify-between mb-2">
@@ -924,6 +955,7 @@ function HomeContent() {
                 </Card>
               )}
 
+              {/* Wallet Damage Rating */}
               {result.worstFinancialDecision && (() => {
                 const style = FINANCIAL_RATING_STYLES[result.worstFinancialDecision.rating] ?? { color: "text-zinc-300", bg: "", stripe: "bg-zinc-700" };
                 return (
@@ -948,13 +980,105 @@ function HomeContent() {
                   </div>
                 );
               })()}
+
+              {/* ── Investment sub-divider ── */}
+              <div ref={investmentTileRef} className="flex items-center gap-3 pt-1 scroll-mt-4">
+                <div className="flex-1 h-px bg-zinc-800/60" />
+                <span className="text-[9px] font-bold uppercase tracking-[0.15em] text-zinc-700">investment</span>
+                <div className="flex-1 h-px bg-zinc-800/60" />
+              </div>
+
+              {/* Reliability Risk */}
+              {result.ownershipPain && (
+                <Card className="p-5">
+                  <div className="flex items-center justify-between mb-4">
+                    <SectionLabel>Reliability Risk</SectionLabel>
+                    <VerdictBadge verdict={result.ownershipPain.score >= 8 ? "High Pain" : result.ownershipPain.score >= 5 ? "Moderate" : "Low Pain"} />
+                  </div>
+                  {result.ownershipPain.issues?.length > 0 && (
+                    <ul className="space-y-3 mt-1">
+                      {result.ownershipPain.issues.map((issue, i) => (
+                        <li key={i} className="pl-3 border-l-[3px] border-red-600 py-1">
+                          <p className="font-black text-zinc-100 text-sm">{issue.title}</p>
+                          {issue.detail && (
+                            <p className="text-zinc-500 text-xs mt-1 leading-relaxed">{issue.detail}</p>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </Card>
+              )}
+
+              {/* Red flags */}
+              {result.redFlags?.length > 0 && (
+                <div className="rounded-2xl border border-red-600 overflow-hidden bg-red-950/40">
+                  <div className="bg-red-700 px-5 py-3 flex items-center gap-2.5">
+                    <span className="text-white text-sm">⚠️</span>
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white">
+                      Red Flags — Read Before Buying
+                    </span>
+                  </div>
+                  <ul className="divide-y divide-red-900/50">
+                    {result.redFlags.map((f, i) => (
+                      <li key={i} className="px-5 py-4 flex gap-3">
+                        <span className="text-red-400 flex-shrink-0 text-base leading-tight mt-0.5">⚠</span>
+                        <div>
+                          <p className="font-black text-red-200 text-sm">{f.flag}</p>
+                          <p className="text-red-300/80 text-xs mt-1 leading-relaxed">{f.explanation}</p>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Market Trend */}
+              {result.marketTrend && (
+                <Card className="p-5">
+                  <div className="flex items-center justify-between mb-2">
+                    <SectionLabel>Market Trend</SectionLabel>
+                    <VerdictBadge verdict={result.marketTrend.trend} />
+                  </div>
+                  <p className="text-zinc-400 text-sm leading-relaxed">{result.marketTrend.reason}</p>
+                </Card>
+              )}
+
+              {/* Future Classic Potential */}
+              {result.classicPotential && (
+                <Card className="p-5">
+                  <SectionLabel>Future Classic Potential</SectionLabel>
+                  <div className="flex items-baseline gap-2 mb-3">
+                    <span className="text-4xl font-black text-amber-400 tabular-nums">{result.classicPotential.score}</span>
+                    <span className="text-zinc-600 text-lg">/10</span>
+                  </div>
+                  {result.classicPotential.reasons?.length > 0 && (
+                    <ul className="space-y-1.5">
+                      {result.classicPotential.reasons.map((r, i) => (
+                        <li key={i} className="flex gap-2 text-xs text-zinc-400">
+                          <span className="text-amber-600 flex-shrink-0">▸</span>
+                          {r}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </Card>
+              )}
             </div>
 
-            {/* ── CHARACTER TILE ──────────────────────────────── */}
+            {/* ── SECTION 2: CHARACTER ────────────────────────── */}
             <div id="character" ref={characterTileRef} className="scroll-mt-4 space-y-4">
               <TileHeader label="Character" score={characterScore} quip={getQuip("character", characterScore)} />
 
-              {/* Driving character — single column rows */}
+              {/* Why Enthusiasts Care */}
+              {result.whyEnthusiastsCare && (
+                <Card className="p-5">
+                  <SectionLabel>Why Enthusiasts Care</SectionLabel>
+                  <p className="text-zinc-300 text-sm leading-relaxed">{result.whyEnthusiastsCare}</p>
+                </Card>
+              )}
+
+              {/* Driving Character */}
               {result.drivingCharacter && (
                 <Card className="p-5">
                   <SectionLabel>Driving Character</SectionLabel>
@@ -972,15 +1096,15 @@ function HomeContent() {
                 </Card>
               )}
 
-              {/* Why enthusiasts care */}
-              {result.whyEnthusiastsCare && (
-                <Card className="p-5">
-                  <SectionLabel>Why Enthusiasts Care</SectionLabel>
-                  <p className="text-zinc-300 text-sm leading-relaxed">{result.whyEnthusiastsCare}</p>
-                </Card>
-              )}
+              {/* Mod Potential */}
+              {result.modPotential && <ModPotentialCard data={result.modPotential} />}
+            </div>
 
-              {/* Owner vibe */}
+            {/* ── SECTION 3: ENTHUSIAST EXTRAS ────────────────── */}
+            <div id="enthusiast-extras" className="scroll-mt-4 space-y-4">
+              <TileHeader label="Enthusiast Extras" score={null} />
+
+              {/* Owner Vibe */}
               {result.ownerVibe?.label && (
                 <div ref={ownerVibeRef} className="scroll-mt-4">
                   <Card className="p-5">
@@ -1030,105 +1154,14 @@ function HomeContent() {
                 </Card>
               )}
 
-              {/* Mod potential */}
-              {result.modPotential && <ModPotentialCard data={result.modPotential} />}
-
-            </div>
-
-            {/* ── INVESTMENT TILE ─────────────────────────────── */}
-            <div id="investment" ref={investmentTileRef} className="scroll-mt-4 space-y-4">
-              <TileHeader label="Investment" score={investmentScore} quip={getQuip("investment", investmentScore)} />
-
-              {/* Ownership pain — failure points with red left border */}
-              {result.ownershipPain && (
+              {/* Regret Risk */}
+              {result.regretRisk && (
                 <Card className="p-5">
-                  <div className="flex items-center justify-between mb-4">
-                    <SectionLabel>Reliability Risk</SectionLabel>
-                    <VerdictBadge verdict={result.ownershipPain.score >= 8 ? "High Pain" : result.ownershipPain.score >= 5 ? "Moderate" : "Low Pain"} />
+                  <div className="flex items-center justify-between mb-2">
+                    <SectionLabel>Regret Risk</SectionLabel>
+                    <VerdictBadge verdict={result.regretRisk.level} />
                   </div>
-                  {result.ownershipPain.issues?.length > 0 && (
-                    <ul className="space-y-3 mt-1">
-                      {result.ownershipPain.issues.map((issue, i) => (
-                        <li key={i} className="pl-3 border-l-[3px] border-red-600 py-1">
-                          <p className="font-black text-zinc-100 text-sm">{issue.title}</p>
-                          {issue.detail && (
-                            <p className="text-zinc-500 text-xs mt-1 leading-relaxed">{issue.detail}</p>
-                          )}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </Card>
-              )}
-
-              {/* Red flags */}
-              {result.redFlags?.length > 0 && (
-                <div className="rounded-2xl border border-red-600 overflow-hidden bg-red-950/40">
-                  <div className="bg-red-700 px-5 py-3 flex items-center gap-2.5">
-                    <span className="text-white text-sm">⚠️</span>
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white">
-                      Red Flags — Read Before Buying
-                    </span>
-                  </div>
-                  <ul className="divide-y divide-red-900/50">
-                    {result.redFlags.map((f, i) => (
-                      <li key={i} className="px-5 py-4 flex gap-3">
-                        <span className="text-red-400 flex-shrink-0 text-base leading-tight mt-0.5">⚠</span>
-                        <div>
-                          <p className="font-black text-red-200 text-sm">{f.flag}</p>
-                          <p className="text-red-300/80 text-xs mt-1 leading-relaxed">{f.explanation}</p>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {/* Regret Risk + Market Trend */}
-              {(result.regretRisk || result.marketTrend) && (
-                <Card className="p-5 space-y-4">
-                  {result.regretRisk && (
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <SectionLabel>Regret Risk</SectionLabel>
-                        <VerdictBadge verdict={result.regretRisk.level} />
-                      </div>
-                      <p className="text-zinc-400 text-sm leading-relaxed">{result.regretRisk.reason}</p>
-                    </div>
-                  )}
-                  {result.regretRisk && result.marketTrend && (
-                    <div className="h-px bg-zinc-800" />
-                  )}
-                  {result.marketTrend && (
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <SectionLabel>Market Trend</SectionLabel>
-                        <VerdictBadge verdict={result.marketTrend.trend} />
-                      </div>
-                      <p className="text-zinc-400 text-sm leading-relaxed">{result.marketTrend.reason}</p>
-                    </div>
-                  )}
-                </Card>
-              )}
-
-              {/* Future classic potential */}
-              {result.classicPotential && (
-                <Card className="p-5">
-                  <SectionLabel>Future Classic Potential</SectionLabel>
-                  <div className="flex items-baseline gap-2 mb-3">
-                    <span className="text-4xl font-black text-amber-400 tabular-nums">{result.classicPotential.score}</span>
-                    <span className="text-zinc-600 text-lg">/10</span>
-                  </div>
-                  {result.classicPotential.reasons?.length > 0 && (
-                    <ul className="space-y-1.5">
-                      {result.classicPotential.reasons.map((r, i) => (
-                        <li key={i} className="flex gap-2 text-xs text-zinc-400">
-                          <span className="text-amber-600 flex-shrink-0">▸</span>
-                          {r}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
+                  <p className="text-zinc-400 text-sm leading-relaxed">{result.regretRisk.reason}</p>
                 </Card>
               )}
             </div>
