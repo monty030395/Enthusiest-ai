@@ -372,7 +372,29 @@ function HomeContent() {
   const valueTileRef = useRef<HTMLDivElement>(null);
   const characterTileRef = useRef<HTMLDivElement>(null);
   const investmentTileRef = useRef<HTMLDivElement>(null);
+  const priceVerdictRef = useRef<HTMLDivElement>(null);
+  const ownerVibeRef = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState(false);
+  const [inputCollapsed, setInputCollapsed] = useState(false);
+
+  useEffect(() => {
+    if (!result) return;
+    const timer = setTimeout(() => {
+      resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 350);
+    return () => clearTimeout(timer);
+  }, [result]);
+
+  function handleReset() {
+    setResult(null);
+    setInputCollapsed(false);
+    setUrl("");
+    setImages([]);
+    setPastedText("");
+    setError("");
+    if (fileInputRef.current) fileInputRef.current.value = "";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
 
   const valueScore = result ? computeValueScore(result) : null;
   const characterScore = result ? computeCharacterScore(result) : null;
@@ -402,7 +424,6 @@ function HomeContent() {
     setError("");
     setResult(null);
     setLoading(true);
-    setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
     try {
       const body = sharedUrl
         ? { url: sharedUrl }
@@ -427,6 +448,7 @@ function HomeContent() {
         }
       } else {
         setResult(data as Analysis);
+        setInputCollapsed(true);
       }
     } catch {
       setError("Network error — check your connection and try again.");
@@ -476,6 +498,10 @@ function HomeContent() {
       </header>
 
       <main className="max-w-3xl mx-auto px-5 py-8 space-y-6">
+
+        {/* Collapsible: Hero + Input */}
+        <div className={`overflow-hidden transition-all duration-500 ease-in-out ${inputCollapsed ? "max-h-0 opacity-0 pointer-events-none" : "max-h-[900px] opacity-100"}`}>
+          <div className="space-y-6">
 
         {/* Hero */}
         <div className="pt-2">
@@ -601,6 +627,19 @@ function HomeContent() {
           </div>
         </div>
 
+          </div>{/* end space-y-6 */}
+        </div>{/* end collapsible */}
+
+        {/* New Analysis button — visible at top when input is collapsed */}
+        {inputCollapsed && (
+          <button
+            onClick={handleReset}
+            className="w-full border border-zinc-800 hover:border-zinc-700 text-zinc-500 hover:text-zinc-300 rounded-xl py-2.5 text-[10px] font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2"
+          >
+            <span className="text-red-500 text-sm leading-none">+</span> New Analysis
+          </button>
+        )}
+
         {/* Results anchor */}
         <div ref={resultsRef} />
 
@@ -655,14 +694,20 @@ function HomeContent() {
                   {isSpecified(result.vehicle.transmission) && <Pill>{result.vehicle.transmission}</Pill>}
                   {isSpecified(result.vehicle.colour) && <Pill>{result.vehicle.colour}</Pill>}
                   {result.label && (
-                    <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg ${LABEL_STYLES[result.label] ?? "bg-zinc-700 text-white"}`}>
+                    <button
+                      onClick={() => priceVerdictRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                      className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg cursor-pointer active:scale-95 transition-all hover:brightness-125 ${LABEL_STYLES[result.label] ?? "bg-zinc-700 text-white"}`}
+                    >
                       {result.label}
-                    </span>
+                    </button>
                   )}
                   {result.ownerVibe?.label && (
-                    <span className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full ${OWNER_VIBE_STYLES[result.ownerVibe.label] ?? "bg-zinc-700 text-zinc-300"}`}>
+                    <button
+                      onClick={() => ownerVibeRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                      className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full cursor-pointer active:scale-95 transition-all hover:brightness-125 ${OWNER_VIBE_STYLES[result.ownerVibe.label] ?? "bg-zinc-700 text-zinc-300"}`}
+                    >
                       {result.ownerVibe.label}
-                    </span>
+                    </button>
                   )}
                 </div>
 
@@ -756,15 +801,17 @@ function HomeContent() {
               <TileHeader label="Value" score={valueScore} quip={getQuip("value", valueScore)} />
 
               {result.priceVerdict && (
-                <Card className="p-5">
-                  <SectionLabel>Price Analysis</SectionLabel>
-                  <div className="flex items-baseline gap-3 mb-2">
-                    <span className={`text-xl font-black ${PRICE_ASSESSMENT_STYLES[result.priceVerdict.assessment] ?? "text-zinc-300"}`}>
-                      {result.priceVerdict.assessment}
-                    </span>
-                  </div>
-                  <p className="text-zinc-400 text-sm leading-relaxed">{result.priceVerdict.reason}</p>
-                </Card>
+                <div ref={priceVerdictRef} className="scroll-mt-4">
+                  <Card className="p-5">
+                    <SectionLabel>Price Analysis</SectionLabel>
+                    <div className="flex items-baseline gap-3 mb-2">
+                      <span className={`text-xl font-black ${PRICE_ASSESSMENT_STYLES[result.priceVerdict.assessment] ?? "text-zinc-300"}`}>
+                        {result.priceVerdict.assessment}
+                      </span>
+                    </div>
+                    <p className="text-zinc-400 text-sm leading-relaxed">{result.priceVerdict.reason}</p>
+                  </Card>
+                </div>
               )}
 
               {result.enthusiastTax && (
@@ -859,17 +906,19 @@ function HomeContent() {
 
               {/* Owner vibe */}
               {result.ownerVibe?.label && (
-                <Card className="p-5">
-                  <SectionLabel>Owner Vibe</SectionLabel>
-                  <div className="mb-3">
-                    <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full ${OWNER_VIBE_STYLES[result.ownerVibe.label] ?? "bg-zinc-700 text-zinc-300"}`}>
-                      {result.ownerVibe.label}
-                    </span>
-                  </div>
-                  {result.ownerVibe.reasoning && (
-                    <p className="text-zinc-400 text-sm leading-relaxed">{result.ownerVibe.reasoning}</p>
-                  )}
-                </Card>
+                <div ref={ownerVibeRef} className="scroll-mt-4">
+                  <Card className="p-5">
+                    <SectionLabel>Owner Vibe</SectionLabel>
+                    <div className="mb-3">
+                      <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full ${OWNER_VIBE_STYLES[result.ownerVibe.label] ?? "bg-zinc-700 text-zinc-300"}`}>
+                        {result.ownerVibe.label}
+                      </span>
+                    </div>
+                    {result.ownerVibe.reasoning && (
+                      <p className="text-zinc-400 text-sm leading-relaxed">{result.ownerVibe.reasoning}</p>
+                    )}
+                  </Card>
+                </div>
               )}
 
               {/* Cars & Coffee + Community Credibility */}
@@ -1088,13 +1137,7 @@ function HomeContent() {
 
             {/* Reset */}
             <button
-              onClick={() => {
-                setResult(null);
-                setUrl("");
-                setImages([]);
-                setPastedText("");
-                if (fileInputRef.current) fileInputRef.current.value = "";
-              }}
+              onClick={handleReset}
               className="w-full border border-zinc-800 hover:border-zinc-600 text-zinc-500 hover:text-zinc-300 rounded-xl py-3 text-xs font-bold uppercase tracking-widest transition-all"
             >
               Analyse Another Listing
