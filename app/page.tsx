@@ -372,6 +372,8 @@ function HomeContent() {
   const valueTileRef = useRef<HTMLDivElement>(null);
   const characterTileRef = useRef<HTMLDivElement>(null);
   const investmentTileRef = useRef<HTMLDivElement>(null);
+  const priceVerdictRef = useRef<HTMLDivElement>(null);
+  const ownerVibeRef = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState(false);
 
   const valueScore = result ? computeValueScore(result) : null;
@@ -655,14 +657,20 @@ function HomeContent() {
                   {isSpecified(result.vehicle.transmission) && <Pill>{result.vehicle.transmission}</Pill>}
                   {isSpecified(result.vehicle.colour) && <Pill>{result.vehicle.colour}</Pill>}
                   {result.label && (
-                    <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg ${LABEL_STYLES[result.label] ?? "bg-zinc-700 text-white"}`}>
+                    <button
+                      onClick={() => priceVerdictRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                      className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg cursor-pointer active:scale-95 transition-all hover:brightness-125 ${LABEL_STYLES[result.label] ?? "bg-zinc-700 text-white"}`}
+                    >
                       {result.label}
-                    </span>
+                    </button>
                   )}
                   {result.ownerVibe?.label && (
-                    <span className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full ${OWNER_VIBE_STYLES[result.ownerVibe.label] ?? "bg-zinc-700 text-zinc-300"}`}>
+                    <button
+                      onClick={() => ownerVibeRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                      className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full cursor-pointer active:scale-95 transition-all hover:brightness-125 ${OWNER_VIBE_STYLES[result.ownerVibe.label] ?? "bg-zinc-700 text-zinc-300"}`}
+                    >
                       {result.ownerVibe.label}
-                    </span>
+                    </button>
                   )}
                 </div>
 
@@ -756,15 +764,17 @@ function HomeContent() {
               <TileHeader label="Value" score={valueScore} quip={getQuip("value", valueScore)} />
 
               {result.priceVerdict && (
-                <Card className="p-5">
-                  <SectionLabel>Price Analysis</SectionLabel>
-                  <div className="flex items-baseline gap-3 mb-2">
-                    <span className={`text-xl font-black ${PRICE_ASSESSMENT_STYLES[result.priceVerdict.assessment] ?? "text-zinc-300"}`}>
-                      {result.priceVerdict.assessment}
-                    </span>
-                  </div>
-                  <p className="text-zinc-400 text-sm leading-relaxed">{result.priceVerdict.reason}</p>
-                </Card>
+                <div ref={priceVerdictRef} className="scroll-mt-4">
+                  <Card className="p-5">
+                    <SectionLabel>Price Analysis</SectionLabel>
+                    <div className="flex items-baseline gap-3 mb-2">
+                      <span className={`text-xl font-black ${PRICE_ASSESSMENT_STYLES[result.priceVerdict.assessment] ?? "text-zinc-300"}`}>
+                        {result.priceVerdict.assessment}
+                      </span>
+                    </div>
+                    <p className="text-zinc-400 text-sm leading-relaxed">{result.priceVerdict.reason}</p>
+                  </Card>
+                </div>
               )}
 
               {result.enthusiastTax && (
@@ -859,17 +869,19 @@ function HomeContent() {
 
               {/* Owner vibe */}
               {result.ownerVibe?.label && (
-                <Card className="p-5">
-                  <SectionLabel>Owner Vibe</SectionLabel>
-                  <div className="mb-3">
-                    <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full ${OWNER_VIBE_STYLES[result.ownerVibe.label] ?? "bg-zinc-700 text-zinc-300"}`}>
-                      {result.ownerVibe.label}
-                    </span>
-                  </div>
-                  {result.ownerVibe.reasoning && (
-                    <p className="text-zinc-400 text-sm leading-relaxed">{result.ownerVibe.reasoning}</p>
-                  )}
-                </Card>
+                <div ref={ownerVibeRef} className="scroll-mt-4">
+                  <Card className="p-5">
+                    <SectionLabel>Owner Vibe</SectionLabel>
+                    <div className="mb-3">
+                      <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full ${OWNER_VIBE_STYLES[result.ownerVibe.label] ?? "bg-zinc-700 text-zinc-300"}`}>
+                        {result.ownerVibe.label}
+                      </span>
+                    </div>
+                    {result.ownerVibe.reasoning && (
+                      <p className="text-zinc-400 text-sm leading-relaxed">{result.ownerVibe.reasoning}</p>
+                    )}
+                  </Card>
+                </div>
               )}
 
               {/* Cars & Coffee + Community Credibility */}
