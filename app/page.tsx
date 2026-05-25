@@ -375,6 +375,26 @@ function HomeContent() {
   const priceVerdictRef = useRef<HTMLDivElement>(null);
   const ownerVibeRef = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState(false);
+  const [inputCollapsed, setInputCollapsed] = useState(false);
+
+  useEffect(() => {
+    if (!result) return;
+    const timer = setTimeout(() => {
+      resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 350);
+    return () => clearTimeout(timer);
+  }, [result]);
+
+  function handleReset() {
+    setResult(null);
+    setInputCollapsed(false);
+    setUrl("");
+    setImages([]);
+    setPastedText("");
+    setError("");
+    if (fileInputRef.current) fileInputRef.current.value = "";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
 
   const valueScore = result ? computeValueScore(result) : null;
   const characterScore = result ? computeCharacterScore(result) : null;
@@ -404,7 +424,6 @@ function HomeContent() {
     setError("");
     setResult(null);
     setLoading(true);
-    setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
     try {
       const body = sharedUrl
         ? { url: sharedUrl }
@@ -429,6 +448,7 @@ function HomeContent() {
         }
       } else {
         setResult(data as Analysis);
+        setInputCollapsed(true);
       }
     } catch {
       setError("Network error — check your connection and try again.");
@@ -478,6 +498,10 @@ function HomeContent() {
       </header>
 
       <main className="max-w-3xl mx-auto px-5 py-8 space-y-6">
+
+        {/* Collapsible: Hero + Input */}
+        <div className={`overflow-hidden transition-all duration-500 ease-in-out ${inputCollapsed ? "max-h-0 opacity-0 pointer-events-none" : "max-h-[900px] opacity-100"}`}>
+          <div className="space-y-6">
 
         {/* Hero */}
         <div className="pt-2">
@@ -602,6 +626,19 @@ function HomeContent() {
             </button>
           </div>
         </div>
+
+          </div>{/* end space-y-6 */}
+        </div>{/* end collapsible */}
+
+        {/* New Analysis button — visible at top when input is collapsed */}
+        {inputCollapsed && (
+          <button
+            onClick={handleReset}
+            className="w-full border border-zinc-800 hover:border-zinc-700 text-zinc-500 hover:text-zinc-300 rounded-xl py-2.5 text-[10px] font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2"
+          >
+            <span className="text-red-500 text-sm leading-none">+</span> New Analysis
+          </button>
+        )}
 
         {/* Results anchor */}
         <div ref={resultsRef} />
@@ -1100,13 +1137,7 @@ function HomeContent() {
 
             {/* Reset */}
             <button
-              onClick={() => {
-                setResult(null);
-                setUrl("");
-                setImages([]);
-                setPastedText("");
-                if (fileInputRef.current) fileInputRef.current.value = "";
-              }}
+              onClick={handleReset}
               className="w-full border border-zinc-800 hover:border-zinc-600 text-zinc-500 hover:text-zinc-300 rounded-xl py-3 text-xs font-bold uppercase tracking-widest transition-all"
             >
               Analyse Another Listing
