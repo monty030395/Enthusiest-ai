@@ -870,7 +870,7 @@ function HomeContent() {
                     onClick={() => characterTileRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
                   />
                   <ScoreChip
-                    label="The Vibe"
+                    label="Respect"
                     score={result.vibeScore ?? null}
                     onClick={() => investmentTileRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
                   />
@@ -1066,9 +1066,9 @@ function HomeContent() {
               {result.modPotential && <ModPotentialCard data={result.modPotential} />}
             </div>
 
-            {/* ── SECTION 3: THE VIBE ─────────────────────────── */}
-            <div id="the-vibe" ref={investmentTileRef} className="scroll-mt-4 space-y-4">
-              <TileHeader label="The Vibe" score={result.vibeScore ?? null} />
+            {/* ── SECTION 3: RESPECT ──────────────────────────── */}
+            <div id="respect" ref={investmentTileRef} className="scroll-mt-4 space-y-4">
+              <TileHeader label="Respect" score={result.vibeScore ?? null} />
 
               {/* Owner Vibe */}
               {result.ownerVibe?.label && (
