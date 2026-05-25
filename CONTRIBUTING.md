@@ -65,7 +65,6 @@ Keys live in `.env.local` (not committed). Ask for the current values if you're 
 
 Required:
 - `OPENAI_API_KEY`
-- `FIRECRAWL_API_KEY`
 - `TRADEME_CONSUMER_KEY`
 - `TRADEME_CONSUMER_SECRET`
 - `TRADEME_SANDBOX` — set to `true` for local dev against sandbox, remove for production

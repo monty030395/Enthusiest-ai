@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
 
 type DriveMetric = { score: number; description: string };
 
@@ -436,8 +435,7 @@ function TileHeader({ label, score, quip }: { label: string; score: number | nul
 }
 
 function HomeContent() {
-  const [mode, setMode] = useState<"url" | "images" | "text">("url");
-  const [url, setUrl] = useState("");
+  const [mode, setMode] = useState<"text" | "images">("text");
   const [images, setImages] = useState<{ file: File; dataUrl: string }[]>([]);
   const [pastedText, setPastedText] = useState("");
   const [loading, setLoading] = useState(false);
@@ -464,7 +462,6 @@ function HomeContent() {
   function handleReset() {
     setResult(null);
     setInputCollapsed(false);
-    setUrl("");
     setImages([]);
     setPastedText("");
     setError("");
@@ -496,16 +493,12 @@ function HomeContent() {
     [addImages]
   );
 
-  async function analyse(sharedUrl?: string) {
+  async function analyse() {
     setError("");
     setResult(null);
     setLoading(true);
     try {
-      const body = sharedUrl
-        ? { url: sharedUrl }
-        : mode === "url"
-        ? { url }
-        : mode === "text"
+      const body = mode === "text"
         ? { pastedText }
         : { images: images.map((i) => i.dataUrl) };
 
@@ -533,27 +526,10 @@ function HomeContent() {
     }
   }
 
-  const searchParams = useSearchParams();
-  useEffect(() => {
-    const directUrl = searchParams.get("shared_url") ?? searchParams.get("url");
-    const textParam = searchParams.get("text") ?? "";
-    const urlInText = textParam.match(/https?:\/\/[^\s]+/)?.[0];
-    const sharedUrl = directUrl ?? urlInText;
-    if (sharedUrl) {
-      setUrl(sharedUrl);
-      setMode("url");
-      window.history.replaceState({}, "", "/");
-      analyse(sharedUrl);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
 
-  const canAnalyse =
-    mode === "url" ? url.trim().length > 0
-    : mode === "text" ? pastedText.trim().length > 0
-    : images.length > 0;
+  const canAnalyse = mode === "text" ? pastedText.trim().length > 0 : images.length > 0;
 
-  const modeLabels = { url: "Paste URL", images: "Screenshots", text: "Paste Text" };
+  const modeLabels: Record<"text" | "images", string> = { text: "Paste Text", images: "Screenshots" };
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-zinc-100 font-sans">
@@ -586,14 +562,14 @@ function HomeContent() {
             <span className="text-red-500">worth your money?</span>
           </h2>
           <p className="mt-3 text-zinc-500 text-sm leading-relaxed max-w-md">
-            Share a listing from Trade Me or upload screenshots. Get a specific, honest enthusiast read — not the generic rubbish you already know.
+            Paste a listing from Trade Me or upload screenshots. Get a specific, honest enthusiast read — not the generic rubbish you already know.
           </p>
         </div>
 
         {/* Input card */}
         <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 overflow-hidden">
           <div className="flex border-b border-zinc-800">
-            {(["url", "images", "text"] as const).map((m) => (
+            {(["text", "images"] as const).map((m) => (
               <button
                 key={m}
                 onClick={() => { setMode(m); setError(""); }}
@@ -609,17 +585,6 @@ function HomeContent() {
           </div>
 
           <div className="p-5 space-y-4">
-            {mode === "url" && (
-              <input
-                type="url"
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && canAnalyse && !loading && analyse()}
-                placeholder="https://www.trademe.co.nz/a/motors/cars/..."
-                className="w-full bg-zinc-800/60 border border-zinc-700 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-red-500/70 focus:bg-zinc-800 transition-all"
-              />
-            )}
-
             {mode === "images" && (
               <div>
                 <div
@@ -674,7 +639,7 @@ function HomeContent() {
             {mode === "text" && (
               <div className="space-y-2">
                 <p className="text-xs text-zinc-500">
-                  On the listing page, select all (<kbd className="bg-zinc-800 px-1 py-0.5 rounded text-zinc-300 font-mono text-[10px]">Ctrl+A</kbd>) then copy (<kbd className="bg-zinc-800 px-1 py-0.5 rounded text-zinc-300 font-mono text-[10px]">Ctrl+C</kbd>), then paste below.
+                  Copy the listing description from Trade Me and paste it here — the more detail the better.
                 </p>
                 <textarea
                   value={pastedText}

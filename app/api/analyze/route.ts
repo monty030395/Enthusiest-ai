@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
-import OAuth from "oauth-1.0a";
-import crypto from "crypto";
 
 const SYSTEM_PROMPT = `You are an experienced NZ car enthusiast with 20+ years of hands-on knowledge buying, owning, and selling JDM, Euro, and performance cars in the New Zealand market. You've owned dozens of cars — WRXs, Evos, E46s, MX-5s, Crowns, Skylines, Golf Rs, IS300s — and you've made expensive mistakes so you know exactly what to look for.
 
@@ -275,92 +273,6 @@ alternatives[].priceRange — approximate NZD price range for a good example (e.
 
 
 
-function extractTradeMeListingId(url: string): string | null {
-  return url.match(/\/listing\/(\d+)/i)?.[1] ?? null;
-}
-
-async function fetchTradeMeListing(listingId: string): Promise<string> {
-  const oauth = new OAuth({
-    consumer: {
-      key: process.env.TRADEME_CONSUMER_KEY!,
-      secret: process.env.TRADEME_CONSUMER_SECRET!,
-    },
-    signature_method: "HMAC-SHA1",
-    hash_function(baseString, key) {
-      return crypto.createHmac("sha1", key).update(baseString).digest("base64");
-    },
-  });
-
-  const baseUrl = process.env.TRADEME_SANDBOX === "true"
-    ? "https://api.tmsandbox.co.nz"
-    : "https://api.trademe.co.nz";
-
-  const requestData = {
-    url: `${baseUrl}/v1/Listings/${listingId}.json`,
-    method: "GET",
-  };
-
-  const authHeader = oauth.toHeader(oauth.authorize(requestData));
-
-  const res = await fetch(requestData.url, {
-    headers: {
-      ...authHeader,
-      Accept: "application/json",
-    },
-    signal: AbortSignal.timeout(10000),
-  });
-
-  if (!res.ok) throw new Error(`Trade Me API returned ${res.status}`);
-
-  const data = await res.json();
-
-  // Format the structured listing data into a clear text summary for GPT
-  const lines = [
-    `Title: ${data.Title ?? ""}`,
-    `Price: $${data.StartPrice ?? data.BuyNowPrice ?? "not listed"}`,
-    `Description: ${data.Body ?? ""}`,
-    `Location: ${data.Region ?? ""} ${data.Suburb ?? ""}`.trim(),
-    `Seller: ${data.Member?.Nickname ?? ""}`,
-    `Listed: ${data.StartDate ?? ""}`,
-  ];
-
-  // Motors-specific fields if present
-  if (data.MotorWebfeatures) {
-    const m = data.MotorWebfeatures;
-    if (m.Odometer) lines.push(`Odometer: ${m.Odometer} km`);
-    if (m.Registration) lines.push(`Registration: ${m.Registration}`);
-    if (m.BodyStyle) lines.push(`Body: ${m.BodyStyle}`);
-    if (m.Transmission) lines.push(`Transmission: ${m.Transmission}`);
-    if (m.FuelType) lines.push(`Fuel: ${m.FuelType}`);
-    if (m.EngineSize) lines.push(`Engine: ${m.EngineSize}cc`);
-    if (m.NumberOfDoors) lines.push(`Doors: ${m.NumberOfDoors}`);
-    if (m.Colour) lines.push(`Colour: ${m.Colour}`);
-    if (m.WOFExpiry) lines.push(`WOF Expiry: ${m.WOFExpiry}`);
-    if (m.RegistrationExpiry) lines.push(`Rego Expiry: ${m.RegistrationExpiry}`);
-  }
-
-  // Also include attributes (Trade Me stores many car details here)
-  if (Array.isArray(data.Attributes)) {
-    for (const attr of data.Attributes) {
-      lines.push(`${attr.Name}: ${attr.Value}`);
-    }
-  }
-
-  return lines.filter(Boolean).join("\n");
-}
-
-function extractJsonLd(html: string): object | null {
-  const matches = [...html.matchAll(/<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)];
-  for (const match of matches) {
-    try {
-      return JSON.parse(match[1]);
-    } catch {
-      continue;
-    }
-  }
-  return null;
-}
-
 export async function POST(req: NextRequest) {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
@@ -372,101 +284,13 @@ export async function POST(req: NextRequest) {
 
   const client = new OpenAI({ apiKey });
   const body = await req.json();
-  const { url, images, pastedText } = body as { url?: string; images?: string[]; pastedText?: string };
+  const { images, pastedText } = body as { images?: string[]; pastedText?: string };
 
   type ContentPart =
     | { type: "text"; text: string }
     | { type: "image_url"; image_url: { url: string } };
 
   const content: ContentPart[] = [];
-
-  if (url) {
-    const firecrawlKey = process.env.FIRECRAWL_API_KEY;
-    const tradeMeKey = process.env.TRADEME_CONSUMER_KEY;
-    try {
-      let text = "";
-
-      // Trade Me URL — use the official API for accurate structured data
-      const listingId = extractTradeMeListingId(url);
-      if (listingId && tradeMeKey) {
-        try {
-          text = await fetchTradeMeListing(listingId);
-          console.log("Trade Me API success — listing ID:", listingId);
-          content.push({ type: "text", text: `Trade Me listing data:\n\n${text}` });
-        } catch (err) {
-          console.error("Trade Me API failed, falling back to scraper:", err);
-          // Fall through to Firecrawl below
-        }
-      }
-
-      if (content.length > 0) {
-        // Already have content from Trade Me API — skip scraping
-      } else
-
-      if (firecrawlKey) {
-        const res = await fetch("https://api.firecrawl.dev/v1/scrape", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${firecrawlKey}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ url, formats: ["markdown", "rawHtml"] }),
-          signal: AbortSignal.timeout(30000),
-        });
-
-        if (!res.ok) {
-          const err = await res.json().catch(() => ({}));
-          console.error("Firecrawl error:", err);
-          return NextResponse.json(
-            { error: "Could not read listing. Try uploading screenshots instead." },
-            { status: 400 }
-          );
-        }
-
-        const data = await res.json();
-        const markdown = data.data?.markdown ?? "";
-        const rawHtml = data.data?.rawHtml ?? "";
-
-        // Detect bot-blocking responses
-        if (markdown.toLowerCase().includes("access denied") || markdown.toLowerCase().includes("you don't have permission")) {
-          return NextResponse.json(
-            { error: "BLOCKED", message: "Trade Me blocked automated access. Upload screenshots of the listing instead — it takes 10 seconds and gives better results." },
-            { status: 422 }
-          );
-        }
-
-        // Extract JSON-LD structured data — Trade Me embeds price, KMs, description here for SEO
-        const jsonLd = extractJsonLd(rawHtml);
-        const jsonLdText = jsonLd ? `Structured listing data:\n${JSON.stringify(jsonLd, null, 2)}\n\n` : "";
-
-        text = (jsonLdText + markdown).slice(0, 15000);
-        console.log("JSON-LD found:", !!jsonLd, "| markdown length:", markdown.length);
-      } else {
-        // Fallback to Jina if no Firecrawl key configured
-        const res = await fetch(`https://r.jina.ai/${url}`, {
-          headers: { Accept: "text/plain", "X-Return-Format": "markdown" },
-          signal: AbortSignal.timeout(20000),
-        });
-        if (!res.ok) {
-          return NextResponse.json(
-            { error: "Could not read listing. Try uploading screenshots instead." },
-            { status: 400 }
-          );
-        }
-        text = (await res.text()).slice(0, 15000);
-      }
-
-      if (text) {
-        console.log("Content preview:", text.slice(0, 300));
-        content.push({ type: "text", text: `Car listing from ${url}:\n\n${text}` });
-      }
-    } catch {
-      return NextResponse.json(
-        { error: "Could not reach that URL. Try uploading screenshots instead." },
-        { status: 400 }
-      );
-    }
-  }
 
   if (images && images.length > 0) {
     content.push({
