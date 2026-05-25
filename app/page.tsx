@@ -181,6 +181,48 @@ function DriveScoreRow({ metric, label }: { metric: DriveMetric; label: string }
   );
 }
 
+const LOADING_MESSAGES = [
+  "Consulting the oracle...",
+  "Asking someone who actually knows their stuff...",
+  "Checking if the service history adds up...",
+  "Sniffing for oil leaks...",
+  "Counting the previous owners...",
+  "Checking if the mods are actually worth anything...",
+  "Reading the CarJam tea leaves...",
+  "Asking a mate who owns one...",
+  "Detecting enthusiast tax...",
+  "Checking if the asking price is a joke...",
+  "Scanning for Trade Me listing fiction...",
+  "Running the numbers through the shed...",
+  "Separating the good ones from the money pits...",
+  "Cross-referencing with every forum thread ever written...",
+];
+
+function RotatingMessage() {
+  const [index, setIndex] = useState(() => Math.floor(Math.random() * LOADING_MESSAGES.length));
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setVisible(false);
+      setTimeout(() => {
+        setIndex((i) => (i + 1) % LOADING_MESSAGES.length);
+        setVisible(true);
+      }, 300);
+    }, 2500);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <p
+      className="text-zinc-400 text-xs mt-1 transition-opacity duration-300"
+      style={{ opacity: visible ? 1 : 0 }}
+    >
+      {LOADING_MESSAGES[index]}
+    </p>
+  );
+}
+
 function WheelSpinner() {
   const spokes = [0, 72, 144, 216, 288];
   return (
@@ -682,8 +724,8 @@ function HomeContent() {
           <Card className="p-10 flex flex-col items-center gap-5">
             <WheelSpinner />
             <div className="text-center">
-              <p className="text-white font-bold text-sm">Consulting the oracle</p>
-              <p className="text-zinc-500 text-xs mt-1">Reading the listing, checking the numbers...</p>
+              <p className="text-white font-bold text-sm">Getting Under the Hood</p>
+              <RotatingMessage />
             </div>
           </Card>
         )}
