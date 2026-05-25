@@ -887,7 +887,7 @@ function HomeContent() {
                 {/* Score chips — tap to scroll */}
                 <div className="flex gap-2.5">
                   <ScoreChip
-                    label="Value"
+                    label="Worth It?"
                     score={valueScore}
                     onClick={() => valueTileRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
                   />
@@ -897,8 +897,8 @@ function HomeContent() {
                     onClick={() => characterTileRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
                   />
                   <ScoreChip
-                    label="Investment"
-                    score={investmentScore}
+                    label="Extras"
+                    score={null}
                     onClick={() => investmentTileRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
                   />
                 </div>
@@ -982,7 +982,7 @@ function HomeContent() {
               })()}
 
               {/* ── Investment sub-divider ── */}
-              <div ref={investmentTileRef} className="flex items-center gap-3 pt-1 scroll-mt-4">
+              <div className="flex items-center gap-3 pt-1">
                 <div className="flex-1 h-px bg-zinc-800/60" />
                 <span className="text-[9px] font-bold uppercase tracking-[0.15em] text-zinc-700">investment</span>
                 <div className="flex-1 h-px bg-zinc-800/60" />
@@ -1101,7 +1101,7 @@ function HomeContent() {
             </div>
 
             {/* ── SECTION 3: ENTHUSIAST EXTRAS ────────────────── */}
-            <div id="enthusiast-extras" className="scroll-mt-4 space-y-4">
+            <div id="enthusiast-extras" ref={investmentTileRef} className="scroll-mt-4 space-y-4">
               <TileHeader label="Enthusiast Extras" score={null} />
 
               {/* Owner Vibe */}
