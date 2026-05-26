@@ -1017,10 +1017,12 @@ function HomeContent() {
               {/* Future Classic Potential */}
               {result.classicPotential && (
                 <Card className="p-5">
-                  <SectionLabel>Future Classic Potential</SectionLabel>
-                  <div className="flex items-baseline gap-2 mb-3">
-                    <span className="text-4xl font-black text-amber-400 tabular-nums">{result.classicPotential.score}</span>
-                    <span className="text-zinc-600 text-lg">/10</span>
+                  <div className="flex items-center justify-between mb-3">
+                    <SectionLabel>Future Classic Potential</SectionLabel>
+                    <span className="text-xl font-black text-amber-400 tabular-nums">
+                      {result.classicPotential.score}
+                      <span className="text-zinc-600 text-xs font-normal">/10</span>
+                    </span>
                   </div>
                   {result.classicPotential.reasons?.length > 0 && (
                     <ul className="space-y-1.5">

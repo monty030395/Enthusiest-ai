@@ -1,0 +1,27 @@
+[
+  {
+    "name": "feature-request",
+    "color": "a2eeef",
+    "description": "New feature or request"
+  },
+  {
+    "name": "ui",
+    "color": "0366d6",
+    "description": "User interface improvements"
+  },
+  {
+    "name": "bug",
+    "color": "d73a49",
+    "description": "Something isn't working"
+  },
+  {
+    "name": "prompt",
+    "color": "fbca04",
+    "description": "Related to AI prompts or prompt engineering"
+  },
+  {
+    "name": "phase-3",
+    "color": "ffa500",
+    "description": "Phase 3 development"
+  }
+]
