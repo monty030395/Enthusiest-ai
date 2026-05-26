@@ -71,6 +71,9 @@ type Analysis = {
   }[];
   investmentScore?: number;
   vibeScore?: number;
+  priceSummary?: string;
+  ownershipCostSummary?: string;
+  investmentOutlookSummary?: string;
 };
 
 // ── Verdict badge colour system ───────────────────────────────
@@ -153,6 +156,14 @@ const TAX_LEVEL_STYLES: Record<string, { icon: string }> = {
 };
 
 
+
+const FINANCIAL_RATING_SHORT: Record<string, string> = {
+  "Sensible Purchase":               "Sensible",
+  "Manageable Pain":                 "Manageable",
+  "Emotionally Justified Disaster":  "Painful",
+  "Dangerous":                       "Dangerous",
+  "Catastrophic Wallet Destruction": "Catastrophic",
+};
 
 const FINANCIAL_RATING_STYLES: Record<string, { color: string; bg: string; stripe: string }> = {
   "Sensible Purchase":               { color: "text-emerald-400", bg: "",                  stripe: "bg-emerald-600" },
@@ -452,6 +463,9 @@ function HomeContent() {
   const priceVerdictRef = useRef<HTMLDivElement>(null);
   const ownerVibeRef = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState(false);
+  const [priceOpen, setPriceOpen] = useState(false);
+  const [ownershipOpen, setOwnershipOpen] = useState(false);
+  const [outlookOpen, setOutlookOpen] = useState(false);
   const [inputCollapsed, setInputCollapsed] = useState(false);
   const [urlHint, setUrlHint] = useState("");
   const [urlHintVisible, setUrlHintVisible] = useState(false);
@@ -467,6 +481,9 @@ function HomeContent() {
   function handleReset() {
     setResult(null);
     setInputCollapsed(false);
+    setPriceOpen(false);
+    setOwnershipOpen(false);
+    setOutlookOpen(false);
     setImages([]);
     setPastedText("");
     setError("");
@@ -880,162 +897,267 @@ function HomeContent() {
             </Card>
 
             {/* ── SECTION 1: INVESTMENT ───────────────────────── */}
-            <div id="investment" ref={valueTileRef} className="scroll-mt-4 space-y-4">
+            <div id="investment" ref={valueTileRef} className="scroll-mt-4 space-y-3">
               <TileHeader label="Investment" score={result.investmentScore ?? null} quip={getQuip("investment", result.investmentScore ?? null)} />
 
-              {/* Price Analysis */}
-              {result.priceVerdict && (
-                <div ref={priceVerdictRef} className="scroll-mt-4">
-                  <Card className="p-5">
-                    <div className="flex items-center justify-between mb-2">
-                      <SectionLabel>Price Analysis</SectionLabel>
-                      <VerdictBadge verdict={result.priceVerdict.assessment} />
+              {/* ── PRICE TILE ─────────────────────────── */}
+              <div ref={priceVerdictRef} className="scroll-mt-4">
+                <Card className="overflow-hidden">
+                  <div className="p-5">
+                    <div className="flex items-center gap-3 mb-4">
+                      <span className="text-[10px] font-black uppercase tracking-[0.2em] text-red-500">Price</span>
+                      <div className="flex-1 h-px bg-zinc-800" />
+                      {result.priceVerdict?.assessment && (
+                        <VerdictBadge verdict={result.priceVerdict.assessment} />
+                      )}
                     </div>
-                    <p className="text-zinc-400 text-sm leading-relaxed">{result.priceVerdict.reason}</p>
-                  </Card>
-                </div>
-              )}
-
-              {/* Price Reality Check */}
-              {result.enthusiastTax && (
-                <Card className="p-5">
-                  <div className="flex items-center justify-between mb-4">
-                    <SectionLabel>Enthusiast Tax</SectionLabel>
-                    {result.enthusiastTax.premium && (
-                      <span style={themeToStyle(VERDICT_THEME_MAP[result.enthusiastTax.level] ?? V_NEUTRAL)}>
-                        {result.enthusiastTax.premium}
-                      </span>
+                    {result.priceSummary && (
+                      <p className="text-zinc-400 text-sm leading-relaxed mb-4">{result.priceSummary}</p>
                     )}
+                    <button
+                      onClick={() => setPriceOpen(o => !o)}
+                      className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl border transition-colors hover:border-zinc-600"
+                      style={{ background: "#1a1a1a", borderColor: "#2a2a2a" }}
+                    >
+                      <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-500">
+                        {priceOpen ? "Show Less" : "Show More"}
+                      </span>
+                      <svg
+                        width="12" height="12" viewBox="0 0 12 12" fill="none"
+                        className="text-zinc-500"
+                        style={{ transform: priceOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 200ms ease" }}
+                      >
+                        <path d="M2 4L6 8L10 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </button>
                   </div>
-                  {result.enthusiastTax.reasons?.length > 0 && (
-                    <ul className="space-y-2">
-                      {result.enthusiastTax.reasons.map((r, i) => (
-                        <li key={i} className="flex gap-2 text-sm text-zinc-400 leading-snug">
-                          <span className={`flex-shrink-0 font-bold ${TAX_LEVEL_STYLES[result.enthusiastTax.level]?.icon ?? "text-zinc-500"}`}>$</span>
-                          {r}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </Card>
-              )}
-
-              {/* Price Outlook */}
-              {result.priceOutlook && (
-                <Card className="p-5">
-                  <div className="flex items-center justify-between mb-2">
-                    <SectionLabel>Price Outlook</SectionLabel>
-                    <VerdictBadge verdict={result.priceOutlook.trend} />
-                  </div>
-                  <p className="text-zinc-400 text-sm leading-relaxed">{result.priceOutlook.reason}</p>
-                  <p className="text-zinc-600 text-[10px] mt-2">Based on enthusiast market trends, not live pricing data.</p>
-                </Card>
-              )}
-
-              {/* Wallet Damage Rating */}
-              {result.worstFinancialDecision && (() => {
-                const style = FINANCIAL_RATING_STYLES[result.worstFinancialDecision.rating] ?? { color: "text-zinc-300", bg: "", stripe: "bg-zinc-700" };
-                return (
-                  <div className={`rounded-2xl border border-zinc-800 overflow-hidden ${style.bg}`}>
-                    <div className={`h-1 ${style.stripe}`} />
-                    <div className="p-5">
-                      <div className="flex items-center justify-between mb-4">
-                        <SectionLabel>Wallet Damage Rating</SectionLabel>
-                        <VerdictBadge verdict={result.worstFinancialDecision.rating} />
-                      </div>
-                      {result.worstFinancialDecision.reasons?.length > 0 && (
-                        <ul className="space-y-2.5">
-                          {result.worstFinancialDecision.reasons.map((r, i) => (
-                            <li key={i} className="flex gap-2 text-sm text-zinc-300 leading-snug">
-                              <span className={`flex-shrink-0 font-black ${style.color}`}>→</span>
-                              {r}
-                            </li>
-                          ))}
-                        </ul>
+                  <div style={{ maxHeight: priceOpen ? "2000px" : "0px", overflow: "hidden", transition: "max-height 300ms ease" }}>
+                    <div className="px-5 pb-5 space-y-4 border-t border-zinc-800 pt-4">
+                      {result.priceVerdict && (
+                        <div>
+                          <SectionLabel>Price Analysis</SectionLabel>
+                          <div className="mb-2">
+                            <VerdictBadge verdict={result.priceVerdict.assessment} />
+                          </div>
+                          <p className="text-zinc-400 text-sm leading-relaxed">{result.priceVerdict.reason}</p>
+                        </div>
+                      )}
+                      {result.enthusiastTax && (
+                        <>
+                          <div className="h-px bg-zinc-800" />
+                          <div>
+                            <div className="flex items-center justify-between mb-3">
+                              <SectionLabel>Enthusiast Tax</SectionLabel>
+                              {result.enthusiastTax.premium && (
+                                <span style={themeToStyle(VERDICT_THEME_MAP[result.enthusiastTax.level] ?? V_NEUTRAL)}>
+                                  {result.enthusiastTax.premium}
+                                </span>
+                              )}
+                            </div>
+                            {result.enthusiastTax.reasons?.length > 0 && (
+                              <ul className="space-y-2">
+                                {result.enthusiastTax.reasons.map((r, i) => (
+                                  <li key={i} className="flex gap-2 text-sm text-zinc-400 leading-snug">
+                                    <span className={`flex-shrink-0 font-bold ${TAX_LEVEL_STYLES[result.enthusiastTax.level]?.icon ?? "text-zinc-500"}`}>$</span>
+                                    {r}
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                          </div>
+                        </>
+                      )}
+                      {result.priceOutlook && (
+                        <>
+                          <div className="h-px bg-zinc-800" />
+                          <div>
+                            <div className="flex items-center justify-between mb-2">
+                              <SectionLabel>Price Outlook</SectionLabel>
+                              <VerdictBadge verdict={result.priceOutlook.trend} />
+                            </div>
+                            <p className="text-zinc-400 text-sm leading-relaxed">{result.priceOutlook.reason}</p>
+                            <p className="text-zinc-600 text-[10px] mt-2">Based on enthusiast market trends, not live pricing data.</p>
+                          </div>
+                        </>
                       )}
                     </div>
                   </div>
-                );
-              })()}
-
-              {/* Reliability Risk */}
-              {result.ownershipPain && (
-                <Card className="p-5">
-                  <div className="flex items-center justify-between mb-4">
-                    <SectionLabel>Reliability Risk</SectionLabel>
-                    <VerdictBadge verdict={result.ownershipPain.score >= 8 ? "High Pain" : result.ownershipPain.score >= 5 ? "Moderate" : "Low Pain"} />
-                  </div>
-                  {result.ownershipPain.issues?.length > 0 && (
-                    <ul className="space-y-3 mt-1">
-                      {result.ownershipPain.issues.map((issue, i) => (
-                        <li key={i} className="pl-3 border-l-[3px] border-red-600 py-1">
-                          <p className="font-black text-zinc-100 text-sm">{issue.title}</p>
-                          {issue.detail && (
-                            <p className="text-zinc-500 text-xs mt-1 leading-relaxed">{issue.detail}</p>
-                          )}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
                 </Card>
-              )}
+              </div>
 
-              {/* Red flags */}
-              {result.redFlags?.length > 0 && (
-                <div className="rounded-2xl border border-red-600 overflow-hidden bg-red-950/40">
-                  <div className="bg-red-700 px-5 py-3 flex items-center gap-2.5">
-                    <span className="text-white text-sm">⚠️</span>
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white">
-                      Red Flags — Read Before Buying
-                    </span>
+              {/* ── OWNERSHIP COST TILE ────────────────── */}
+              <Card className="overflow-hidden">
+                <div className="p-5">
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-red-500">Ownership Cost</span>
+                    <div className="flex-1 h-px bg-zinc-800" />
+                    {result.worstFinancialDecision?.rating && (
+                      <span className={`text-xs font-bold ${FINANCIAL_RATING_STYLES[result.worstFinancialDecision.rating]?.color ?? "text-zinc-400"}`}>
+                        {FINANCIAL_RATING_SHORT[result.worstFinancialDecision.rating] ?? result.worstFinancialDecision.rating}
+                      </span>
+                    )}
                   </div>
-                  <ul className="divide-y divide-red-900/50">
-                    {result.redFlags.map((f, i) => (
-                      <li key={i} className="px-5 py-4 flex gap-3">
-                        <span className="text-red-400 flex-shrink-0 text-base leading-tight mt-0.5">⚠</span>
-                        <div>
-                          <p className="font-black text-red-200 text-sm">{f.flag}</p>
-                          <p className="text-red-300/80 text-xs mt-1 leading-relaxed">{f.explanation}</p>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
+                  {result.ownershipCostSummary && (
+                    <p className="text-zinc-400 text-sm leading-relaxed mb-4">{result.ownershipCostSummary}</p>
+                  )}
+                  <button
+                    onClick={() => setOwnershipOpen(o => !o)}
+                    className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl border transition-colors hover:border-zinc-600"
+                    style={{ background: "#1a1a1a", borderColor: "#2a2a2a" }}
+                  >
+                    <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-500">
+                      {ownershipOpen ? "Show Less" : "Show More"}
+                    </span>
+                    <svg
+                      width="12" height="12" viewBox="0 0 12 12" fill="none"
+                      className="text-zinc-500"
+                      style={{ transform: ownershipOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 200ms ease" }}
+                    >
+                      <path d="M2 4L6 8L10 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
                 </div>
-              )}
-
-              {/* Market Trend */}
-              {result.marketTrend && (
-                <Card className="p-5">
-                  <div className="flex items-center justify-between mb-2">
-                    <SectionLabel>Market Trend</SectionLabel>
-                    <VerdictBadge verdict={result.marketTrend.trend} />
+                <div style={{ maxHeight: ownershipOpen ? "2000px" : "0px", overflow: "hidden", transition: "max-height 300ms ease" }}>
+                  <div className="px-5 pb-5 space-y-4 border-t border-zinc-800 pt-4">
+                    {result.worstFinancialDecision && (() => {
+                      const style = FINANCIAL_RATING_STYLES[result.worstFinancialDecision.rating] ?? { color: "text-zinc-300", bg: "", stripe: "bg-zinc-700" };
+                      return (
+                        <div>
+                          <div className="flex items-center justify-between mb-4">
+                            <SectionLabel>Wallet Damage Rating</SectionLabel>
+                            <VerdictBadge verdict={result.worstFinancialDecision.rating} />
+                          </div>
+                          {result.worstFinancialDecision.reasons?.length > 0 && (
+                            <ul className="space-y-2.5">
+                              {result.worstFinancialDecision.reasons.map((r, i) => (
+                                <li key={i} className="flex gap-2 text-sm text-zinc-300 leading-snug">
+                                  <span className={`flex-shrink-0 font-black ${style.color}`}>→</span>
+                                  {r}
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                      );
+                    })()}
+                    {result.ownershipPain && (
+                      <>
+                        <div className="h-px bg-zinc-800" />
+                        <div>
+                          <div className="flex items-center justify-between mb-4">
+                            <SectionLabel>Reliability Risk</SectionLabel>
+                            <VerdictBadge verdict={result.ownershipPain.score >= 8 ? "High Pain" : result.ownershipPain.score >= 5 ? "Moderate" : "Low Pain"} />
+                          </div>
+                          {result.ownershipPain.issues?.length > 0 && (
+                            <ul className="space-y-3 mt-1">
+                              {result.ownershipPain.issues.map((issue, i) => (
+                                <li key={i} className="pl-3 border-l-[3px] border-red-600 py-1">
+                                  <p className="font-black text-zinc-100 text-sm">{issue.title}</p>
+                                  {issue.detail && (
+                                    <p className="text-zinc-500 text-xs mt-1 leading-relaxed">{issue.detail}</p>
+                                  )}
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                      </>
+                    )}
+                    {result.redFlags?.length > 0 && (
+                      <>
+                        <div className="h-px bg-zinc-800" />
+                        <div>
+                          <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-red-500 mb-3">Red Flags</p>
+                          <div className="rounded-xl border border-red-900/60 bg-red-950/30 overflow-hidden">
+                            <ul className="divide-y divide-red-900/40">
+                              {result.redFlags.map((f, i) => (
+                                <li key={i} className="px-4 py-3 flex gap-3">
+                                  <span className="text-red-400 flex-shrink-0 text-base leading-tight mt-0.5">⚠</span>
+                                  <div>
+                                    <p className="font-black text-red-200 text-sm">{f.flag}</p>
+                                    <p className="text-red-300/80 text-xs mt-1 leading-relaxed">{f.explanation}</p>
+                                  </div>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      </>
+                    )}
                   </div>
-                  <p className="text-zinc-400 text-sm leading-relaxed">{result.marketTrend.reason}</p>
-                </Card>
-              )}
+                </div>
+              </Card>
 
-              {/* Future Classic Potential */}
-              {result.classicPotential && (
-                <Card className="p-5">
-                  <div className="flex items-center justify-between mb-3">
-                    <SectionLabel>Future Classic Potential</SectionLabel>
-                    <span className="text-xl font-black text-amber-400 tabular-nums">
-                      {result.classicPotential.score}
-                      <span className="text-zinc-600 text-xs font-normal">/10</span>
-                    </span>
+              {/* ── INVESTMENT OUTLOOK TILE ────────────── */}
+              <Card className="overflow-hidden">
+                <div className="p-5">
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-red-500">Investment Outlook</span>
+                    <div className="flex-1 h-px bg-zinc-800" />
+                    {result.investmentScore != null && (
+                      <span className="text-xs font-black tabular-nums text-red-500">
+                        {result.investmentScore}<span className="text-zinc-600 font-normal">/10</span>
+                      </span>
+                    )}
                   </div>
-                  {result.classicPotential.reasons?.length > 0 && (
-                    <ul className="space-y-1.5">
-                      {result.classicPotential.reasons.map((r, i) => (
-                        <li key={i} className="flex gap-2 text-xs text-zinc-400">
-                          <span className="text-amber-600 flex-shrink-0">▸</span>
-                          {r}
-                        </li>
-                      ))}
-                    </ul>
+                  {result.investmentOutlookSummary && (
+                    <p className="text-zinc-400 text-sm leading-relaxed mb-4">{result.investmentOutlookSummary}</p>
                   )}
-                </Card>
-              )}
+                  <button
+                    onClick={() => setOutlookOpen(o => !o)}
+                    className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl border transition-colors hover:border-zinc-600"
+                    style={{ background: "#1a1a1a", borderColor: "#2a2a2a" }}
+                  >
+                    <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-500">
+                      {outlookOpen ? "Show Less" : "Show More"}
+                    </span>
+                    <svg
+                      width="12" height="12" viewBox="0 0 12 12" fill="none"
+                      className="text-zinc-500"
+                      style={{ transform: outlookOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 200ms ease" }}
+                    >
+                      <path d="M2 4L6 8L10 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+                </div>
+                <div style={{ maxHeight: outlookOpen ? "2000px" : "0px", overflow: "hidden", transition: "max-height 300ms ease" }}>
+                  <div className="px-5 pb-5 space-y-4 border-t border-zinc-800 pt-4">
+                    {result.marketTrend && (
+                      <div>
+                        <div className="flex items-center justify-between mb-2">
+                          <SectionLabel>Market Trend</SectionLabel>
+                          <VerdictBadge verdict={result.marketTrend.trend} />
+                        </div>
+                        <p className="text-zinc-400 text-sm leading-relaxed">{result.marketTrend.reason}</p>
+                      </div>
+                    )}
+                    {result.classicPotential && (
+                      <>
+                        {result.marketTrend && <div className="h-px bg-zinc-800" />}
+                        <div>
+                          <div className="flex items-center justify-between mb-3">
+                            <SectionLabel>Future Classic Potential</SectionLabel>
+                            <span className="text-xl font-black text-amber-400 tabular-nums">
+                              {result.classicPotential.score}
+                              <span className="text-zinc-600 text-xs font-normal">/10</span>
+                            </span>
+                          </div>
+                          {result.classicPotential.reasons?.length > 0 && (
+                            <ul className="space-y-1.5">
+                              {result.classicPotential.reasons.map((r, i) => (
+                                <li key={i} className="flex gap-2 text-xs text-zinc-400">
+                                  <span className="text-amber-600 flex-shrink-0">▸</span>
+                                  {r}
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </Card>
             </div>
 
             {/* ── SECTION 2: CHARACTER ────────────────────────── */}

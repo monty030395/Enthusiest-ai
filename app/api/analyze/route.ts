@@ -122,6 +122,9 @@ Return ONLY valid JSON in this exact structure, no markdown, no extra text:
     "partsEcosystem": "",
     "collectorRisk": ""
   },
+  "priceSummary": "",
+  "ownershipCostSummary": "",
+  "investmentOutlookSummary": "",
   "questionsToAsk": [""],
   "enthusiastTake": "",
   "performanceSpecs": {
@@ -235,6 +238,12 @@ redFlags[].flag — short title (e.g. "Re-registered Vehicle", "Money Owing", "E
 redFlags[].explanation — one sentence explaining WHY this matters and what the buyer should do. Be direct. E.g. "This car has been de-registered and re-registered, which commonly indicates a previous write-off or insurance total loss — request a full PPSR report before proceeding."
 
 If redFlags is non-empty, the enthusiastTake field MUST directly acknowledge the flags rather than ignoring them.
+
+priceSummary — one sentence summarising the price situation in plain English. Is it a bargain, fair, or inflated? Say why — reference the enthusiast tax level, the market, or the spec premium. Same opinionated NZ enthusiast voice as the rest of the output. No hedging.
+
+ownershipCostSummary — one sentence summarising what this car will actually cost to own. Cover the maintenance burden, reliability risk, and wallet impact specific to this model and mileage. Be blunt.
+
+investmentOutlookSummary — one sentence on the long-term investment case. Cover future classic potential, whether the market is moving for or against it, and any history or depreciation concerns. Be direct.
 
 questionsToAsk — specific, model-relevant questions to ask the seller. Not generic. Reference known failure points for this exact model and mileage.
 
