@@ -1,11 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
-import OAuth from "oauth-1.0a";
-import crypto from "crypto";
 
 const SYSTEM_PROMPT = `You are an experienced NZ car enthusiast with 20+ years of hands-on knowledge buying, owning, and selling JDM, Euro, and performance cars in the New Zealand market. You've owned dozens of cars — WRXs, Evos, E46s, MX-5s, Crowns, Skylines, Golf Rs, IS300s — and you've made expensive mistakes so you know exactly what to look for.
 
 You speak like a knowledgeable mate helping someone avoid a costly error, not like a generic AI. You're direct, opinionated, and specific. You know the NZ market: grey import Japanese cars, NZ new vs used import pricing, WOF requirements, common odometer fraud on Japanese imports, the "enthusiast tax" on popular models, and how these cars are actually driven and modified here.
+
+Scoring must be consistent and objective. Base all numerical scores and verdict labels on established knowledge about this specific car platform and model. Do not vary scores based on interpretation — if a platform has known reliability issues they should score consistently regardless of how the listing is written.
+
+Generate an Investment Score out of 10 that reflects the overall investment worthiness of this car, combining price fairness and ownership outlook. Consider the price assessment, enthusiast tax, ownership pain score, and classic potential. 10 = exceptional financial decision, 1 = financial disaster.
+
+Generate a Vibe Score out of 10 that reflects the social desirability and community standing of this car among NZ enthusiasts. Consider owner reputation, Cars and Coffee appeal, and community credibility. 10 = legendary status, 1 = avoid at a meet.
+
+After the main analysis, suggest 3 alternative cars the buyer should consider at a similar budget. For each suggestion include:
+- Make, model, and generation (be specific e.g. BMW E46 330i not just BMW 3 Series)
+- One sentence on why it suits someone considering this car
+- One sentence on how it differs in character or ownership
+- Approximate NZD price range to find a good example
+
+Prioritise alternatives that are realistic finds on the NZ market. Consider JDM, Euro and local market availability. Do not suggest cars that are rare or expensive to find in NZ.
 
 Rules:
 - Write like a knowledgeable, opinionated NZ car enthusiast. Be direct. Never hedge.
@@ -63,6 +75,7 @@ Return ONLY valid JSON in this exact structure, no markdown, no extra text:
   },
   "enthusiastTax": {
     "level": "",
+    "premium": "",
     "reasons": [""]
   },
   "priceOutlook": {
@@ -121,7 +134,17 @@ Return ONLY valid JSON in this exact structure, no markdown, no extra text:
     "kerbWeightKg": 0,
     "drivetrain": "",
     "jdmNote": ""
-  }
+  },
+  "alternatives": [
+    {
+      "name": "",
+      "whySuited": "",
+      "howDiffers": "",
+      "priceRange": ""
+    }
+  ],
+  "investmentScore": 0,
+  "vibeScore": 0
 }
 
 Field definitions:
@@ -172,6 +195,7 @@ priceVerdict.assessment — one of: "Fair" | "Overpriced" | "Underpriced" | "Pre
 priceVerdict.reason — the WHY behind the price. Not just market average — is it paying the premium? rare spec premium? high-risk mileage discount? neglected pricing?
 
 enthusiastTax.level — pick ONE: "None" | "Mild" | "Moderate" | "High" | "Extreme"
+enthusiastTax.premium — estimated NZD dollar amount this car commands above its non-enthusiast equivalent, as a short string. E.g. "+$1,000–2,000" for Mild, "+$3,000–5,000" for Moderate, "+$6,000–10,000" for High, "+$10,000+" for Extreme. Use "None" if level is None.
 enthusiastTax.reasons — specific reasons why this car commands or doesn't command an enthusiast premium. E.g. "manual gearbox adds $3–5k over equivalent auto in NZ", "declining NZ supply as JDM import pool dries up", "collector hype on this generation outpacing actual value", "rare factory colour documented from new", "seller clearly aware of enthusiast demand and priced accordingly". Be specific — name the factor and explain it.
 
 ownershipPain.score — 1 (painless) to 10 (financial nightmare)
@@ -247,95 +271,19 @@ regretRisk.level — pick ONE: "Low" | "Medium" | "High" | "Extreme". Likelihood
 regretRisk.reason — one sentence on the specific factors that could turn this purchase sour. Reference real risks for this model and condition.
 
 marketTrend.trend — pick ONE: "Stable" | "Rising" | "Falling". Direction of this model's market value in NZ over the next 2–3 years.
-marketTrend.reason — one sentence on the investment trajectory. E.g. "Values have plateaued — enthusiast floor is firm but high km and common availability cap any upside."`;
+marketTrend.reason — one sentence on the investment trajectory. E.g. "Values have plateaued — enthusiast floor is firm but high km and common availability cap any upside."
+
+investmentScore — a single number 1–10 representing overall investment worthiness. Combine price fairness (priceVerdict), ownership cost (ownershipPain.score, worstFinancialDecision), and long-term value outlook (classicPotential, priceOutlook). Use the full range — 10 = exceptional deal on a rising classic, 1 = overpriced financial nightmare.
+
+vibeScore — a single number 1–10 representing social desirability and community standing among NZ enthusiasts. Weight: Cars & Coffee appeal, community credibility, owner vibe reputation, and social standing. Use the full range — 10 = legendary status that commands a crowd, 1 = the car people quietly judge you for at a meet.
+
+alternatives — exactly 3 entries. Realistic alternatives at a similar budget that a buyer of this car should know about.
+alternatives[].name — specific make, model, generation (e.g. "Honda Integra DC5 Type R", "BMW E46 330i", "Subaru Liberty GT BP").
+alternatives[].whySuited — one sentence on why this suits someone considering the analysed car.
+alternatives[].howDiffers — one sentence on how it differs in character or ownership experience.
+alternatives[].priceRange — approximate NZD price range for a good example (e.g. "$8,000–$14,000").`;
 
 
-
-function extractTradeMeListingId(url: string): string | null {
-  return url.match(/\/listing\/(\d+)/i)?.[1] ?? null;
-}
-
-async function fetchTradeMeListing(listingId: string): Promise<string> {
-  const oauth = new OAuth({
-    consumer: {
-      key: process.env.TRADEME_CONSUMER_KEY!,
-      secret: process.env.TRADEME_CONSUMER_SECRET!,
-    },
-    signature_method: "HMAC-SHA1",
-    hash_function(baseString, key) {
-      return crypto.createHmac("sha1", key).update(baseString).digest("base64");
-    },
-  });
-
-  const baseUrl = process.env.TRADEME_SANDBOX === "true"
-    ? "https://api.tmsandbox.co.nz"
-    : "https://api.trademe.co.nz";
-
-  const requestData = {
-    url: `${baseUrl}/v1/Listings/${listingId}.json`,
-    method: "GET",
-  };
-
-  const authHeader = oauth.toHeader(oauth.authorize(requestData));
-
-  const res = await fetch(requestData.url, {
-    headers: {
-      ...authHeader,
-      Accept: "application/json",
-    },
-    signal: AbortSignal.timeout(10000),
-  });
-
-  if (!res.ok) throw new Error(`Trade Me API returned ${res.status}`);
-
-  const data = await res.json();
-
-  // Format the structured listing data into a clear text summary for GPT
-  const lines = [
-    `Title: ${data.Title ?? ""}`,
-    `Price: $${data.StartPrice ?? data.BuyNowPrice ?? "not listed"}`,
-    `Description: ${data.Body ?? ""}`,
-    `Location: ${data.Region ?? ""} ${data.Suburb ?? ""}`.trim(),
-    `Seller: ${data.Member?.Nickname ?? ""}`,
-    `Listed: ${data.StartDate ?? ""}`,
-  ];
-
-  // Motors-specific fields if present
-  if (data.MotorWebfeatures) {
-    const m = data.MotorWebfeatures;
-    if (m.Odometer) lines.push(`Odometer: ${m.Odometer} km`);
-    if (m.Registration) lines.push(`Registration: ${m.Registration}`);
-    if (m.BodyStyle) lines.push(`Body: ${m.BodyStyle}`);
-    if (m.Transmission) lines.push(`Transmission: ${m.Transmission}`);
-    if (m.FuelType) lines.push(`Fuel: ${m.FuelType}`);
-    if (m.EngineSize) lines.push(`Engine: ${m.EngineSize}cc`);
-    if (m.NumberOfDoors) lines.push(`Doors: ${m.NumberOfDoors}`);
-    if (m.Colour) lines.push(`Colour: ${m.Colour}`);
-    if (m.WOFExpiry) lines.push(`WOF Expiry: ${m.WOFExpiry}`);
-    if (m.RegistrationExpiry) lines.push(`Rego Expiry: ${m.RegistrationExpiry}`);
-  }
-
-  // Also include attributes (Trade Me stores many car details here)
-  if (Array.isArray(data.Attributes)) {
-    for (const attr of data.Attributes) {
-      lines.push(`${attr.Name}: ${attr.Value}`);
-    }
-  }
-
-  return lines.filter(Boolean).join("\n");
-}
-
-function extractJsonLd(html: string): object | null {
-  const matches = [...html.matchAll(/<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)];
-  for (const match of matches) {
-    try {
-      return JSON.parse(match[1]);
-    } catch {
-      continue;
-    }
-  }
-  return null;
-}
 
 export async function POST(req: NextRequest) {
   const apiKey = process.env.OPENAI_API_KEY;
@@ -348,101 +296,13 @@ export async function POST(req: NextRequest) {
 
   const client = new OpenAI({ apiKey });
   const body = await req.json();
-  const { url, images, pastedText } = body as { url?: string; images?: string[]; pastedText?: string };
+  const { images, pastedText } = body as { images?: string[]; pastedText?: string };
 
   type ContentPart =
     | { type: "text"; text: string }
     | { type: "image_url"; image_url: { url: string } };
 
   const content: ContentPart[] = [];
-
-  if (url) {
-    const firecrawlKey = process.env.FIRECRAWL_API_KEY;
-    const tradeMeKey = process.env.TRADEME_CONSUMER_KEY;
-    try {
-      let text = "";
-
-      // Trade Me URL — use the official API for accurate structured data
-      const listingId = extractTradeMeListingId(url);
-      if (listingId && tradeMeKey) {
-        try {
-          text = await fetchTradeMeListing(listingId);
-          console.log("Trade Me API success — listing ID:", listingId);
-          content.push({ type: "text", text: `Trade Me listing data:\n\n${text}` });
-        } catch (err) {
-          console.error("Trade Me API failed, falling back to scraper:", err);
-          // Fall through to Firecrawl below
-        }
-      }
-
-      if (content.length > 0) {
-        // Already have content from Trade Me API — skip scraping
-      } else
-
-      if (firecrawlKey) {
-        const res = await fetch("https://api.firecrawl.dev/v1/scrape", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${firecrawlKey}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ url, formats: ["markdown", "rawHtml"] }),
-          signal: AbortSignal.timeout(30000),
-        });
-
-        if (!res.ok) {
-          const err = await res.json().catch(() => ({}));
-          console.error("Firecrawl error:", err);
-          return NextResponse.json(
-            { error: "Could not read listing. Try uploading screenshots instead." },
-            { status: 400 }
-          );
-        }
-
-        const data = await res.json();
-        const markdown = data.data?.markdown ?? "";
-        const rawHtml = data.data?.rawHtml ?? "";
-
-        // Detect bot-blocking responses
-        if (markdown.toLowerCase().includes("access denied") || markdown.toLowerCase().includes("you don't have permission")) {
-          return NextResponse.json(
-            { error: "BLOCKED", message: "Trade Me blocked automated access. Upload screenshots of the listing instead — it takes 10 seconds and gives better results." },
-            { status: 422 }
-          );
-        }
-
-        // Extract JSON-LD structured data — Trade Me embeds price, KMs, description here for SEO
-        const jsonLd = extractJsonLd(rawHtml);
-        const jsonLdText = jsonLd ? `Structured listing data:\n${JSON.stringify(jsonLd, null, 2)}\n\n` : "";
-
-        text = (jsonLdText + markdown).slice(0, 15000);
-        console.log("JSON-LD found:", !!jsonLd, "| markdown length:", markdown.length);
-      } else {
-        // Fallback to Jina if no Firecrawl key configured
-        const res = await fetch(`https://r.jina.ai/${url}`, {
-          headers: { Accept: "text/plain", "X-Return-Format": "markdown" },
-          signal: AbortSignal.timeout(20000),
-        });
-        if (!res.ok) {
-          return NextResponse.json(
-            { error: "Could not read listing. Try uploading screenshots instead." },
-            { status: 400 }
-          );
-        }
-        text = (await res.text()).slice(0, 15000);
-      }
-
-      if (text) {
-        console.log("Content preview:", text.slice(0, 300));
-        content.push({ type: "text", text: `Car listing from ${url}:\n\n${text}` });
-      }
-    } catch {
-      return NextResponse.json(
-        { error: "Could not reach that URL. Try uploading screenshots instead." },
-        { status: 400 }
-      );
-    }
-  }
 
   if (images && images.length > 0) {
     content.push({
@@ -479,6 +339,7 @@ export async function POST(req: NextRequest) {
         { role: "user", content },
       ],
       response_format: { type: "json_object" },
+      temperature: 0.3,
       max_tokens: 8000,
     });
 

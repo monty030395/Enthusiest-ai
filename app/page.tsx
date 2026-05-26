@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
 
 type DriveMetric = { score: number; description: string };
 
@@ -25,7 +24,7 @@ type Analysis = {
   ownerVibe: { label: string; reasoning: string };
   specSignificance: { item: string; note: string }[];
   priceVerdict: { assessment: string; reason: string };
-  enthusiastTax: { level: string; reasons: string[] };
+  enthusiastTax: { level: string; premium?: string; reasons: string[] };
   ownershipPain: { score: number; issues: { title: string; detail: string }[] };
   drivingCharacter: {
     steeringFeel: DriveMetric;
@@ -64,61 +63,96 @@ type Analysis = {
     partsEcosystem: string;
     collectorRisk: string;
   };
+  alternatives?: {
+    name: string;
+    whySuited: string;
+    howDiffers: string;
+    priceRange: string;
+  }[];
+  investmentScore?: number;
+  vibeScore?: number;
 };
 
-const LABEL_STYLES: Record<string, string> = {
-  "Hidden Gem":            "bg-emerald-600 text-white",
-  "Future Classic":        "bg-amber-500 text-black",
-  "Premium Asking Price":  "bg-orange-600 text-white",
-  "Cheap Thrill":          "bg-sky-600 text-white",
-  "Money Pit":             "bg-red-700 text-white",
-  "Peak Daily Driver":     "bg-zinc-600 text-white",
-  "Overrated":             "bg-rose-700 text-white",
-  "Underrated":            "bg-teal-600 text-white",
+// ── Verdict badge colour system ───────────────────────────────
+type VerdictTheme = { bg: string; border: string; text: string };
+const V_RED:     VerdictTheme = { bg: "#3d1212", border: "#7f1d1d", text: "#f87171" };
+const V_AMBER:   VerdictTheme = { bg: "#2d1a00", border: "#854f0b", text: "#fbbf24" };
+const V_GREEN:   VerdictTheme = { bg: "#0d2410", border: "#3b6d11", text: "#86efac" };
+const V_BLUE:    VerdictTheme = { bg: "#0c1e36", border: "#185fa5", text: "#60a5fa" };
+const V_NEUTRAL: VerdictTheme = { bg: "#27272a", border: "#3f3f46", text: "#a1a1aa" };
+
+const VERDICT_THEME_MAP: Record<string, VerdictTheme> = {
+  // Hero labels
+  "Hidden Gem": V_GREEN, "Future Classic": V_GREEN, "Underrated": V_GREEN,
+  "Premium Asking Price": V_AMBER, "Overrated": V_AMBER,
+  "Cheap Thrill": V_BLUE, "Peak Daily Driver": V_BLUE,
+  "Money Pit": V_RED,
+  // Price assessment
+  "Fair": V_GREEN, "Underpriced": V_GREEN, "Premium Justified": V_GREEN,
+  "Overpriced": V_RED, "Paying the Premium": V_AMBER,
+  // Enthusiast tax level
+  "None": V_BLUE, "Mild": V_AMBER, "Moderate": V_AMBER,
+  "High": V_RED, "Extreme": V_RED,
+  // Price / market trend
+  "Stable": V_BLUE, "Rising": V_GREEN, "Falling": V_RED, "Declining": V_RED,
+  // Wallet damage rating
+  "Sensible Purchase": V_GREEN,
+  "Manageable Pain": V_AMBER,
+  "Emotionally Justified Disaster": V_AMBER,
+  "Dangerous": V_RED,
+  "Catastrophic Wallet Destruction": V_RED,
+  // Reliability risk derived labels
+  "Low Pain": V_GREEN, "High Pain": V_RED,
+  // Regret risk level  ("Moderate" and "High" already covered above)
+  "Low": V_GREEN, "Medium": V_AMBER,
+  // Owner vibe
+  "Mature Enthusiast Owner": V_GREEN, "Grandpa-Owned Gem": V_GREEN,
+  "Weekend Warrior": V_BLUE, "Rich Dentist Spec": V_BLUE,
+  "Motivated Seller": V_AMBER, "Deferred Maintenance Energy": V_AMBER,
+  "Drift Missile History": V_AMBER, "TikTok Build": V_AMBER,
+  "Optimistic Dreamer": V_AMBER, "Dealer Dressed as Private": V_RED,
 };
 
-const PRICE_ASSESSMENT_STYLES: Record<string, string> = {
-  "Fair":                "text-emerald-400",
-  "Underpriced":         "text-emerald-400",
-  "Premium Justified":   "text-amber-400",
-  "Overpriced":          "text-red-400",
-  "Paying the Premium":  "text-orange-400",
+function themeToStyle(t: VerdictTheme) {
+  return {
+    display: "inline-block" as const,
+    backgroundColor: t.bg,
+    border: `1px solid ${t.border}`,
+    color: t.text,
+    fontSize: "10px",
+    fontWeight: 700,
+    letterSpacing: "0.14em",
+    textTransform: "uppercase" as const,
+    padding: "4px 10px",
+    borderRadius: "3px",
+  };
+}
+
+function verdictBadgeStyle(verdict: string) {
+  return themeToStyle(VERDICT_THEME_MAP[verdict] ?? V_NEUTRAL);
+}
+
+function VerdictBadge({ verdict }: { verdict: string }) {
+  return <span style={verdictBadgeStyle(verdict)}>{verdict}</span>;
+}
+
+const RATING_THEME_MAP: Record<string, VerdictTheme> = {
+  "High": V_GREEN, "Medium": V_BLUE, "Low": V_AMBER,
 };
 
-const OWNER_VIBE_STYLES: Record<string, string> = {
-  "Mature Enthusiast Owner":     "bg-blue-900 text-blue-200",
-  "Deferred Maintenance Energy": "bg-amber-900 text-amber-200",
-  "Drift Missile History":       "bg-orange-900 text-orange-200",
-  "Rich Dentist Spec":           "bg-purple-900 text-purple-200",
-  "Grandpa-Owned Gem":           "bg-emerald-900 text-emerald-200",
-  "TikTok Build":                "bg-pink-900 text-pink-200",
-  "Weekend Warrior":             "bg-sky-900 text-sky-200",
-  "Motivated Seller":            "bg-teal-900 text-teal-200",
-  "Optimistic Dreamer":          "bg-rose-900 text-rose-200",
-  "Dealer Dressed as Private":   "bg-zinc-700 text-zinc-300",
+function RatingBadge({ rating }: { rating: string }) {
+  return <span style={themeToStyle(RATING_THEME_MAP[rating] ?? V_NEUTRAL)}>{rating}</span>;
+}
+
+const TAX_LEVEL_STYLES: Record<string, { icon: string }> = {
+  "None":     { icon: "text-zinc-500" },
+  "Mild":     { icon: "text-emerald-500" },
+  "Moderate": { icon: "text-amber-500" },
+  "High":     { icon: "text-orange-500" },
+  "Extreme":  { icon: "text-red-500" },
 };
 
-const TAX_LEVEL_STYLES: Record<string, { badge: string; icon: string }> = {
-  "None":     { badge: "bg-zinc-700 text-zinc-300",         icon: "text-zinc-500" },
-  "Mild":     { badge: "bg-emerald-900 text-emerald-200",   icon: "text-emerald-500" },
-  "Moderate": { badge: "bg-amber-900 text-amber-200",       icon: "text-amber-500" },
-  "High":     { badge: "bg-orange-900 text-orange-200",     icon: "text-orange-500" },
-  "Extreme":  { badge: "bg-red-900 text-red-200",           icon: "text-red-500" },
-};
 
-const RATING_BADGE_STYLES: Record<string, string> = {
-  "High":    "bg-red-900/60 text-red-300 border border-red-800/50",
-  "Medium":  "bg-amber-900/60 text-amber-300 border border-amber-800/50",
-  "Low":     "bg-emerald-900/60 text-emerald-300 border border-emerald-800/50",
-  "Extreme": "bg-red-900/80 text-red-200 border border-red-700/50",
-};
-
-const TREND_BADGE_STYLES: Record<string, string> = {
-  "Stable":   "bg-zinc-800 text-zinc-300 border border-zinc-700",
-  "Rising":   "bg-emerald-900/60 text-emerald-300 border border-emerald-800/50",
-  "Falling":  "bg-red-900/60 text-red-300 border border-red-800/50",
-  "Declining":"bg-red-900/60 text-red-300 border border-red-800/50",
-};
 
 const FINANCIAL_RATING_STYLES: Record<string, { color: string; bg: string; stripe: string }> = {
   "Sensible Purchase":               { color: "text-emerald-400", bg: "",                  stripe: "bg-emerald-600" },
@@ -127,6 +161,7 @@ const FINANCIAL_RATING_STYLES: Record<string, { color: string; bg: string; strip
   "Dangerous":                       { color: "text-red-400",     bg: "bg-red-950/30",     stripe: "bg-red-600" },
   "Catastrophic Wallet Destruction": { color: "text-red-300",     bg: "bg-red-950/50",     stripe: "bg-red-500" },
 };
+// color key kept for the → arrow bullets in wallet damage reasons
 
 // Single-column drive row — matches mockup layout
 function DriveScoreRow({ metric, label }: { metric: DriveMetric; label: string }) {
@@ -144,6 +179,48 @@ function DriveScoreRow({ metric, label }: { metric: DriveMetric; label: string }
         <p className="text-zinc-400 text-sm leading-relaxed">{metric.description}</p>
       </div>
     </div>
+  );
+}
+
+const LOADING_MESSAGES = [
+  "Consulting the oracle...",
+  "Asking someone who actually knows their stuff...",
+  "Checking if the service history adds up...",
+  "Sniffing for oil leaks...",
+  "Counting the previous owners...",
+  "Checking if the mods are actually worth anything...",
+  "Reading the CarJam tea leaves...",
+  "Asking a mate who owns one...",
+  "Detecting enthusiast tax...",
+  "Checking if the asking price is a joke...",
+  "Scanning for Trade Me listing fiction...",
+  "Running the numbers through the shed...",
+  "Separating the good ones from the money pits...",
+  "Cross-referencing with every forum thread ever written...",
+];
+
+function RotatingMessage() {
+  const [index, setIndex] = useState(() => Math.floor(Math.random() * LOADING_MESSAGES.length));
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setVisible(false);
+      setTimeout(() => {
+        setIndex((i) => (i + 1) % LOADING_MESSAGES.length);
+        setVisible(true);
+      }, 300);
+    }, 2500);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <p
+      className="text-zinc-400 text-xs mt-1 transition-opacity duration-300"
+      style={{ opacity: visible ? 1 : 0 }}
+    >
+      {LOADING_MESSAGES[index]}
+    </p>
   );
 }
 
@@ -359,9 +436,9 @@ function TileHeader({ label, score, quip }: { label: string; score: number | nul
   );
 }
 
+
 function HomeContent() {
-  const [mode, setMode] = useState<"url" | "images" | "text">("url");
-  const [url, setUrl] = useState("");
+  const [mode, setMode] = useState<"text" | "images">("text");
   const [images, setImages] = useState<{ file: File; dataUrl: string }[]>([]);
   const [pastedText, setPastedText] = useState("");
   const [loading, setLoading] = useState(false);
@@ -372,11 +449,34 @@ function HomeContent() {
   const valueTileRef = useRef<HTMLDivElement>(null);
   const characterTileRef = useRef<HTMLDivElement>(null);
   const investmentTileRef = useRef<HTMLDivElement>(null);
+  const priceVerdictRef = useRef<HTMLDivElement>(null);
+  const ownerVibeRef = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState(false);
+  const [inputCollapsed, setInputCollapsed] = useState(false);
+  const [urlHint, setUrlHint] = useState("");
+  const [urlHintVisible, setUrlHintVisible] = useState(false);
 
-  const valueScore = result ? computeValueScore(result) : null;
+  useEffect(() => {
+    if (!result) return;
+    const timer = setTimeout(() => {
+      resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 350);
+    return () => clearTimeout(timer);
+  }, [result]);
+
+  function handleReset() {
+    setResult(null);
+    setInputCollapsed(false);
+    setImages([]);
+    setPastedText("");
+    setError("");
+    setUrlHint("");
+    setUrlHintVisible(false);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
   const characterScore = result ? computeCharacterScore(result) : null;
-  const investmentScore = result ? computeInvestmentScore(result) : null;
 
   const addImages = useCallback((files: FileList | File[]) => {
     Array.from(files)
@@ -398,18 +498,13 @@ function HomeContent() {
     [addImages]
   );
 
-  async function analyse(sharedUrl?: string) {
+  async function analyse(textOverride?: string) {
     setError("");
     setResult(null);
     setLoading(true);
-    setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
     try {
-      const body = sharedUrl
-        ? { url: sharedUrl }
-        : mode === "url"
-        ? { url }
-        : mode === "text"
-        ? { pastedText }
+      const body = mode === "text"
+        ? { pastedText: textOverride ?? pastedText }
         : { images: images.map((i) => i.dataUrl) };
 
       const res = await fetch("/api/analyze", {
@@ -427,6 +522,7 @@ function HomeContent() {
         }
       } else {
         setResult(data as Analysis);
+        setInputCollapsed(true);
       }
     } catch {
       setError("Network error — check your connection and try again.");
@@ -435,27 +531,28 @@ function HomeContent() {
     }
   }
 
-  const searchParams = useSearchParams();
-  useEffect(() => {
-    const directUrl = searchParams.get("shared_url") ?? searchParams.get("url");
-    const textParam = searchParams.get("text") ?? "";
-    const urlInText = textParam.match(/https?:\/\/[^\s]+/)?.[0];
-    const sharedUrl = directUrl ?? urlInText;
-    if (sharedUrl) {
-      setUrl(sharedUrl);
-      setMode("url");
-      window.history.replaceState({}, "", "/");
-      analyse(sharedUrl);
+
+  function handlePaste(e: React.ClipboardEvent<HTMLTextAreaElement>) {
+    const content = e.clipboardData.getData("text");
+    if (content.includes("trademe.co.nz")) {
+      e.preventDefault();
+      setPastedText("");
+      setUrlHint("Open that listing in Trade Me, copy the full description text and paste it here — we'll handle the rest.");
+      setUrlHintVisible(false);
+      setTimeout(() => setUrlHintVisible(true), 10);
+    } else if (content.length > 50 && !content.startsWith("http")) {
+      setUrlHint("");
+      setUrlHintVisible(false);
+      setTimeout(() => analyse(content), 100);
+    } else {
+      setUrlHint("");
+      setUrlHintVisible(false);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
+  }
 
-  const canAnalyse =
-    mode === "url" ? url.trim().length > 0
-    : mode === "text" ? pastedText.trim().length > 0
-    : images.length > 0;
+  const canAnalyse = mode === "text" ? pastedText.trim().length > 0 : images.length > 0;
 
-  const modeLabels = { url: "Paste URL", images: "Screenshots", text: "Paste Text" };
+  const modeLabels: Record<"text" | "images", string> = { text: "Paste Text", images: "Screenshots" };
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-zinc-100 font-sans">
@@ -465,8 +562,8 @@ function HomeContent() {
         <div className="max-w-3xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1">
-              <span className="text-lg font-black tracking-tight text-white uppercase">Enthusiast</span>
-              <span className="text-lg font-black tracking-tight text-red-500 uppercase">AI</span>
+              <span className="text-lg font-black tracking-tight text-white uppercase">Motor</span>
+              <span className="text-lg font-black tracking-tight text-red-500 uppercase">mind</span>
             </div>
             <div className="h-4 w-px bg-zinc-700" />
             <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500">NZ Car Copilot</span>
@@ -477,6 +574,10 @@ function HomeContent() {
 
       <main className="max-w-3xl mx-auto px-5 py-8 space-y-6">
 
+        {/* Collapsible: Hero + Input */}
+        <div className={`overflow-hidden transition-all duration-500 ease-in-out ${inputCollapsed ? "max-h-0 opacity-0 pointer-events-none" : "max-h-[900px] opacity-100"}`}>
+          <div className="space-y-6">
+
         {/* Hero */}
         <div className="pt-2">
           <h2 className="text-4xl font-black text-white leading-[1.1] tracking-tight">
@@ -484,14 +585,14 @@ function HomeContent() {
             <span className="text-red-500">worth your money?</span>
           </h2>
           <p className="mt-3 text-zinc-500 text-sm leading-relaxed max-w-md">
-            Share a listing from Trade Me or upload screenshots. Get a specific, honest enthusiast read — not the generic rubbish you already know.
+            Paste a listing from Trade Me or upload screenshots. Get a specific, honest enthusiast read — not the generic rubbish you already know.
           </p>
         </div>
 
         {/* Input card */}
         <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 overflow-hidden">
           <div className="flex border-b border-zinc-800">
-            {(["url", "images", "text"] as const).map((m) => (
+            {(["text", "images"] as const).map((m) => (
               <button
                 key={m}
                 onClick={() => { setMode(m); setError(""); }}
@@ -507,17 +608,6 @@ function HomeContent() {
           </div>
 
           <div className="p-5 space-y-4">
-            {mode === "url" && (
-              <input
-                type="url"
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && canAnalyse && !loading && analyse()}
-                placeholder="https://www.trademe.co.nz/a/motors/cars/..."
-                className="w-full bg-zinc-800/60 border border-zinc-700 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-red-500/70 focus:bg-zinc-800 transition-all"
-              />
-            )}
-
             {mode === "images" && (
               <div>
                 <div
@@ -572,15 +662,28 @@ function HomeContent() {
             {mode === "text" && (
               <div className="space-y-2">
                 <p className="text-xs text-zinc-500">
-                  On the listing page, select all (<kbd className="bg-zinc-800 px-1 py-0.5 rounded text-zinc-300 font-mono text-[10px]">Ctrl+A</kbd>) then copy (<kbd className="bg-zinc-800 px-1 py-0.5 rounded text-zinc-300 font-mono text-[10px]">Ctrl+C</kbd>), then paste below.
+                  Copy the listing description from Trade Me and paste it here — the more detail the better.
                 </p>
                 <textarea
                   value={pastedText}
-                  onChange={(e) => setPastedText(e.target.value)}
+                  onChange={(e) => {
+                    setPastedText(e.target.value);
+                    if (urlHint) { setUrlHint(""); setUrlHintVisible(false); }
+                  }}
+                  onPaste={handlePaste}
                   placeholder="Paste the full listing text here..."
                   rows={7}
                   className="w-full bg-zinc-800/60 border border-zinc-700 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-red-500/70 transition-all resize-none"
                 />
+                {urlHint && (
+                  <div
+                    className="flex gap-2.5 bg-amber-950/40 border border-amber-800/50 rounded-xl px-4 py-3 transition-opacity duration-300"
+                    style={{ opacity: urlHintVisible ? 1 : 0 }}
+                  >
+                    <span className="text-amber-400 flex-shrink-0 font-bold">→</span>
+                    <p className="text-amber-200/80 text-sm leading-relaxed">{urlHint}</p>
+                  </div>
+                )}
               </div>
             )}
 
@@ -601,6 +704,19 @@ function HomeContent() {
           </div>
         </div>
 
+          </div>{/* end space-y-6 */}
+        </div>{/* end collapsible */}
+
+        {/* New Analysis button — visible at top when input is collapsed */}
+        {inputCollapsed && (
+          <button
+            onClick={handleReset}
+            className="w-full border border-zinc-800 hover:border-zinc-700 text-zinc-500 hover:text-zinc-300 rounded-xl py-2.5 text-[10px] font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2"
+          >
+            <span className="text-red-500 text-sm leading-none">+</span> New Analysis
+          </button>
+        )}
+
         {/* Results anchor */}
         <div ref={resultsRef} />
 
@@ -609,8 +725,8 @@ function HomeContent() {
           <Card className="p-10 flex flex-col items-center gap-5">
             <WheelSpinner />
             <div className="text-center">
-              <p className="text-white font-bold text-sm">Consulting the oracle</p>
-              <p className="text-zinc-500 text-xs mt-1">Reading the listing, checking the numbers...</p>
+              <p className="text-white font-bold text-sm">Getting Under the Hood</p>
+              <RotatingMessage />
             </div>
           </Card>
         )}
@@ -655,14 +771,26 @@ function HomeContent() {
                   {isSpecified(result.vehicle.transmission) && <Pill>{result.vehicle.transmission}</Pill>}
                   {isSpecified(result.vehicle.colour) && <Pill>{result.vehicle.colour}</Pill>}
                   {result.label && (
-                    <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg ${LABEL_STYLES[result.label] ?? "bg-zinc-700 text-white"}`}>
+                    <button
+                      title="Tap to view details"
+                      onClick={() => priceVerdictRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                      style={verdictBadgeStyle(result.label)}
+                      className="inline-flex items-center gap-1.5 cursor-pointer hover:brightness-110 active:scale-95 transition-all"
+                    >
                       {result.label}
-                    </span>
+                      <span className="opacity-70 text-[9px] leading-none">↓</span>
+                    </button>
                   )}
                   {result.ownerVibe?.label && (
-                    <span className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full ${OWNER_VIBE_STYLES[result.ownerVibe.label] ?? "bg-zinc-700 text-zinc-300"}`}>
+                    <button
+                      title="Tap to view details"
+                      onClick={() => ownerVibeRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                      style={verdictBadgeStyle(result.ownerVibe.label)}
+                      className="inline-flex items-center gap-1.5 cursor-pointer hover:brightness-110 active:scale-95 transition-all"
+                    >
                       {result.ownerVibe.label}
-                    </span>
+                      <span className="opacity-70 text-[9px] leading-none">↓</span>
+                    </button>
                   )}
                 </div>
 
@@ -732,8 +860,8 @@ function HomeContent() {
                 {/* Score chips — tap to scroll */}
                 <div className="flex gap-2.5">
                   <ScoreChip
-                    label="Value"
-                    score={valueScore}
+                    label="Investment"
+                    score={result.investmentScore ?? null}
                     onClick={() => valueTileRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
                   />
                   <ScoreChip
@@ -742,8 +870,8 @@ function HomeContent() {
                     onClick={() => characterTileRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
                   />
                   <ScoreChip
-                    label="Investment"
-                    score={investmentScore}
+                    label="Street Cred"
+                    score={result.vibeScore ?? null}
                     onClick={() => investmentTileRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
                   />
                 </div>
@@ -751,29 +879,33 @@ function HomeContent() {
               </div>
             </Card>
 
-            {/* ── VALUE TILE ──────────────────────────────────── */}
-            <div id="value" ref={valueTileRef} className="scroll-mt-4 space-y-4">
-              <TileHeader label="Value" score={valueScore} quip={getQuip("value", valueScore)} />
+            {/* ── SECTION 1: INVESTMENT ───────────────────────── */}
+            <div id="investment" ref={valueTileRef} className="scroll-mt-4 space-y-4">
+              <TileHeader label="Investment" score={result.investmentScore ?? null} quip={getQuip("investment", result.investmentScore ?? null)} />
 
+              {/* Price Analysis */}
               {result.priceVerdict && (
-                <Card className="p-5">
-                  <SectionLabel>Price Analysis</SectionLabel>
-                  <div className="flex items-baseline gap-3 mb-2">
-                    <span className={`text-xl font-black ${PRICE_ASSESSMENT_STYLES[result.priceVerdict.assessment] ?? "text-zinc-300"}`}>
-                      {result.priceVerdict.assessment}
-                    </span>
-                  </div>
-                  <p className="text-zinc-400 text-sm leading-relaxed">{result.priceVerdict.reason}</p>
-                </Card>
+                <div ref={priceVerdictRef} className="scroll-mt-4">
+                  <Card className="p-5">
+                    <div className="flex items-center justify-between mb-2">
+                      <SectionLabel>Price Analysis</SectionLabel>
+                      <VerdictBadge verdict={result.priceVerdict.assessment} />
+                    </div>
+                    <p className="text-zinc-400 text-sm leading-relaxed">{result.priceVerdict.reason}</p>
+                  </Card>
+                </div>
               )}
 
+              {/* Price Reality Check */}
               {result.enthusiastTax && (
                 <Card className="p-5">
-                  <SectionLabel>Price Reality Check</SectionLabel>
-                  <div className="mb-4">
-                    <span className={`text-sm font-black uppercase tracking-widest px-3 py-1.5 rounded-lg ${TAX_LEVEL_STYLES[result.enthusiastTax.level]?.badge ?? "bg-zinc-700 text-zinc-300"}`}>
-                      {result.enthusiastTax.level}
-                    </span>
+                  <div className="flex items-center justify-between mb-4">
+                    <SectionLabel>Enthusiast Tax</SectionLabel>
+                    {result.enthusiastTax.premium && (
+                      <span style={themeToStyle(VERDICT_THEME_MAP[result.enthusiastTax.level] ?? V_NEUTRAL)}>
+                        {result.enthusiastTax.premium}
+                      </span>
+                    )}
                   </div>
                   {result.enthusiastTax.reasons?.length > 0 && (
                     <ul className="space-y-2">
@@ -788,29 +920,29 @@ function HomeContent() {
                 </Card>
               )}
 
+              {/* Price Outlook */}
               {result.priceOutlook && (
                 <Card className="p-5">
-                  <div className="flex items-start justify-between gap-3 mb-2">
+                  <div className="flex items-center justify-between mb-2">
                     <SectionLabel>Price Outlook</SectionLabel>
-                    <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md ${TREND_BADGE_STYLES[result.priceOutlook.trend] ?? "bg-zinc-800 text-zinc-300 border border-zinc-700"}`}>
-                      {result.priceOutlook.trend}
-                    </span>
+                    <VerdictBadge verdict={result.priceOutlook.trend} />
                   </div>
                   <p className="text-zinc-400 text-sm leading-relaxed">{result.priceOutlook.reason}</p>
                   <p className="text-zinc-600 text-[10px] mt-2">Based on enthusiast market trends, not live pricing data.</p>
                 </Card>
               )}
 
+              {/* Wallet Damage Rating */}
               {result.worstFinancialDecision && (() => {
                 const style = FINANCIAL_RATING_STYLES[result.worstFinancialDecision.rating] ?? { color: "text-zinc-300", bg: "", stripe: "bg-zinc-700" };
                 return (
                   <div className={`rounded-2xl border border-zinc-800 overflow-hidden ${style.bg}`}>
                     <div className={`h-1 ${style.stripe}`} />
                     <div className="p-5">
-                      <SectionLabel>Wallet Damage Rating</SectionLabel>
-                      <p className={`text-3xl font-black mb-4 leading-tight ${style.color}`}>
-                        {result.worstFinancialDecision.rating}
-                      </p>
+                      <div className="flex items-center justify-between mb-4">
+                        <SectionLabel>Wallet Damage Rating</SectionLabel>
+                        <VerdictBadge verdict={result.worstFinancialDecision.rating} />
+                      </div>
                       {result.worstFinancialDecision.reasons?.length > 0 && (
                         <ul className="space-y-2.5">
                           {result.worstFinancialDecision.reasons.map((r, i) => (
@@ -825,109 +957,13 @@ function HomeContent() {
                   </div>
                 );
               })()}
-            </div>
 
-            {/* ── CHARACTER TILE ──────────────────────────────── */}
-            <div id="character" ref={characterTileRef} className="scroll-mt-4 space-y-4">
-              <TileHeader label="Character" score={characterScore} quip={getQuip("character", characterScore)} />
-
-              {/* Driving character — single column rows */}
-              {result.drivingCharacter && (
-                <Card className="p-5">
-                  <SectionLabel>Driving Character</SectionLabel>
-                  <div className="space-y-0">
-                    <DriveScoreRow metric={result.drivingCharacter.steeringFeel} label="Steering" />
-                    <DriveScoreRow metric={result.drivingCharacter.engineCharacter} label="Engine" />
-                    <DriveScoreRow metric={result.drivingCharacter.dailyComfort} label="Daily" />
-                    <DriveScoreRow metric={result.drivingCharacter.overallFun} label="Fun" />
-                  </div>
-                  {result.drivingCharacter.summary && (
-                    <p className="text-zinc-400 text-xs leading-relaxed border-t border-zinc-800 pt-3 mt-1">
-                      {result.drivingCharacter.summary}
-                    </p>
-                  )}
-                </Card>
-              )}
-
-              {/* Why enthusiasts care */}
-              {result.whyEnthusiastsCare && (
-                <Card className="p-5">
-                  <SectionLabel>Why Enthusiasts Care</SectionLabel>
-                  <p className="text-zinc-300 text-sm leading-relaxed">{result.whyEnthusiastsCare}</p>
-                </Card>
-              )}
-
-              {/* Owner vibe */}
-              {result.ownerVibe?.label && (
-                <Card className="p-5">
-                  <div className="flex items-center justify-between mb-3">
-                    <SectionLabel>Owner Vibe</SectionLabel>
-                    <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full ${OWNER_VIBE_STYLES[result.ownerVibe.label] ?? "bg-zinc-700 text-zinc-300"}`}>
-                      {result.ownerVibe.label}
-                    </span>
-                  </div>
-                  {result.ownerVibe.reasoning && (
-                    <p className="text-zinc-400 text-sm leading-relaxed">{result.ownerVibe.reasoning}</p>
-                  )}
-                </Card>
-              )}
-
-              {/* Cars & Coffee + Community Credibility */}
-              {(result.carsCoffee || result.communityCredibility) && (
-                <Card className="p-5 space-y-4">
-                  {result.carsCoffee && (
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <SectionLabel>Cars &amp; Coffee</SectionLabel>
-                        <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md ${RATING_BADGE_STYLES[result.carsCoffee.rating] ?? "bg-zinc-800 text-zinc-300"}`}>
-                          {result.carsCoffee.rating}
-                        </span>
-                      </div>
-                      <p className="text-zinc-400 text-sm leading-relaxed">{result.carsCoffee.description}</p>
-                    </div>
-                  )}
-                  {result.carsCoffee && result.communityCredibility && (
-                    <div className="h-px bg-zinc-800" />
-                  )}
-                  {result.communityCredibility && (
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <SectionLabel>Community Credibility</SectionLabel>
-                        <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md ${RATING_BADGE_STYLES[result.communityCredibility.rating] ?? "bg-zinc-800 text-zinc-300"}`}>
-                          {result.communityCredibility.rating}
-                        </span>
-                      </div>
-                      <p className="text-zinc-400 text-sm leading-relaxed">{result.communityCredibility.description}</p>
-                    </div>
-                  )}
-                  {result.socialStanding && (
-                    <>
-                      <div className="h-px bg-zinc-800" />
-                      <p className="text-zinc-400 text-sm italic leading-relaxed pl-3 border-l-2 border-red-600/60">
-                        {result.socialStanding}
-                      </p>
-                    </>
-                  )}
-                </Card>
-              )}
-
-              {/* Mod potential */}
-              {result.modPotential && <ModPotentialCard data={result.modPotential} />}
-
-            </div>
-
-            {/* ── INVESTMENT TILE ─────────────────────────────── */}
-            <div id="investment" ref={investmentTileRef} className="scroll-mt-4 space-y-4">
-              <TileHeader label="Investment" score={investmentScore} quip={getQuip("investment", investmentScore)} />
-
-              {/* Ownership pain — failure points with red left border */}
+              {/* Reliability Risk */}
               {result.ownershipPain && (
                 <Card className="p-5">
                   <div className="flex items-center justify-between mb-4">
                     <SectionLabel>Reliability Risk</SectionLabel>
-                    <span className="text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md bg-amber-900/60 text-amber-300 border border-amber-800/50">
-                      ⚠ {result.ownershipPain.score >= 8 ? "High" : result.ownershipPain.score >= 5 ? "Moderate" : "Low"} Reliability Risk
-                    </span>
+                    <VerdictBadge verdict={result.ownershipPain.score >= 8 ? "High Pain" : result.ownershipPain.score >= 5 ? "Moderate" : "Low Pain"} />
                   </div>
                   {result.ownershipPain.issues?.length > 0 && (
                     <ul className="space-y-3 mt-1">
@@ -967,38 +1003,18 @@ function HomeContent() {
                 </div>
               )}
 
-              {/* Regret Risk + Market Trend */}
-              {(result.regretRisk || result.marketTrend) && (
-                <Card className="p-5 space-y-4">
-                  {result.regretRisk && (
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <SectionLabel>Regret Risk</SectionLabel>
-                        <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md ${RATING_BADGE_STYLES[result.regretRisk.level] ?? "bg-zinc-800 text-zinc-300"}`}>
-                          {result.regretRisk.level}
-                        </span>
-                      </div>
-                      <p className="text-zinc-400 text-sm leading-relaxed">{result.regretRisk.reason}</p>
-                    </div>
-                  )}
-                  {result.regretRisk && result.marketTrend && (
-                    <div className="h-px bg-zinc-800" />
-                  )}
-                  {result.marketTrend && (
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <SectionLabel>Market Trend</SectionLabel>
-                        <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md ${TREND_BADGE_STYLES[result.marketTrend.trend] ?? "bg-zinc-800 text-zinc-300"}`}>
-                          {result.marketTrend.trend}
-                        </span>
-                      </div>
-                      <p className="text-zinc-400 text-sm leading-relaxed">{result.marketTrend.reason}</p>
-                    </div>
-                  )}
+              {/* Market Trend */}
+              {result.marketTrend && (
+                <Card className="p-5">
+                  <div className="flex items-center justify-between mb-2">
+                    <SectionLabel>Market Trend</SectionLabel>
+                    <VerdictBadge verdict={result.marketTrend.trend} />
+                  </div>
+                  <p className="text-zinc-400 text-sm leading-relaxed">{result.marketTrend.reason}</p>
                 </Card>
               )}
 
-              {/* Future classic potential */}
+              {/* Future Classic Potential */}
               {result.classicPotential && (
                 <Card className="p-5">
                   <div className="flex items-center justify-between mb-3">
@@ -1018,6 +1034,106 @@ function HomeContent() {
                       ))}
                     </ul>
                   )}
+                </Card>
+              )}
+            </div>
+
+            {/* ── SECTION 2: CHARACTER ────────────────────────── */}
+            <div id="character" ref={characterTileRef} className="scroll-mt-4 space-y-4">
+              <TileHeader label="Character" score={characterScore} quip={getQuip("character", characterScore)} />
+
+              {/* Why Enthusiasts Care */}
+              {result.whyEnthusiastsCare && (
+                <Card className="p-5">
+                  <SectionLabel>Why Enthusiasts Care</SectionLabel>
+                  <p className="text-zinc-300 text-sm leading-relaxed">{result.whyEnthusiastsCare}</p>
+                </Card>
+              )}
+
+              {/* Driving Character */}
+              {result.drivingCharacter && (
+                <Card className="p-5">
+                  <SectionLabel>Driving Character</SectionLabel>
+                  <div className="space-y-0">
+                    <DriveScoreRow metric={result.drivingCharacter.steeringFeel} label="Steering" />
+                    <DriveScoreRow metric={result.drivingCharacter.engineCharacter} label="Engine" />
+                    <DriveScoreRow metric={result.drivingCharacter.dailyComfort} label="Daily" />
+                    <DriveScoreRow metric={result.drivingCharacter.overallFun} label="Fun" />
+                  </div>
+                  {result.drivingCharacter.summary && (
+                    <p className="text-zinc-400 text-xs leading-relaxed border-t border-zinc-800 pt-3 mt-1">
+                      {result.drivingCharacter.summary}
+                    </p>
+                  )}
+                </Card>
+              )}
+
+              {/* Mod Potential */}
+              {result.modPotential && <ModPotentialCard data={result.modPotential} />}
+            </div>
+
+            {/* ── SECTION 3: STREET CRED ──────────────────────── */}
+            <div id="street-cred" ref={investmentTileRef} className="scroll-mt-4 space-y-4">
+              <TileHeader label="Street Cred" score={result.vibeScore ?? null} />
+
+              {/* Owner Vibe */}
+              {result.ownerVibe?.label && (
+                <div ref={ownerVibeRef} className="scroll-mt-4">
+                  <Card className="p-5">
+                    <div className="flex items-center justify-between mb-3">
+                      <SectionLabel>Owner Vibe</SectionLabel>
+                      <VerdictBadge verdict={result.ownerVibe.label} />
+                    </div>
+                    {result.ownerVibe.reasoning && (
+                      <p className="text-zinc-400 text-sm leading-relaxed">{result.ownerVibe.reasoning}</p>
+                    )}
+                  </Card>
+                </div>
+              )}
+
+              {/* Cars & Coffee + Community Credibility */}
+              {(result.carsCoffee || result.communityCredibility) && (
+                <Card className="p-5 space-y-4">
+                  {result.carsCoffee && (
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <SectionLabel>Cars &amp; Coffee</SectionLabel>
+                        <RatingBadge rating={result.carsCoffee.rating} />
+                      </div>
+                      <p className="text-zinc-400 text-sm leading-relaxed">{result.carsCoffee.description}</p>
+                    </div>
+                  )}
+                  {result.carsCoffee && result.communityCredibility && (
+                    <div className="h-px bg-zinc-800" />
+                  )}
+                  {result.communityCredibility && (
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <SectionLabel>Community Credibility</SectionLabel>
+                        <RatingBadge rating={result.communityCredibility.rating} />
+                      </div>
+                      <p className="text-zinc-400 text-sm leading-relaxed">{result.communityCredibility.description}</p>
+                    </div>
+                  )}
+                  {result.socialStanding && (
+                    <>
+                      <div className="h-px bg-zinc-800" />
+                      <p className="text-zinc-400 text-sm italic leading-relaxed pl-3 border-l-2 border-red-600/60">
+                        {result.socialStanding}
+                      </p>
+                    </>
+                  )}
+                </Card>
+              )}
+
+              {/* Regret Risk */}
+              {result.regretRisk && (
+                <Card className="p-5">
+                  <div className="flex items-center justify-between mb-2">
+                    <SectionLabel>Regret Risk</SectionLabel>
+                    <VerdictBadge verdict={result.regretRisk.level} />
+                  </div>
+                  <p className="text-zinc-400 text-sm leading-relaxed">{result.regretRisk.reason}</p>
                 </Card>
               )}
             </div>
@@ -1065,6 +1181,35 @@ function HomeContent() {
               </div>
             )}
 
+            {/* ── YOU MIGHT ALSO CONSIDER ─────────────────────── */}
+            {result.alternatives && result.alternatives.length > 0 && (
+              <div className="space-y-3">
+                <div className="flex items-center gap-3 pt-2">
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-red-500">You Might Also Consider</span>
+                  <div className="flex-1 h-px bg-zinc-800" />
+                </div>
+                <Card className="p-5 space-y-4">
+                  {result.alternatives.map((alt, i) => (
+                    <div key={i} className={i > 0 ? "pt-4 border-t border-zinc-800" : ""}>
+                      <div className="flex items-start justify-between gap-3 mb-2">
+                        <p className="font-black text-zinc-100 text-sm leading-snug">{alt.name}</p>
+                        {alt.priceRange && (
+                          <span className="flex-shrink-0 text-[10px] font-bold text-zinc-400 bg-zinc-800 px-2.5 py-1 rounded-md whitespace-nowrap">
+                            {alt.priceRange}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-zinc-400 text-sm leading-relaxed">{alt.whySuited}</p>
+                      <p className="text-zinc-500 text-xs leading-relaxed mt-1">{alt.howDiffers}</p>
+                    </div>
+                  ))}
+                  <p className="text-zinc-600 text-[10px] leading-relaxed pt-2 border-t border-zinc-800/60">
+                    These are AI suggestions based on general market knowledge — not live Trade Me listings. Availability and pricing may vary.
+                  </p>
+                </Card>
+              </div>
+            )}
+
             {/* ── THE ENTHUSIAST TAKE ─────────────────────────── */}
             {result.enthusiastTake && (
               <div className="rounded-2xl bg-zinc-900 border border-zinc-700 overflow-hidden">
@@ -1082,13 +1227,7 @@ function HomeContent() {
 
             {/* Reset */}
             <button
-              onClick={() => {
-                setResult(null);
-                setUrl("");
-                setImages([]);
-                setPastedText("");
-                if (fileInputRef.current) fileInputRef.current.value = "";
-              }}
+              onClick={handleReset}
               className="w-full border border-zinc-800 hover:border-zinc-600 text-zinc-500 hover:text-zinc-300 rounded-xl py-3 text-xs font-bold uppercase tracking-widest transition-all"
             >
               Analyse Another Listing

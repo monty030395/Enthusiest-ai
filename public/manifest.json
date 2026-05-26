@@ -1,6 +1,6 @@
 {
-  "name": "EnthusiastAI",
-  "short_name": "EnthusiastAI",
+  "name": "Motormind",
+  "short_name": "Motormind",
   "description": "AI car-buying copilot for NZ enthusiasts",
   "start_url": "/",
   "display": "standalone",
@@ -13,14 +13,5 @@
       "type": "image/svg+xml",
       "purpose": "any maskable"
     }
-  ],
-  "share_target": {
-    "action": "/",
-    "method": "GET",
-    "params": {
-      "url": "shared_url",
-      "title": "title",
-      "text": "text"
-    }
-  }
+  ]
 }
