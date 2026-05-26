@@ -24,7 +24,7 @@ type Analysis = {
   ownerVibe: { label: string; reasoning: string };
   specSignificance: { item: string; note: string }[];
   priceVerdict: { assessment: string; reason: string };
-  enthusiastTax: { level: string; reasons: string[] };
+  enthusiastTax: { level: string; premium?: string; reasons: string[] };
   ownershipPain: { score: number; issues: { title: string; detail: string }[] };
   drivingCharacter: {
     steeringFeel: DriveMetric;
@@ -900,8 +900,12 @@ function HomeContent() {
               {result.enthusiastTax && (
                 <Card className="p-5">
                   <div className="flex items-center justify-between mb-4">
-                    <SectionLabel>Price Reality Check</SectionLabel>
-                    <VerdictBadge verdict={result.enthusiastTax.level} />
+                    <SectionLabel>Enthusiast Tax</SectionLabel>
+                    {result.enthusiastTax.premium && (
+                      <span style={themeToStyle(VERDICT_THEME_MAP[result.enthusiastTax.level] ?? V_NEUTRAL)}>
+                        {result.enthusiastTax.premium}
+                      </span>
+                    )}
                   </div>
                   {result.enthusiastTax.reasons?.length > 0 && (
                     <ul className="space-y-2">

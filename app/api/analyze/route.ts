@@ -75,6 +75,7 @@ Return ONLY valid JSON in this exact structure, no markdown, no extra text:
   },
   "enthusiastTax": {
     "level": "",
+    "premium": "",
     "reasons": [""]
   },
   "priceOutlook": {
@@ -194,6 +195,7 @@ priceVerdict.assessment — one of: "Fair" | "Overpriced" | "Underpriced" | "Pre
 priceVerdict.reason — the WHY behind the price. Not just market average — is it paying the premium? rare spec premium? high-risk mileage discount? neglected pricing?
 
 enthusiastTax.level — pick ONE: "None" | "Mild" | "Moderate" | "High" | "Extreme"
+enthusiastTax.premium — estimated NZD dollar amount this car commands above its non-enthusiast equivalent, as a short string. E.g. "+$1,000–2,000" for Mild, "+$3,000–5,000" for Moderate, "+$6,000–10,000" for High, "+$10,000+" for Extreme. Use "None" if level is None.
 enthusiastTax.reasons — specific reasons why this car commands or doesn't command an enthusiast premium. E.g. "manual gearbox adds $3–5k over equivalent auto in NZ", "declining NZ supply as JDM import pool dries up", "collector hype on this generation outpacing actual value", "rare factory colour documented from new", "seller clearly aware of enthusiast demand and priced accordingly". Be specific — name the factor and explain it.
 
 ownershipPain.score — 1 (painless) to 10 (financial nightmare)
