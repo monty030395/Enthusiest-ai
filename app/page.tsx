@@ -74,12 +74,13 @@ type Analysis = {
 };
 
 // ── Verdict badge colour system ───────────────────────────────
+// Warm-tuned signal palette to sit on the carbon/ember theme
 type VerdictTheme = { bg: string; border: string; text: string };
-const V_RED:     VerdictTheme = { bg: "#3d1212", border: "#7f1d1d", text: "#f87171" };
-const V_AMBER:   VerdictTheme = { bg: "#2d1a00", border: "#854f0b", text: "#fbbf24" };
-const V_GREEN:   VerdictTheme = { bg: "#0d2410", border: "#3b6d11", text: "#86efac" };
-const V_BLUE:    VerdictTheme = { bg: "#0c1e36", border: "#185fa5", text: "#60a5fa" };
-const V_NEUTRAL: VerdictTheme = { bg: "#27272a", border: "#3f3f46", text: "#a1a1aa" };
+const V_RED:     VerdictTheme = { bg: "#2a100b", border: "#803023", text: "#ff9d8a" };
+const V_AMBER:   VerdictTheme = { bg: "#271b06", border: "#7a5a1e", text: "#ffc96b" };
+const V_GREEN:   VerdictTheme = { bg: "#0e2316", border: "#2f5e40", text: "#93dbad" };
+const V_BLUE:    VerdictTheme = { bg: "#101b29", border: "#31506f", text: "#a3bedf" };
+const V_NEUTRAL: VerdictTheme = { bg: "#1c1c20", border: "#3a3a42", text: "#a6a29a" };
 
 const VERDICT_THEME_MAP: Record<string, VerdictTheme> = {
   // Hero labels
@@ -119,6 +120,7 @@ function themeToStyle(t: VerdictTheme) {
     backgroundColor: t.bg,
     border: `1px solid ${t.border}`,
     color: t.text,
+    fontFamily: "var(--font-mono)",
     fontSize: "10px",
     fontWeight: 700,
     letterSpacing: "0.14em",
@@ -145,7 +147,7 @@ function RatingBadge({ rating }: { rating: string }) {
 }
 
 const TAX_LEVEL_STYLES: Record<string, { icon: string }> = {
-  "None":     { icon: "text-zinc-500" },
+  "None":     { icon: "text-ink-faint" },
   "Mild":     { icon: "text-emerald-500" },
   "Moderate": { icon: "text-amber-500" },
   "High":     { icon: "text-orange-500" },
@@ -170,13 +172,13 @@ function DriveScoreRow({ metric, label }: { metric: DriveMetric; label: string }
     : metric.score >= 5 ? "text-amber-400"
     : "text-red-500";
   return (
-    <div className="flex items-start gap-4 py-3 border-b border-zinc-800/60 last:border-0">
-      <span className={`text-xl font-black tabular-nums min-w-[28px] leading-none pt-0.5 ${color}`}>
+    <div className="flex items-start gap-4 py-3.5 border-b border-line last:border-0">
+      <span className={`font-mono text-xl font-bold tabular-nums min-w-[30px] leading-none pt-0.5 ${color}`}>
         {metric.score}
       </span>
       <div>
-        <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-1.5">{label}</p>
-        <p className="text-zinc-400 text-sm leading-relaxed">{metric.description}</p>
+        <p className="font-mono text-[9px] font-medium uppercase tracking-[0.22em] text-ink-faint mb-1.5">{label}</p>
+        <p className="text-ink-muted text-sm leading-relaxed">{metric.description}</p>
       </div>
     </div>
   );
@@ -216,7 +218,7 @@ function RotatingMessage() {
 
   return (
     <p
-      className="text-zinc-400 text-xs mt-1 transition-opacity duration-300"
+      className="font-mono text-ink-muted text-xs mt-2 transition-opacity duration-300"
       style={{ opacity: visible ? 1 : 0 }}
     >
       {LOADING_MESSAGES[index]}
@@ -228,34 +230,34 @@ function WheelSpinner() {
   const spokes = [0, 72, 144, 216, 288];
   return (
     <svg className="animate-spin w-14 h-14" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="24" cy="24" r="22" stroke="#27272a" strokeWidth="4" />
-      <circle cx="24" cy="24" r="18.5" stroke="#3f3f46" strokeWidth="1" />
-      <circle cx="24" cy="24" r="13" stroke="#dc2626" strokeWidth="1.5" />
+      <circle cx="24" cy="24" r="22" stroke="#232328" strokeWidth="4" />
+      <circle cx="24" cy="24" r="18.5" stroke="#3a3a42" strokeWidth="1" />
+      <circle cx="24" cy="24" r="13" stroke="#e89a2b" strokeWidth="1.5" />
       {spokes.map((angle) => (
-        <line key={angle} x1="24" y1="19.5" x2="24" y2="11" stroke="#dc2626" strokeWidth="2" strokeLinecap="round" transform={`rotate(${angle} 24 24)`} />
+        <line key={angle} x1="24" y1="19.5" x2="24" y2="11" stroke="#e89a2b" strokeWidth="2" strokeLinecap="round" transform={`rotate(${angle} 24 24)`} />
       ))}
       {spokes.map((angle) => {
         const rad = (angle - 90) * (Math.PI / 180);
         const r = 13;
         const cx = 24 + r * Math.cos(rad);
         const cy = 24 + r * Math.sin(rad);
-        return <circle key={`nut-${angle}`} cx={cx} cy={cy} r="1.5" fill="#dc2626" />;
+        return <circle key={`nut-${angle}`} cx={cx} cy={cy} r="1.5" fill="#e89a2b" />;
       })}
-      <circle cx="24" cy="24" r="5" fill="#18181b" stroke="#dc2626" strokeWidth="1.5" />
-      <circle cx="24" cy="24" r="1.8" fill="#dc2626" />
+      <circle cx="24" cy="24" r="5" fill="#131316" stroke="#e89a2b" strokeWidth="1.5" />
+      <circle cx="24" cy="24" r="1.8" fill="#e89a2b" />
     </svg>
   );
 }
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-zinc-500 mb-3">{children}</p>
+    <p className="font-mono text-[10px] font-medium uppercase tracking-[0.2em] text-ink-faint mb-3">{children}</p>
   );
 }
 
 function Card({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`rounded-2xl border border-zinc-800 bg-zinc-900/60 ${className}`}>
+    <div className={`rounded-xl border border-line bg-white/[0.02] ${className}`}>
       {children}
     </div>
   );
@@ -269,7 +271,7 @@ function isSpecified(value: string | undefined): boolean {
 
 function Pill({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-flex items-center px-2.5 py-0.5 rounded-md bg-zinc-800 text-zinc-300 text-xs font-medium">
+    <span className="inline-flex items-center px-2.5 py-1 rounded border border-line bg-white/[0.04] text-ink-muted font-mono text-[11px]">
       {children}
     </span>
   );
@@ -335,20 +337,20 @@ function getQuip(section: "value" | "character" | "investment", score: number | 
 
 function ScoreChip({ label, score, onClick }: { label: string; score: number | null; onClick: () => void }) {
   const numColor =
-    score === null ? "text-zinc-500"
+    score === null ? "text-ink-faint"
     : score >= 7 ? "text-emerald-400"
     : score >= 5 ? "text-amber-400"
     : "text-red-400";
   return (
     <button
       onClick={onClick}
-      className="flex-1 flex flex-col items-center gap-0.5 py-3 px-2 rounded-xl bg-zinc-800/60 hover:bg-zinc-700/60 border border-zinc-700/50 hover:border-zinc-600 active:scale-95 transition-all"
+      className="flex-1 flex flex-col items-center gap-1 py-3.5 px-2 rounded-lg bg-white/[0.03] hover:bg-white/[0.06] border border-line hover:border-line-strong active:scale-95 transition-all"
     >
-      <span className={`text-xl font-black tabular-nums leading-none ${numColor}`}>
+      <span className={`font-mono text-2xl font-bold tabular-nums leading-none ${numColor}`}>
         {score !== null ? score : "?"}
-        <span className="text-zinc-600 text-xs font-normal">/10</span>
+        <span className="text-ink-faint text-xs font-normal">/10</span>
       </span>
-      <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-500">{label}</span>
+      <span className="font-mono text-[9px] font-medium uppercase tracking-[0.2em] text-ink-faint">{label}</span>
     </button>
   );
 }
@@ -359,30 +361,30 @@ function ModPotentialCard({ data }: { data: NonNullable<Analysis["modPotential"]
   const isCollapsed = data.relevance === "medium" && !expanded;
   return (
     <Card className="overflow-hidden">
-      <div className="p-5">
+      <div className="p-6">
         <div className="flex items-center justify-between mb-3">
-          <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-zinc-500">Mod Potential</p>
+          <p className="font-mono text-[10px] font-medium uppercase tracking-[0.2em] text-ink-faint">Mod Potential</p>
           {data.relevance === "medium" && (
             <button
               onClick={() => setExpanded(!expanded)}
-              className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 hover:text-zinc-300 transition-colors flex items-center gap-1"
+              className="font-mono text-[9px] font-medium uppercase tracking-[0.18em] text-ink-faint hover:text-ink-muted transition-colors flex items-center gap-1"
             >
               {expanded ? "Less ▲" : "More ▼"}
             </button>
           )}
         </div>
         {data.powerCeiling && (
-          <p className="text-zinc-300 text-sm leading-relaxed">{data.powerCeiling}</p>
+          <p className="text-ink-muted text-sm leading-relaxed">{data.powerCeiling}</p>
         )}
         {!isCollapsed && (
           <div className="space-y-4 mt-4">
             {data.firstMods?.length > 0 && (
               <div>
-                <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 mb-2">First Mods</p>
+                <p className="font-mono text-[9px] font-medium uppercase tracking-[0.2em] text-ink-faint mb-2">First Mods</p>
                 <ul className="space-y-1.5">
                   {data.firstMods.map((mod, i) => (
-                    <li key={i} className="flex gap-2 text-sm text-zinc-400 leading-snug">
-                      <span className="text-red-500 flex-shrink-0 font-black">+</span>
+                    <li key={i} className="flex gap-2 text-sm text-ink-muted leading-snug">
+                      <span className="text-ember-400 flex-shrink-0 font-bold">+</span>
                       {mod}
                     </li>
                   ))}
@@ -391,20 +393,20 @@ function ModPotentialCard({ data }: { data: NonNullable<Analysis["modPotential"]
             )}
             {data.handlingUpgrades && (
               <div>
-                <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 mb-1">Handling Upgrades</p>
-                <p className="text-zinc-400 text-sm leading-relaxed">{data.handlingUpgrades}</p>
+                <p className="font-mono text-[9px] font-medium uppercase tracking-[0.2em] text-ink-faint mb-1">Handling Upgrades</p>
+                <p className="text-ink-muted text-sm leading-relaxed">{data.handlingUpgrades}</p>
               </div>
             )}
             {data.partsEcosystem && (
               <div>
-                <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 mb-1">Parts Ecosystem</p>
-                <p className="text-zinc-400 text-sm leading-relaxed">{data.partsEcosystem}</p>
+                <p className="font-mono text-[9px] font-medium uppercase tracking-[0.2em] text-ink-faint mb-1">Parts Ecosystem</p>
+                <p className="text-ink-muted text-sm leading-relaxed">{data.partsEcosystem}</p>
               </div>
             )}
             {data.collectorRisk && (
               <div>
-                <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 mb-1">Collector Risk</p>
-                <p className="text-zinc-400 text-sm leading-relaxed">{data.collectorRisk}</p>
+                <p className="font-mono text-[9px] font-medium uppercase tracking-[0.2em] text-ink-faint mb-1">Collector Risk</p>
+                <p className="text-ink-muted text-sm leading-relaxed">{data.collectorRisk}</p>
               </div>
             )}
           </div>
@@ -414,23 +416,28 @@ function ModPotentialCard({ data }: { data: NonNullable<Analysis["modPotential"]
   );
 }
 
-function TileHeader({ label, score, quip }: { label: string; score: number | null; quip?: string }) {
+function TileHeader({ label, score, quip, index }: { label: string; score: number | null; quip?: string; index?: string }) {
   const numColor =
-    score === null ? "text-zinc-600"
-    : score >= 7 ? "text-emerald-500"
-    : score >= 5 ? "text-amber-500"
-    : "text-red-500";
+    score === null ? "text-ink-faint"
+    : score >= 7 ? "text-emerald-400"
+    : score >= 5 ? "text-amber-400"
+    : "text-red-400";
   return (
-    <div className="pt-2 space-y-1">
-      <div className="flex items-center gap-3">
-        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-red-500">{label}</span>
-        <div className="flex-1 h-px bg-zinc-800" />
+    <div className="pt-4 space-y-1.5">
+      <div className="flex items-baseline gap-3">
+        {index && (
+          <span className="font-display text-3xl font-extrabold leading-none tabular-nums text-ink/15 select-none">{index}</span>
+        )}
+        <span className="font-display text-base font-bold uppercase tracking-[0.14em] text-ink">{label}</span>
+        <div className="flex-1 h-px bg-line self-center" />
         {score !== null && (
-          <span className={`text-xs font-black tabular-nums ${numColor}`}>{score}/10</span>
+          <span className={`font-mono text-sm font-bold tabular-nums ${numColor}`}>
+            {score}<span className="text-ink-faint text-xs font-normal">/10</span>
+          </span>
         )}
       </div>
       {quip && (
-        <p className="text-xs italic text-zinc-600 pl-0.5">{quip}</p>
+        <p className="font-mono text-[11px] italic text-ink-faint pl-0.5">{quip}</p>
       )}
     </div>
   );
@@ -555,51 +562,54 @@ function HomeContent() {
   const modeLabels: Record<"text" | "images", string> = { text: "Paste Text", images: "Screenshots" };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-zinc-100 font-sans">
+    <div className="min-h-screen bg-carbon-950 text-ink font-sans">
 
-      {/* Header */}
-      <header className="px-6 pt-5 pb-4 border-b border-zinc-800/60">
+      {/* Masthead */}
+      <header className="sticky top-0 z-40 px-6 pt-4 pb-3.5 border-b border-line bg-carbon-950/80 backdrop-blur-md">
         <div className="max-w-3xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1">
-              <span className="text-lg font-black tracking-tight text-white uppercase">Motor</span>
-              <span className="text-lg font-black tracking-tight text-red-500 uppercase">mind</span>
-            </div>
-            <div className="h-4 w-px bg-zinc-700" />
-            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500">NZ Car Copilot</span>
+            <h1 className="font-display text-lg font-extrabold tracking-tight uppercase leading-none">
+              <span className="text-ink">Motor</span>
+              <span className="text-ember-400">mind</span>
+            </h1>
+            <div className="h-3.5 w-px bg-line-strong" />
+            <span className="font-mono text-[9px] uppercase tracking-[0.28em] text-ink-faint">NZ Car Copilot</span>
           </div>
-          <div className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />
+          <div className="h-1.5 w-1.5 rounded-full bg-ember-400 animate-pulse" />
         </div>
       </header>
 
-      <main className="max-w-3xl mx-auto px-5 py-8 space-y-6">
+      <main className="max-w-3xl mx-auto px-5 py-10 space-y-6">
 
         {/* Collapsible: Hero + Input */}
         <div className={`overflow-hidden transition-all duration-500 ease-in-out ${inputCollapsed ? "max-h-0 opacity-0 pointer-events-none" : "max-h-[900px] opacity-100"}`}>
-          <div className="space-y-6">
+          <div className="space-y-8">
 
         {/* Hero */}
         <div className="pt-2">
-          <h2 className="text-4xl font-black text-white leading-[1.1] tracking-tight">
+          <p className="font-mono text-[10px] font-medium uppercase tracking-[0.3em] text-ember-400 mb-4">
+            Pre-purchase intelligence
+          </p>
+          <h2 className="font-display text-[2.6rem] sm:text-5xl font-extrabold text-ink leading-[1.05] tracking-tight">
             Is this car<br />
-            <span className="text-red-500">worth your money?</span>
+            <span className="text-ember-400">worth your money?</span>
           </h2>
-          <p className="mt-3 text-zinc-500 text-sm leading-relaxed max-w-md">
+          <p className="mt-4 text-ink-muted text-sm leading-relaxed max-w-md">
             Paste a listing from Trade Me or upload screenshots. Get a specific, honest enthusiast read — not the generic rubbish you already know.
           </p>
         </div>
 
         {/* Input card */}
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 overflow-hidden">
-          <div className="flex border-b border-zinc-800">
+        <div className="rounded-xl border border-line bg-white/[0.02] overflow-hidden">
+          <div className="flex border-b border-line">
             {(["text", "images"] as const).map((m) => (
               <button
                 key={m}
                 onClick={() => { setMode(m); setError(""); }}
-                className={`flex-1 py-3 text-xs font-bold uppercase tracking-widest transition-colors ${
+                className={`flex-1 py-3.5 font-mono text-[11px] font-medium uppercase tracking-[0.18em] transition-colors ${
                   mode === m
-                    ? "text-white border-b-2 border-red-500 bg-zinc-800/40"
-                    : "text-zinc-500 hover:text-zinc-300"
+                    ? "text-ink border-b-2 border-ember-400 bg-white/[0.03]"
+                    : "text-ink-faint hover:text-ink-muted"
                 }`}
               >
                 {modeLabels[m]}
@@ -615,16 +625,16 @@ function HomeContent() {
                   onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
                   onDragLeave={() => setDragging(false)}
                   onDrop={handleDrop}
-                  className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all ${
+                  className={`border border-dashed rounded-lg p-8 text-center cursor-pointer transition-all ${
                     dragging
-                      ? "border-red-500 bg-red-950/20"
-                      : "border-zinc-700 hover:border-zinc-500 hover:bg-zinc-800/30"
+                      ? "border-ember-400 bg-ember-500/10"
+                      : "border-line-strong hover:border-ember-500/50 hover:bg-white/[0.03]"
                   }`}
                 >
-                  <p className="text-sm text-zinc-300 font-medium">
-                    Drop screenshots here or <span className="text-red-400">tap to browse</span>
+                  <p className="text-sm text-ink-muted font-medium">
+                    Drop screenshots here or <span className="text-ember-400">tap to browse</span>
                   </p>
-                  <p className="text-xs text-zinc-600 mt-1.5">
+                  <p className="font-mono text-[11px] text-ink-faint mt-2">
                     Screenshot the listing — price, KMs, description, seller notes
                   </p>
                 </div>
@@ -644,11 +654,11 @@ function HomeContent() {
                         <img
                           src={img.dataUrl}
                           alt={`Screenshot ${i + 1}`}
-                          className="w-16 h-16 object-cover rounded-lg border border-zinc-700"
+                          className="w-16 h-16 object-cover rounded-lg border border-line-strong"
                         />
                         <button
                           onClick={() => setImages((prev) => prev.filter((_, idx) => idx !== i))}
-                          className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-600 rounded-full text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity leading-none"
+                          className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-ember-500 rounded-full text-carbon-950 text-xs font-bold flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity leading-none"
                         >
                           ×
                         </button>
@@ -660,8 +670,8 @@ function HomeContent() {
             )}
 
             {mode === "text" && (
-              <div className="space-y-2">
-                <p className="text-xs text-zinc-500">
+              <div className="space-y-2.5">
+                <p className="font-mono text-[11px] text-ink-faint leading-relaxed">
                   Copy the listing description from Trade Me and paste it here — the more detail the better.
                 </p>
                 <textarea
@@ -673,31 +683,31 @@ function HomeContent() {
                   onPaste={handlePaste}
                   placeholder="Paste the full listing text here..."
                   rows={7}
-                  className="w-full bg-zinc-800/60 border border-zinc-700 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-red-500/70 transition-all resize-none"
+                  className="w-full bg-carbon-900/80 border border-line rounded-lg px-4 py-3.5 text-sm text-ink placeholder:text-ink-faint placeholder:font-mono focus:outline-none focus:border-ember-500/60 transition-all resize-none"
                 />
                 {urlHint && (
                   <div
-                    className="flex gap-2.5 bg-amber-950/40 border border-amber-800/50 rounded-xl px-4 py-3 transition-opacity duration-300"
+                    className="flex gap-2.5 bg-ember-500/10 border border-ember-600/40 rounded-lg px-4 py-3 transition-opacity duration-300"
                     style={{ opacity: urlHintVisible ? 1 : 0 }}
                   >
-                    <span className="text-amber-400 flex-shrink-0 font-bold">→</span>
-                    <p className="text-amber-200/80 text-sm leading-relaxed">{urlHint}</p>
+                    <span className="text-ember-400 flex-shrink-0 font-bold">→</span>
+                    <p className="text-ember-300/90 text-sm leading-relaxed">{urlHint}</p>
                   </div>
                 )}
               </div>
             )}
 
             {error && (
-              <div className="flex gap-3 bg-amber-950/30 border border-amber-900/60 rounded-xl px-4 py-3">
-                <span className="text-amber-500 flex-shrink-0 font-bold">!</span>
-                <p className="text-amber-200/80 text-sm leading-relaxed">{error}</p>
+              <div className="flex gap-3 bg-ember-500/10 border border-ember-600/40 rounded-lg px-4 py-3">
+                <span className="text-ember-400 flex-shrink-0 font-bold">!</span>
+                <p className="text-ember-300/90 text-sm leading-relaxed">{error}</p>
               </div>
             )}
 
             <button
               onClick={() => analyse()}
               disabled={!canAnalyse || loading}
-              className="w-full bg-red-600 hover:bg-red-500 active:bg-red-700 disabled:bg-zinc-800 disabled:text-zinc-600 disabled:cursor-not-allowed text-white font-black uppercase tracking-widest rounded-xl py-3.5 transition-all text-xs"
+              className="w-full bg-ember-500 hover:bg-ember-400 active:bg-ember-600 disabled:bg-carbon-800 disabled:text-ink-faint disabled:cursor-not-allowed text-carbon-950 font-mono font-bold uppercase tracking-[0.22em] rounded-lg py-4 transition-all text-xs"
             >
               {loading ? "Getting Under the Hood..." : "Analyse Listing"}
             </button>
@@ -711,9 +721,9 @@ function HomeContent() {
         {inputCollapsed && (
           <button
             onClick={handleReset}
-            className="w-full border border-zinc-800 hover:border-zinc-700 text-zinc-500 hover:text-zinc-300 rounded-xl py-2.5 text-[10px] font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2"
+            className="w-full border border-line hover:border-line-strong text-ink-faint hover:text-ink-muted rounded-lg py-3 font-mono text-[10px] font-medium uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2"
           >
-            <span className="text-red-500 text-sm leading-none">+</span> New Analysis
+            <span className="text-ember-400 text-sm leading-none">+</span> New Analysis
           </button>
         )}
 
@@ -722,10 +732,10 @@ function HomeContent() {
 
         {/* Loading */}
         {loading && (
-          <Card className="p-10 flex flex-col items-center gap-5">
+          <Card className="p-12 flex flex-col items-center gap-6">
             <WheelSpinner />
             <div className="text-center">
-              <p className="text-white font-bold text-sm">Getting Under the Hood</p>
+              <p className="font-display text-ink font-bold text-sm uppercase tracking-[0.12em]">Getting Under the Hood</p>
               <RotatingMessage />
             </div>
           </Card>
@@ -737,31 +747,31 @@ function HomeContent() {
 
             {/* ── HERO TILE ───────────────────────────────────── */}
             <Card className="overflow-hidden">
-              <div className="h-1 bg-gradient-to-r from-red-600 via-red-500 to-transparent" />
-              <div className="p-6 space-y-5">
+              <div className="h-px bg-gradient-to-r from-ember-500 via-ember-500/40 to-transparent" />
+              <div className="p-6 sm:p-7 space-y-5">
 
                 {/* Year / import / location + price */}
                 <div className="flex items-start justify-between gap-3">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500 pt-1">
+                  <p className="font-mono text-[10px] font-medium uppercase tracking-[0.24em] text-ink-faint pt-1.5">
                     {result.vehicle.year}
                     {isSpecified(result.vehicle.importStatus) ? ` · ${result.vehicle.importStatus}` : ""}
                     {isSpecified(result.vehicle.location) ? ` · ${result.vehicle.location}` : ""}
                   </p>
                   {result.vehicle.price && (
-                    <div className="bg-red-600 rounded-xl px-4 py-2 text-right flex-shrink-0">
-                      <p className="text-[9px] font-bold uppercase tracking-widest text-red-200 opacity-80">Asking</p>
-                      <p className="text-xl font-black text-white">{result.vehicle.price}</p>
+                    <div className="bg-ember-500 rounded-lg px-4 py-2 text-right flex-shrink-0">
+                      <p className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-carbon-950/60">Asking</p>
+                      <p className="font-mono text-xl font-bold text-carbon-950 tabular-nums">{result.vehicle.price}</p>
                     </div>
                   )}
                 </div>
 
                 {/* Make / model / variant */}
                 <div>
-                  <h3 className="text-3xl font-black text-white tracking-tight leading-tight">
+                  <h3 className="font-display text-3xl sm:text-4xl font-extrabold text-ink tracking-tight leading-tight">
                     {result.vehicle.make} {result.vehicle.model}
                   </h3>
                   {result.vehicle.variant && (
-                    <p className="text-zinc-400 font-medium mt-0.5">{result.vehicle.variant}</p>
+                    <p className="text-ink-muted font-medium mt-1">{result.vehicle.variant}</p>
                   )}
                 </div>
 
@@ -796,63 +806,63 @@ function HomeContent() {
 
                 {/* Pull-quote */}
                 {result.whatMakesSpecial && (
-                  <div className="pl-4 border-l-[3px] border-red-500">
-                    <p className="text-white text-base font-medium italic leading-snug">{result.whatMakesSpecial}</p>
+                  <div className="pl-4 border-l-2 border-ember-400">
+                    <p className="text-ink text-[17px] font-medium italic leading-snug">{result.whatMakesSpecial}</p>
                   </div>
                 )}
 
                 {/* Verdict */}
                 {result.verdict && (
-                  <div className="pl-4 border-l-2 border-red-600/70">
-                    <p className="text-zinc-300 leading-relaxed text-sm italic">{result.verdict}</p>
+                  <div className="pl-4 border-l border-line-strong">
+                    <p className="text-ink-muted leading-relaxed text-sm italic">{result.verdict}</p>
                   </div>
                 )}
 
                 {/* Performance specs */}
                 {result.performanceSpecs?.engine && (
-                  <div className="bg-zinc-800/30 rounded-xl border border-zinc-800 p-4">
+                  <div className="bg-carbon-900/60 rounded-lg border border-line p-5">
                     <SectionLabel>Performance Specs</SectionLabel>
-                    <p className="text-zinc-200 font-bold text-sm mb-4">{result.performanceSpecs.engine}</p>
-                    <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+                    <p className="font-mono text-ink font-bold text-sm mb-5">{result.performanceSpecs.engine}</p>
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-4">
                       {result.performanceSpecs.powerKw > 0 && (
                         <div>
-                          <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 mb-0.5">Power</p>
-                          <p className="text-zinc-100 font-black text-sm tabular-nums">
+                          <p className="font-mono text-[9px] font-medium uppercase tracking-[0.2em] text-ink-faint mb-1">Power</p>
+                          <p className="font-mono text-ink font-bold text-sm tabular-nums">
                             {result.performanceSpecs.powerKw}kW
-                            {result.performanceSpecs.powerHp > 0 && <span className="text-zinc-500 font-normal"> / {result.performanceSpecs.powerHp}hp</span>}
+                            {result.performanceSpecs.powerHp > 0 && <span className="text-ink-faint font-normal"> / {result.performanceSpecs.powerHp}hp</span>}
                           </p>
                         </div>
                       )}
                       {result.performanceSpecs.torqueNm > 0 && (
                         <div>
-                          <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 mb-0.5">Torque</p>
-                          <p className="text-zinc-100 font-black text-sm tabular-nums">
+                          <p className="font-mono text-[9px] font-medium uppercase tracking-[0.2em] text-ink-faint mb-1">Torque</p>
+                          <p className="font-mono text-ink font-bold text-sm tabular-nums">
                             {result.performanceSpecs.torqueNm}Nm
-                            {result.performanceSpecs.torqueRpm && <span className="text-zinc-500 font-normal"> @ {result.performanceSpecs.torqueRpm}rpm</span>}
+                            {result.performanceSpecs.torqueRpm && <span className="text-ink-faint font-normal"> @ {result.performanceSpecs.torqueRpm}rpm</span>}
                           </p>
                         </div>
                       )}
                       {result.performanceSpecs.zeroToHundred && (
                         <div>
-                          <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 mb-0.5">0–100 km/h</p>
-                          <p className="text-zinc-100 font-black text-sm">{result.performanceSpecs.zeroToHundred}</p>
+                          <p className="font-mono text-[9px] font-medium uppercase tracking-[0.2em] text-ink-faint mb-1">0–100 km/h</p>
+                          <p className="font-mono text-ink font-bold text-sm tabular-nums">{result.performanceSpecs.zeroToHundred}</p>
                         </div>
                       )}
                       {result.performanceSpecs.kerbWeightKg > 0 && (
                         <div>
-                          <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 mb-0.5">Kerb Weight</p>
-                          <p className="text-zinc-100 font-black text-sm tabular-nums">{result.performanceSpecs.kerbWeightKg}kg</p>
+                          <p className="font-mono text-[9px] font-medium uppercase tracking-[0.2em] text-ink-faint mb-1">Kerb Weight</p>
+                          <p className="font-mono text-ink font-bold text-sm tabular-nums">{result.performanceSpecs.kerbWeightKg}kg</p>
                         </div>
                       )}
                       {result.performanceSpecs.drivetrain && (
                         <div>
-                          <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 mb-0.5">Drivetrain</p>
-                          <p className="text-zinc-100 font-black text-sm">{result.performanceSpecs.drivetrain}</p>
+                          <p className="font-mono text-[9px] font-medium uppercase tracking-[0.2em] text-ink-faint mb-1">Drivetrain</p>
+                          <p className="font-mono text-ink font-bold text-sm">{result.performanceSpecs.drivetrain}</p>
                         </div>
                       )}
                     </div>
                     {result.performanceSpecs.jdmNote && (
-                      <p className="text-amber-500/80 text-xs mt-4 pt-3 border-t border-zinc-800 leading-snug">{result.performanceSpecs.jdmNote}</p>
+                      <p className="text-ember-300/80 text-xs mt-5 pt-4 border-t border-line leading-snug">{result.performanceSpecs.jdmNote}</p>
                     )}
                   </div>
                 )}
@@ -881,24 +891,24 @@ function HomeContent() {
 
             {/* ── SECTION 1: INVESTMENT ───────────────────────── */}
             <div id="investment" ref={valueTileRef} className="scroll-mt-4 space-y-4">
-              <TileHeader label="Investment" score={result.investmentScore ?? null} quip={getQuip("investment", result.investmentScore ?? null)} />
+              <TileHeader index="01" label="Investment" score={result.investmentScore ?? null} quip={getQuip("investment", result.investmentScore ?? null)} />
 
               {/* Price Analysis */}
               {result.priceVerdict && (
                 <div ref={priceVerdictRef} className="scroll-mt-4">
-                  <Card className="p-5">
+                  <Card className="p-6">
                     <div className="flex items-center justify-between mb-2">
                       <SectionLabel>Price Analysis</SectionLabel>
                       <VerdictBadge verdict={result.priceVerdict.assessment} />
                     </div>
-                    <p className="text-zinc-400 text-sm leading-relaxed">{result.priceVerdict.reason}</p>
+                    <p className="text-ink-muted text-sm leading-relaxed">{result.priceVerdict.reason}</p>
                   </Card>
                 </div>
               )}
 
               {/* Price Reality Check */}
               {result.enthusiastTax && (
-                <Card className="p-5">
+                <Card className="p-6">
                   <div className="flex items-center justify-between mb-4">
                     <SectionLabel>Enthusiast Tax</SectionLabel>
                     {result.enthusiastTax.premium && (
@@ -908,10 +918,10 @@ function HomeContent() {
                     )}
                   </div>
                   {result.enthusiastTax.reasons?.length > 0 && (
-                    <ul className="space-y-2">
+                    <ul className="space-y-2.5">
                       {result.enthusiastTax.reasons.map((r, i) => (
-                        <li key={i} className="flex gap-2 text-sm text-zinc-400 leading-snug">
-                          <span className={`flex-shrink-0 font-bold ${TAX_LEVEL_STYLES[result.enthusiastTax.level]?.icon ?? "text-zinc-500"}`}>$</span>
+                        <li key={i} className="flex gap-2.5 text-sm text-ink-muted leading-snug">
+                          <span className={`flex-shrink-0 font-mono font-bold ${TAX_LEVEL_STYLES[result.enthusiastTax.level]?.icon ?? "text-ink-faint"}`}>$</span>
                           {r}
                         </li>
                       ))}
@@ -922,23 +932,23 @@ function HomeContent() {
 
               {/* Price Outlook */}
               {result.priceOutlook && (
-                <Card className="p-5">
+                <Card className="p-6">
                   <div className="flex items-center justify-between mb-2">
                     <SectionLabel>Price Outlook</SectionLabel>
                     <VerdictBadge verdict={result.priceOutlook.trend} />
                   </div>
-                  <p className="text-zinc-400 text-sm leading-relaxed">{result.priceOutlook.reason}</p>
-                  <p className="text-zinc-600 text-[10px] mt-2">Based on enthusiast market trends, not live pricing data.</p>
+                  <p className="text-ink-muted text-sm leading-relaxed">{result.priceOutlook.reason}</p>
+                  <p className="font-mono text-ink-faint text-[10px] mt-2.5">Based on enthusiast market trends, not live pricing data.</p>
                 </Card>
               )}
 
               {/* Wallet Damage Rating */}
               {result.worstFinancialDecision && (() => {
-                const style = FINANCIAL_RATING_STYLES[result.worstFinancialDecision.rating] ?? { color: "text-zinc-300", bg: "", stripe: "bg-zinc-700" };
+                const style = FINANCIAL_RATING_STYLES[result.worstFinancialDecision.rating] ?? { color: "text-ink-muted", bg: "", stripe: "bg-carbon-700" };
                 return (
-                  <div className={`rounded-2xl border border-zinc-800 overflow-hidden ${style.bg}`}>
+                  <div className={`rounded-xl border border-line overflow-hidden ${style.bg}`}>
                     <div className={`h-1 ${style.stripe}`} />
-                    <div className="p-5">
+                    <div className="p-6">
                       <div className="flex items-center justify-between mb-4">
                         <SectionLabel>Wallet Damage Rating</SectionLabel>
                         <VerdictBadge verdict={result.worstFinancialDecision.rating} />
@@ -946,8 +956,8 @@ function HomeContent() {
                       {result.worstFinancialDecision.reasons?.length > 0 && (
                         <ul className="space-y-2.5">
                           {result.worstFinancialDecision.reasons.map((r, i) => (
-                            <li key={i} className="flex gap-2 text-sm text-zinc-300 leading-snug">
-                              <span className={`flex-shrink-0 font-black ${style.color}`}>→</span>
+                            <li key={i} className="flex gap-2.5 text-sm text-ink/85 leading-snug">
+                              <span className={`flex-shrink-0 font-mono font-bold ${style.color}`}>→</span>
                               {r}
                             </li>
                           ))}
@@ -960,18 +970,18 @@ function HomeContent() {
 
               {/* Reliability Risk */}
               {result.ownershipPain && (
-                <Card className="p-5">
+                <Card className="p-6">
                   <div className="flex items-center justify-between mb-4">
                     <SectionLabel>Reliability Risk</SectionLabel>
                     <VerdictBadge verdict={result.ownershipPain.score >= 8 ? "High Pain" : result.ownershipPain.score >= 5 ? "Moderate" : "Low Pain"} />
                   </div>
                   {result.ownershipPain.issues?.length > 0 && (
-                    <ul className="space-y-3 mt-1">
+                    <ul className="space-y-3.5 mt-1">
                       {result.ownershipPain.issues.map((issue, i) => (
-                        <li key={i} className="pl-3 border-l-[3px] border-red-600 py-1">
-                          <p className="font-black text-zinc-100 text-sm">{issue.title}</p>
+                        <li key={i} className="pl-3.5 border-l-2 border-ember-500 py-0.5">
+                          <p className="font-bold text-ink text-sm">{issue.title}</p>
                           {issue.detail && (
-                            <p className="text-zinc-500 text-xs mt-1 leading-relaxed">{issue.detail}</p>
+                            <p className="text-ink-faint text-xs mt-1 leading-relaxed">{issue.detail}</p>
                           )}
                         </li>
                       ))}
@@ -982,19 +992,19 @@ function HomeContent() {
 
               {/* Red flags */}
               {result.redFlags?.length > 0 && (
-                <div className="rounded-2xl border border-red-600 overflow-hidden bg-red-950/40">
-                  <div className="bg-red-700 px-5 py-3 flex items-center gap-2.5">
+                <div className="rounded-xl border border-red-500/50 overflow-hidden bg-red-950/25">
+                  <div className="bg-red-600 px-5 py-3 flex items-center gap-2.5">
                     <span className="text-white text-sm">⚠️</span>
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white">
+                    <span className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-white">
                       Red Flags — Read Before Buying
                     </span>
                   </div>
-                  <ul className="divide-y divide-red-900/50">
+                  <ul className="divide-y divide-red-900/40">
                     {result.redFlags.map((f, i) => (
                       <li key={i} className="px-5 py-4 flex gap-3">
                         <span className="text-red-400 flex-shrink-0 text-base leading-tight mt-0.5">⚠</span>
                         <div>
-                          <p className="font-black text-red-200 text-sm">{f.flag}</p>
+                          <p className="font-bold text-red-200 text-sm">{f.flag}</p>
                           <p className="text-red-300/80 text-xs mt-1 leading-relaxed">{f.explanation}</p>
                         </div>
                       </li>
@@ -1005,30 +1015,30 @@ function HomeContent() {
 
               {/* Market Trend */}
               {result.marketTrend && (
-                <Card className="p-5">
+                <Card className="p-6">
                   <div className="flex items-center justify-between mb-2">
                     <SectionLabel>Market Trend</SectionLabel>
                     <VerdictBadge verdict={result.marketTrend.trend} />
                   </div>
-                  <p className="text-zinc-400 text-sm leading-relaxed">{result.marketTrend.reason}</p>
+                  <p className="text-ink-muted text-sm leading-relaxed">{result.marketTrend.reason}</p>
                 </Card>
               )}
 
               {/* Future Classic Potential */}
               {result.classicPotential && (
-                <Card className="p-5">
-                  <div className="flex items-center justify-between mb-3">
+                <Card className="p-6">
+                  <div className="flex items-center justify-between mb-4">
                     <SectionLabel>Future Classic Potential</SectionLabel>
-                    <span className="text-xl font-black text-amber-400 tabular-nums">
+                    <span className="font-mono text-xl font-bold text-ember-400 tabular-nums">
                       {result.classicPotential.score}
-                      <span className="text-zinc-600 text-xs font-normal">/10</span>
+                      <span className="text-ink-faint text-xs font-normal">/10</span>
                     </span>
                   </div>
                   {result.classicPotential.reasons?.length > 0 && (
-                    <ul className="space-y-1.5">
+                    <ul className="space-y-2">
                       {result.classicPotential.reasons.map((r, i) => (
-                        <li key={i} className="flex gap-2 text-xs text-zinc-400">
-                          <span className="text-amber-600 flex-shrink-0">▸</span>
+                        <li key={i} className="flex gap-2.5 text-xs text-ink-muted leading-relaxed">
+                          <span className="text-ember-600 flex-shrink-0">▸</span>
                           {r}
                         </li>
                       ))}
@@ -1040,19 +1050,19 @@ function HomeContent() {
 
             {/* ── SECTION 2: CHARACTER ────────────────────────── */}
             <div id="character" ref={characterTileRef} className="scroll-mt-4 space-y-4">
-              <TileHeader label="Character" score={characterScore} quip={getQuip("character", characterScore)} />
+              <TileHeader index="02" label="Character" score={characterScore} quip={getQuip("character", characterScore)} />
 
               {/* Why Enthusiasts Care */}
               {result.whyEnthusiastsCare && (
-                <Card className="p-5">
+                <Card className="p-6">
                   <SectionLabel>Why Enthusiasts Care</SectionLabel>
-                  <p className="text-zinc-300 text-sm leading-relaxed">{result.whyEnthusiastsCare}</p>
+                  <p className="text-ink/85 text-sm leading-relaxed">{result.whyEnthusiastsCare}</p>
                 </Card>
               )}
 
               {/* Driving Character */}
               {result.drivingCharacter && (
-                <Card className="p-5">
+                <Card className="p-6">
                   <SectionLabel>Driving Character</SectionLabel>
                   <div className="space-y-0">
                     <DriveScoreRow metric={result.drivingCharacter.steeringFeel} label="Steering" />
@@ -1061,7 +1071,7 @@ function HomeContent() {
                     <DriveScoreRow metric={result.drivingCharacter.overallFun} label="Fun" />
                   </div>
                   {result.drivingCharacter.summary && (
-                    <p className="text-zinc-400 text-xs leading-relaxed border-t border-zinc-800 pt-3 mt-1">
+                    <p className="text-ink-muted text-xs italic leading-relaxed border-t border-line pt-4 mt-1">
                       {result.drivingCharacter.summary}
                     </p>
                   )}
@@ -1074,18 +1084,18 @@ function HomeContent() {
 
             {/* ── SECTION 3: STREET CRED ──────────────────────── */}
             <div id="street-cred" ref={investmentTileRef} className="scroll-mt-4 space-y-4">
-              <TileHeader label="Street Cred" score={result.vibeScore ?? null} />
+              <TileHeader index="03" label="Street Cred" score={result.vibeScore ?? null} />
 
               {/* Owner Vibe */}
               {result.ownerVibe?.label && (
                 <div ref={ownerVibeRef} className="scroll-mt-4">
-                  <Card className="p-5">
+                  <Card className="p-6">
                     <div className="flex items-center justify-between mb-3">
                       <SectionLabel>Owner Vibe</SectionLabel>
                       <VerdictBadge verdict={result.ownerVibe.label} />
                     </div>
                     {result.ownerVibe.reasoning && (
-                      <p className="text-zinc-400 text-sm leading-relaxed">{result.ownerVibe.reasoning}</p>
+                      <p className="text-ink-muted text-sm leading-relaxed">{result.ownerVibe.reasoning}</p>
                     )}
                   </Card>
                 </div>
@@ -1093,18 +1103,18 @@ function HomeContent() {
 
               {/* Cars & Coffee + Community Credibility */}
               {(result.carsCoffee || result.communityCredibility) && (
-                <Card className="p-5 space-y-4">
+                <Card className="p-6 space-y-5">
                   {result.carsCoffee && (
                     <div>
                       <div className="flex items-center justify-between mb-2">
                         <SectionLabel>Cars &amp; Coffee</SectionLabel>
                         <RatingBadge rating={result.carsCoffee.rating} />
                       </div>
-                      <p className="text-zinc-400 text-sm leading-relaxed">{result.carsCoffee.description}</p>
+                      <p className="text-ink-muted text-sm leading-relaxed">{result.carsCoffee.description}</p>
                     </div>
                   )}
                   {result.carsCoffee && result.communityCredibility && (
-                    <div className="h-px bg-zinc-800" />
+                    <div className="h-px bg-line" />
                   )}
                   {result.communityCredibility && (
                     <div>
@@ -1112,13 +1122,13 @@ function HomeContent() {
                         <SectionLabel>Community Credibility</SectionLabel>
                         <RatingBadge rating={result.communityCredibility.rating} />
                       </div>
-                      <p className="text-zinc-400 text-sm leading-relaxed">{result.communityCredibility.description}</p>
+                      <p className="text-ink-muted text-sm leading-relaxed">{result.communityCredibility.description}</p>
                     </div>
                   )}
                   {result.socialStanding && (
                     <>
-                      <div className="h-px bg-zinc-800" />
-                      <p className="text-zinc-400 text-sm italic leading-relaxed pl-3 border-l-2 border-red-600/60">
+                      <div className="h-px bg-line" />
+                      <p className="text-ink-muted text-sm italic leading-relaxed pl-3.5 border-l-2 border-ember-500/60">
                         {result.socialStanding}
                       </p>
                     </>
@@ -1128,12 +1138,12 @@ function HomeContent() {
 
               {/* Regret Risk */}
               {result.regretRisk && (
-                <Card className="p-5">
+                <Card className="p-6">
                   <div className="flex items-center justify-between mb-2">
                     <SectionLabel>Regret Risk</SectionLabel>
                     <VerdictBadge verdict={result.regretRisk.level} />
                   </div>
-                  <p className="text-zinc-400 text-sm leading-relaxed">{result.regretRisk.reason}</p>
+                  <p className="text-ink-muted text-sm leading-relaxed">{result.regretRisk.reason}</p>
                 </Card>
               )}
             </div>
@@ -1142,17 +1152,17 @@ function HomeContent() {
             {result.specSignificance?.length > 0 && (
               <div className="space-y-3">
                 <div className="flex items-center gap-3 pt-2">
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-red-500">Spec Significance</span>
-                  <div className="flex-1 h-px bg-zinc-800" />
+                  <span className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-ember-400">Spec Significance</span>
+                  <div className="flex-1 h-px bg-line" />
                 </div>
-                <Card className="p-5">
-                  <ul className="space-y-3">
+                <Card className="p-6">
+                  <ul className="space-y-3.5">
                     {result.specSignificance.map((s, i) => (
                       <li key={i} className="flex gap-3">
-                        <span className="text-red-500 flex-shrink-0 font-black mt-0.5">+</span>
+                        <span className="text-ember-400 flex-shrink-0 font-bold mt-0.5">+</span>
                         <div>
-                          <span className="font-bold text-zinc-200 text-sm">{s.item}</span>
-                          {s.note && <p className="text-zinc-500 text-xs mt-0.5 leading-relaxed">{s.note}</p>}
+                          <span className="font-bold text-ink text-sm">{s.item}</span>
+                          {s.note && <p className="text-ink-faint text-xs mt-1 leading-relaxed">{s.note}</p>}
                         </div>
                       </li>
                     ))}
@@ -1165,15 +1175,15 @@ function HomeContent() {
             {result.questionsToAsk?.length > 0 && (
               <div className="space-y-3">
                 <div className="flex items-center gap-3 pt-2">
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-red-500">Ask the Seller</span>
-                  <div className="flex-1 h-px bg-zinc-800" />
+                  <span className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-ember-400">Ask the Seller</span>
+                  <div className="flex-1 h-px bg-line" />
                 </div>
-                <Card className="p-5">
-                  <ol className="space-y-3">
+                <Card className="p-6">
+                  <ol className="space-y-3.5">
                     {result.questionsToAsk.map((q, i) => (
-                      <li key={i} className="flex gap-3 text-sm border-b border-zinc-800/60 pb-3 last:border-0 last:pb-0">
-                        <span className="text-red-600 font-black w-4 flex-shrink-0 tabular-nums">{i + 1}</span>
-                        <span className="text-zinc-300 leading-snug">{q}</span>
+                      <li key={i} className="flex gap-3.5 text-sm border-b border-line pb-3.5 last:border-0 last:pb-0">
+                        <span className="font-mono text-ember-500 font-bold w-5 flex-shrink-0 tabular-nums">{String(i + 1).padStart(2, "0")}</span>
+                        <span className="text-ink/85 leading-snug">{q}</span>
                       </li>
                     ))}
                   </ol>
@@ -1185,25 +1195,25 @@ function HomeContent() {
             {result.alternatives && result.alternatives.length > 0 && (
               <div className="space-y-3">
                 <div className="flex items-center gap-3 pt-2">
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-red-500">You Might Also Consider</span>
-                  <div className="flex-1 h-px bg-zinc-800" />
+                  <span className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-ember-400">You Might Also Consider</span>
+                  <div className="flex-1 h-px bg-line" />
                 </div>
-                <Card className="p-5 space-y-4">
+                <Card className="p-6 space-y-5">
                   {result.alternatives.map((alt, i) => (
-                    <div key={i} className={i > 0 ? "pt-4 border-t border-zinc-800" : ""}>
+                    <div key={i} className={i > 0 ? "pt-5 border-t border-line" : ""}>
                       <div className="flex items-start justify-between gap-3 mb-2">
-                        <p className="font-black text-zinc-100 text-sm leading-snug">{alt.name}</p>
+                        <p className="font-bold text-ink text-sm leading-snug">{alt.name}</p>
                         {alt.priceRange && (
-                          <span className="flex-shrink-0 text-[10px] font-bold text-zinc-400 bg-zinc-800 px-2.5 py-1 rounded-md whitespace-nowrap">
+                          <span className="flex-shrink-0 font-mono text-[10px] font-medium text-ink-muted bg-white/[0.04] border border-line px-2.5 py-1 rounded whitespace-nowrap tabular-nums">
                             {alt.priceRange}
                           </span>
                         )}
                       </div>
-                      <p className="text-zinc-400 text-sm leading-relaxed">{alt.whySuited}</p>
-                      <p className="text-zinc-500 text-xs leading-relaxed mt-1">{alt.howDiffers}</p>
+                      <p className="text-ink-muted text-sm leading-relaxed">{alt.whySuited}</p>
+                      <p className="text-ink-faint text-xs leading-relaxed mt-1.5">{alt.howDiffers}</p>
                     </div>
                   ))}
-                  <p className="text-zinc-600 text-[10px] leading-relaxed pt-2 border-t border-zinc-800/60">
+                  <p className="font-mono text-ink-faint text-[10px] leading-relaxed pt-3 border-t border-line">
                     These are AI suggestions based on general market knowledge — not live Trade Me listings. Availability and pricing may vary.
                   </p>
                 </Card>
@@ -1212,15 +1222,15 @@ function HomeContent() {
 
             {/* ── THE ENTHUSIAST TAKE ─────────────────────────── */}
             {result.enthusiastTake && (
-              <div className="rounded-2xl bg-zinc-900 border border-zinc-700 overflow-hidden">
-                <div className="bg-red-600 px-5 py-2.5 flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-white/60" />
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white">
+              <div className="rounded-xl bg-carbon-900 border border-line-strong overflow-hidden">
+                <div className="bg-ember-500 px-5 py-3 flex items-center gap-2.5">
+                  <div className="w-1.5 h-1.5 rounded-full bg-carbon-950/50" />
+                  <span className="font-mono text-[10px] font-bold uppercase tracking-[0.24em] text-carbon-950">
                     The Enthusiast Take
                   </span>
                 </div>
-                <div className="px-5 py-4">
-                  <p className="text-zinc-100 leading-relaxed text-sm">{result.enthusiastTake}</p>
+                <div className="px-6 py-5">
+                  <p className="text-ink leading-relaxed text-[15px]">{result.enthusiastTake}</p>
                 </div>
               </div>
             )}
@@ -1228,7 +1238,7 @@ function HomeContent() {
             {/* Reset */}
             <button
               onClick={handleReset}
-              className="w-full border border-zinc-800 hover:border-zinc-600 text-zinc-500 hover:text-zinc-300 rounded-xl py-3 text-xs font-bold uppercase tracking-widest transition-all"
+              className="w-full border border-line hover:border-line-strong text-ink-faint hover:text-ink-muted rounded-lg py-3.5 font-mono text-[11px] font-medium uppercase tracking-[0.2em] transition-all"
             >
               Analyse Another Listing
             </button>
