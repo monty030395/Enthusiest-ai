@@ -1,0 +1,172 @@
+﻿{
+    "vehicle":  {
+                    "make":  "BMW",
+                    "model":  "130i",
+                    "year":  "",
+                    "variant":  "Manual",
+                    "mileage":  "",
+                    "price":  "",
+                    "transmission":  "Manual",
+                    "colour":  "",
+                    "importStatus":  "Unknown",
+                    "location":  ""
+                },
+    "label":  "Hidden Gem",
+    "verdict":  "Well-maintained and tastefully modified, this 130i is a rare find in the NZ market.",
+    "whatMakesSpecial":  "One of the last naturally aspirated inline-6s BMW put in a hatchback, with a manual gearbox that enhances the driving experience.",
+    "whyEnthusiastsCare":  "The E87 130i is beloved for its hydraulic steering and naturally aspirated inline-6, offering a driving purity that\u0027s increasingly rare.",
+    "ownerVibe":  {
+                      "label":  "Mature Enthusiast Owner",
+                      "reasoning":  "Extensive maintenance and tasteful mods suggest a knowledgeable owner who cared for the car."
+                  },
+    "carsCoffee":  {
+                       "rating":  "Medium",
+                       "description":  "While not a headliner, the 130i\u0027s rarity and manual gearbox will draw interest from those in the know."
+                   },
+    "communityCredibility":  {
+                                 "rating":  "High",
+                                 "description":  "The 130i has a strong following among BMW enthusiasts for its unique blend of practicality and performance."
+                             },
+    "socialStanding":  "The car that makes WRX owners look twice and Honda guys quietly jealous.",
+    "specSignificance":  [
+                             {
+                                 "item":  "Manual Transmission",
+                                 "note":  "Highly sought after for driving engagement."
+                             },
+                             {
+                                 "item":  "Ohlins Coil Over Suspension",
+                                 "note":  "Premium suspension upgrade for improved handling."
+                             },
+                             {
+                                 "item":  "Supersprint Exhaust",
+                                 "note":  "Enhances the inline-6\u0027s sound and performance."
+                             }
+                         ],
+    "priceVerdict":  {
+                         "assessment":  "Fair",
+                         "reason":  "The maintenance and modifications justify the asking price in the enthusiast market."
+                     },
+    "enthusiastTax":  {
+                          "level":  "Moderate",
+                          "premium":  "+$3,000â5,000",
+                          "reasons":  [
+                                          "Manual gearbox adds $3â5k over equivalent auto in NZ",
+                                          "Tasteful mods and documented history increase appeal."
+                                      ]
+                      },
+    "priceOutlook":  {
+                         "trend":  "Stable",
+                         "reason":  "The 130i\u0027s unique attributes maintain its value, but supply is not as limited as older M models."
+                     },
+    "ownershipPain":  {
+                          "score":  5,
+                          "issues":  [
+                                         {
+                                             "title":  "N52 Hydraulic Valve Adjuster Failure",
+                                             "detail":  "Can cause rough idle and misfires â replacement costs $1,500â2,000 NZD."
+                                         },
+                                         {
+                                             "title":  "Water Pump Failure",
+                                             "detail":  "Electric water pump is a known weak point â costs $800â1,200 NZD to replace."
+                                         },
+                                         {
+                                             "title":  "DISA Valve Issues",
+                                             "detail":  "Failure can lead to power loss â replacement costs $500â800 NZD."
+                                         }
+                                     ]
+                      },
+    "drivingCharacter":  {
+                             "steeringFeel":  {
+                                                  "score":  8,
+                                                  "description":  "The hydraulic rack provides excellent feedback and precision, making twisty roads a delight."
+                                              },
+                             "engineCharacter":  {
+                                                     "score":  8,
+                                                     "description":  "The N52 inline-6 sings all the way to redline, with a linear power delivery that\u0027s a joy to exploit."
+                                                 },
+                             "dailyComfort":  {
+                                                  "score":  6,
+                                                  "description":  "Ohlins suspension improves handling but may be firm for daily use; cabin is well-appointed but road noise can intrude."
+                                              },
+                             "overallFun":  {
+                                                "score":  8,
+                                                "description":  "The combination of a manual gearbox and a lively inline-6 makes every drive engaging."
+                                            },
+                             "summary":  "A driver\u0027s car that rewards with every corner and gear change."
+                         },
+    "classicPotential":  {
+                             "score":  7,
+                             "reasons":  [
+                                             "Last naturally aspirated inline-6 in this body",
+                                             "Manuals disappearing from this segment."
+                                         ]
+                         },
+    "regretRisk":  {
+                       "level":  "Low",
+                       "reason":  "Well-maintained example with desirable spec reduces the risk of buyer\u0027s remorse."
+                   },
+    "marketTrend":  {
+                        "trend":  "Stable",
+                        "reason":  "Values have plateaued â enthusiast floor is firm but high km and common availability cap any upside."
+                    },
+    "worstFinancialDecision":  {
+                                   "rating":  "Manageable Pain",
+                                   "reasons":  [
+                                                   "N52 engine maintenance can be costly, but a well-maintained example mitigates major risks.",
+                                                   "Parts are generally available but can be expensive."
+                                               ]
+                               },
+    "redFlags":  [
+
+                 ],
+    "modPotential":  {
+                         "relevance":  "high",
+                         "powerCeiling":  "Stage 2 tune and intake mods can push this to 200kW â budget $3,000â5,000 NZD for a reliable street build.",
+                         "firstMods":  [
+                                           "N52 catch can ($200â400 NZD) to address oil ingestion before any power mods",
+                                           "Silicone intake hose on the N52 â factory rubber can crack and cause issues."
+                                       ],
+                         "handlingUpgrades":  "Ohlins coilovers are top-tier, but consider adding a limited-slip differential for better traction.",
+                         "partsEcosystem":  "Strong support from both local and international suppliers, with a vibrant community on forums like Bimmersport.",
+                         "collectorRisk":  "Modifications are generally accepted as long as they enhance performance and are reversible."
+                     },
+    "questionsToAsk":  [
+                           "Has the Vanos system been serviced recently?",
+                           "Any issues with the electric water pump or thermostat?",
+                           "Are there any signs of oil leaks from the valve cover or oil filter housing?"
+                       ],
+    "enthusiastTake":  "This 130i is a rare gem, combining the best of BMW\u0027s driving dynamics with tasteful mods and a manual gearbox.",
+    "performanceSpecs":  {
+                             "engine":  "N52B30 3.0L NA I6",
+                             "powerKw":  195,
+                             "powerHp":  261,
+                             "torqueNm":  315,
+                             "torqueRpm":  "2750",
+                             "zeroToHundred":  "6.0s",
+                             "kerbWeightKg":  1395,
+                             "drivetrain":  "FR, RWD",
+                             "jdmNote":  ""
+                         },
+    "alternatives":  [
+                         {
+                             "name":  "Volkswagen Golf GTI Mk6",
+                             "whySuited":  "Offers a similar blend of practicality and performance with a strong enthusiast following.",
+                             "howDiffers":  "Turbocharged engine provides a different power delivery and tuning potential.",
+                             "priceRange":  "$15,000â$25,000"
+                         },
+                         {
+                             "name":  "Mazda MX-5 NC",
+                             "whySuited":  "For those prioritizing driving fun and open-top motoring.",
+                             "howDiffers":  "Lacks the practicality of a hatchback but offers a pure roadster experience.",
+                             "priceRange":  "$12,000â$20,000"
+                         },
+                         {
+                             "name":  "Subaru WRX STI (GD)",
+                             "whySuited":  "For those seeking performance with AWD grip and rally heritage.",
+                             "howDiffers":  "More raw and aggressive, with a turbocharged flat-four and AWD.",
+                             "priceRange":  "$20,000â$30,000"
+                         }
+                     ],
+    "investmentScore":  7,
+    "vibeScore":  8
+}

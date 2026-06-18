@@ -1,0 +1,165 @@
+﻿{
+    "vehicle":  {
+                    "make":  "Mercedes-Benz",
+                    "model":  "C-Class",
+                    "year":  "2020",
+                    "variant":  "C200 AMG Line",
+                    "mileage":  "58,500",
+                    "price":  "NZ$33,990",
+                    "transmission":  "",
+                    "colour":  "",
+                    "importStatus":  "NZ New",
+                    "location":  "Christchurch"
+                },
+    "label":  "Peak Daily Driver",
+    "verdict":  "A well-priced, modern luxury sedan with all the tech and comfort you need for daily driving.",
+    "whatMakesSpecial":  "The AMG Line package adds a sporty edge to the C-Class, with aggressive styling and premium features that elevate its appeal.",
+    "whyEnthusiastsCare":  "The C-Class has long been a benchmark for luxury sedans, combining Mercedes\u0027 reputation for quality with a balance of performance and comfort.",
+    "ownerVibe":  {
+                      "label":  "Rich Dentist Spec",
+                      "reasoning":  "The car is presented in excellent condition with premium options, suggesting a meticulous owner who values luxury and style."
+                  },
+    "carsCoffee":  {
+                       "rating":  "Medium",
+                       "description":  "While not a showstopper, the AMG Line gives it enough flair to catch some eyes among luxury sedan enthusiasts."
+                   },
+    "communityCredibility":  {
+                                 "rating":  "High",
+                                 "description":  "The C-Class is respected for its blend of luxury and performance, with a strong following among Mercedes enthusiasts."
+                             },
+    "socialStanding":  "The C-Class that says you\u0027ve arrived, but still know how to enjoy the drive.",
+    "specSignificance":  [
+                             {
+                                 "item":  "AMG Line package",
+                                 "note":  "Adds sporty styling and premium features."
+                             },
+                             {
+                                 "item":  "Panoramic sunroof",
+                                 "note":  "Enhances the luxury feel of the cabin."
+                             },
+                             {
+                                 "item":  "Heads-up display",
+                                 "note":  "Modern tech feature for convenience and safety."
+                             }
+                         ],
+    "priceVerdict":  {
+                         "assessment":  "Fair",
+                         "reason":  "The price reflects its condition, mileage, and the desirable AMG Line package."
+                     },
+    "enthusiastTax":  {
+                          "level":  "Mild",
+                          "premium":  "+$1,000â2,000",
+                          "reasons":  [
+                                          "AMG Line package adds a slight premium over standard models."
+                                      ]
+                      },
+    "priceOutlook":  {
+                         "trend":  "Stable",
+                         "reason":  "The C-Class holds its value well due to its reputation and desirability in the luxury sedan market."
+                     },
+    "ownershipPain":  {
+                          "score":  3,
+                          "issues":  [
+                                         {
+                                             "title":  "M274 engine timing chain",
+                                             "detail":  "Known to stretch over time, potentially requiring replacement around 100,000km â budget $1,500â2,500 NZD."
+                                         },
+                                         {
+                                             "title":  "ZF 9-speed transmission service",
+                                             "detail":  "Requires regular servicing to maintain smooth operation â expect $500â800 NZD every 60,000km."
+                                         }
+                                     ]
+                      },
+    "drivingCharacter":  {
+                             "steeringFeel":  {
+                                                  "score":  7,
+                                                  "description":  "The steering is precise and well-weighted, offering good feedback for a luxury sedan, though not as communicative as a sports car."
+                                              },
+                             "engineCharacter":  {
+                                                     "score":  6,
+                                                     "description":  "The turbocharged engine delivers smooth power with a refined, quiet operation, though it lacks the visceral thrill of a naturally aspirated unit."
+                                                 },
+                             "dailyComfort":  {
+                                                  "score":  9,
+                                                  "description":  "Exceptionally comfortable with a plush ride, quiet cabin, and all the modern conveniences for a stress-free commute."
+                                              },
+                             "overallFun":  {
+                                                "score":  6,
+                                                "description":  "While not a sports car, the C200 AMG Line offers a satisfying balance of comfort and performance for spirited driving."
+                                            },
+                             "summary":  "A refined and comfortable luxury sedan with enough performance to keep the drive engaging."
+                         },
+    "classicPotential":  {
+                             "score":  5,
+                             "reasons":  [
+                                             "Modern luxury sedans rarely become classics, but AMG Line models may hold a niche appeal."
+                                         ]
+                         },
+    "regretRisk":  {
+                       "level":  "Low",
+                       "reason":  "With its blend of luxury, tech, and performance, it\u0027s unlikely to disappoint as a daily driver."
+                   },
+    "marketTrend":  {
+                        "trend":  "Stable",
+                        "reason":  "The C-Class remains a popular choice, keeping demand and prices steady."
+                    },
+    "worstFinancialDecision":  {
+                                   "rating":  "Sensible Purchase",
+                                   "reasons":  [
+                                                   "Mercedes-Benz parts can be pricey, but the C-Class is generally reliable with regular maintenance."
+                                               ]
+                               },
+    "redFlags":  [
+
+                 ],
+    "modPotential":  {
+                         "relevance":  "medium",
+                         "powerCeiling":  "Stage 1 tune can push it to around 180kW â budget $2,000â3,000 NZD for a reliable upgrade.",
+                         "firstMods":  [
+                                           "Upgraded air intake for better breathing and sound.",
+                                           "ECU tune for improved throttle response and power."
+                                       ],
+                         "handlingUpgrades":  "Bilstein or KW coilovers can improve handling without sacrificing comfort.",
+                         "partsEcosystem":  "Strong aftermarket support with plenty of tuning options available both locally and internationally.",
+                         "collectorRisk":  "AMG Line models are more desirable but unlikely to be collectible â modding won\u0027t significantly hurt resale."
+                     },
+    "questionsToAsk":  [
+                           "Has the timing chain been inspected or replaced?",
+                           "When was the last transmission service performed?",
+                           "Is there any remaining warranty or service plan?"
+                       ],
+    "enthusiastTake":  "This C200 AMG Line is a solid choice for those who want luxury and style without the new car price tag, but keep an eye on the timing chain as it ages.",
+    "performanceSpecs":  {
+                             "engine":  "M274 2.0L Turbo I4",
+                             "powerKw":  135,
+                             "powerHp":  184,
+                             "torqueNm":  300,
+                             "torqueRpm":  "1200â4000",
+                             "zeroToHundred":  "7.2s",
+                             "kerbWeightKg":  1495,
+                             "drivetrain":  "FR, RWD",
+                             "jdmNote":  ""
+                         },
+    "alternatives":  [
+                         {
+                             "name":  "BMW 320i G20",
+                             "whySuited":  "For those considering a luxury sedan with a sporty edge, the 320i offers a similar blend of performance and comfort.",
+                             "howDiffers":  "The BMW offers a slightly more engaging drive with its rear-wheel-drive dynamics.",
+                             "priceRange":  "$30,000â$40,000"
+                         },
+                         {
+                             "name":  "Audi A4 B9",
+                             "whySuited":  "A great alternative for those who value interior quality and tech features, the A4 competes directly with the C-Class.",
+                             "howDiffers":  "The A4 offers quattro all-wheel drive for added traction and security.",
+                             "priceRange":  "$32,000â$42,000"
+                         },
+                         {
+                             "name":  "Volvo S60 T5",
+                             "whySuited":  "For buyers seeking safety and Scandinavian design, the S60 provides a unique take on the luxury sedan.",
+                             "howDiffers":  "The Volvo focuses more on comfort and safety than outright sportiness.",
+                             "priceRange":  "$28,000â$38,000"
+                         }
+                     ],
+    "investmentScore":  7,
+    "vibeScore":  8
+}

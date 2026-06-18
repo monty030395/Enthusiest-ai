@@ -1,0 +1,174 @@
+﻿{
+    "vehicle":  {
+                    "make":  "Aston Martin",
+                    "model":  "DB9",
+                    "year":  "2005",
+                    "variant":  "",
+                    "mileage":  "79,233 kms",
+                    "price":  "",
+                    "transmission":  "6-speed automatic with Touchtronic paddle-shift manual mode",
+                    "colour":  "Grey",
+                    "importStatus":  "Unknown",
+                    "location":  "Christchurch"
+                },
+    "label":  "Money Pit",
+    "verdict":  "Structurally damaged history makes this a risky buy despite its allure and performance.",
+    "whatMakesSpecial":  "A hand-built British grand tourer with a naturally aspirated 5.9L V12, offering a unique blend of luxury and performance.",
+    "whyEnthusiastsCare":  "The DB9 is revered for its timeless design and the visceral experience of a naturally aspirated V12, a combination that\u0027s becoming increasingly rare.",
+    "ownerVibe":  {
+                      "label":  "Dealer Dressed as Private",
+                      "reasoning":  "Listed by a dealership on behalf of a private seller, with professional sales language and finance options."
+                  },
+    "carsCoffee":  {
+                       "rating":  "High",
+                       "description":  "A DB9 always draws a crowd with its stunning design and V12 soundtrack."
+                   },
+    "communityCredibility":  {
+                                 "rating":  "High",
+                                 "description":  "The Aston Martin DB9 is highly respected among enthusiasts for its design and performance pedigree."
+                             },
+    "socialStanding":  "The car that turns heads at every meet and makes even supercar owners nod in appreciation.",
+    "specSignificance":  [
+                             {
+                                 "item":  "5.9L V12",
+                                 "note":  "Naturally aspirated V12 engines are a dying breed."
+                             },
+                             {
+                                 "item":  "Bridge of Weir leather",
+                                 "note":  "High-quality leather interior that adds to the luxury feel."
+                             }
+                         ],
+    "priceVerdict":  {
+                         "assessment":  "Overpriced",
+                         "reason":  "The structural damage history significantly impacts value, despite the car\u0027s inherent desirability."
+                     },
+    "enthusiastTax":  {
+                          "level":  "High",
+                          "premium":  "+$6,000â10,000",
+                          "reasons":  [
+                                          "Naturally aspirated V12 rarity",
+                                          "Iconic design and brand prestige",
+                                          "Seller leveraging the car\u0027s desirability despite damage history."
+                                      ]
+                      },
+    "priceOutlook":  {
+                         "trend":  "Falling",
+                         "reason":  "Structural damage history will deter collectors and impact long-term value retention."
+                     },
+    "ownershipPain":  {
+                          "score":  8,
+                          "issues":  [
+                                         {
+                                             "title":  "V12 Engine Maintenance",
+                                             "detail":  "Routine servicing of the V12 can cost upwards of $2,000â3,000 NZD annually."
+                                         },
+                                         {
+                                             "title":  "Touchtronic Transmission",
+                                             "detail":  "Known for expensive repairs if issues arise, with potential costs exceeding $5,000 NZD."
+                                         },
+                                         {
+                                             "title":  "Structural Damage History",
+                                             "detail":  "Unknown quality of repairs could lead to unforeseen issues and devaluation."
+                                         }
+                                     ]
+                      },
+    "drivingCharacter":  {
+                             "steeringFeel":  {
+                                                  "score":  7,
+                                                  "description":  "Precise and responsive, though not as communicative as the best hydraulic setups."
+                                              },
+                             "engineCharacter":  {
+                                                     "score":  9,
+                                                     "description":  "The V12 roars with a symphony of mechanical sound, delivering power smoothly across the rev range."
+                                                 },
+                             "dailyComfort":  {
+                                                  "score":  6,
+                                                  "description":  "Luxurious but firm; the ride can be harsh on NZ\u0027s rough roads, and the cabin is snug."
+                                              },
+                             "overallFun":  {
+                                                "score":  8,
+                                                "description":  "A thrilling grand tourer that excels on open roads, but the automatic can feel less engaging."
+                                            },
+                             "summary":  "A grand tourer that combines luxury and performance, but the automatic transmission dulls the edge."
+                         },
+    "classicPotential":  {
+                             "score":  6,
+                             "reasons":  [
+                                             "Naturally aspirated V12s are becoming rare",
+                                             "Iconic design",
+                                             "Structural damage history limits classic appeal."
+                                         ]
+                         },
+    "regretRisk":  {
+                       "level":  "High",
+                       "reason":  "The structural damage history and high maintenance costs could lead to buyer\u0027s remorse."
+                   },
+    "marketTrend":  {
+                        "trend":  "Falling",
+                        "reason":  "Structural damage history will keep values suppressed despite the model\u0027s inherent desirability."
+                    },
+    "worstFinancialDecision":  {
+                                   "rating":  "Dangerous",
+                                   "reasons":  [
+                                                   "High maintenance costs",
+                                                   "Potentially expensive structural repairs",
+                                                   "Depreciation due to damage history."
+                                               ]
+                               },
+    "redFlags":  [
+                     {
+                         "flag":  "Structurally Damaged",
+                         "explanation":  "This car has been recorded as structurally damaged by NZTA, which can severely impact value and insurability."
+                     }
+                 ],
+    "modPotential":  {
+                         "relevance":  "medium",
+                         "powerCeiling":  "Limited due to the V12\u0027s already high output and the car\u0027s grand touring focus.",
+                         "firstMods":  [
+                                           "High-flow air filters to enhance intake sound.",
+                                           "Exhaust system upgrade for a more aggressive V12 note."
+                                       ],
+                         "handlingUpgrades":  "Bilstein or KW coilovers can improve handling without sacrificing too much comfort.",
+                         "partsEcosystem":  "Limited aftermarket support in NZ, but international suppliers like RSC Tuning offer performance parts.",
+                         "collectorRisk":  "Modifications could further devalue this car given its damage history."
+                     },
+    "questionsToAsk":  [
+                           "Can you provide detailed documentation of the structural repairs?",
+                           "Has the Touchtronic transmission been serviced or had any issues?",
+                           "What is the service history for the V12 engine?"
+                       ],
+    "enthusiastTake":  "While the DB9 is a stunning piece of automotive art, the structural damage history is a serious concern that could lead to costly surprises.",
+    "performanceSpecs":  {
+                             "engine":  "5.9L DOHC 48-valve V12",
+                             "powerKw":  335,
+                             "powerHp":  450,
+                             "torqueNm":  570,
+                             "torqueRpm":  "",
+                             "zeroToHundred":  "4.7s",
+                             "kerbWeightKg":  1760,
+                             "drivetrain":  "FR, RWD",
+                             "jdmNote":  ""
+                         },
+    "alternatives":  [
+                         {
+                             "name":  "Jaguar XKR (X150)",
+                             "whySuited":  "For those seeking a British grand tourer with a supercharged V8 and similar luxury appeal.",
+                             "howDiffers":  "Offers a more modern interior and supercharged power delivery with less risk of structural issues.",
+                             "priceRange":  "$30,000â$50,000"
+                         },
+                         {
+                             "name":  "BMW M6 (E63)",
+                             "whySuited":  "Provides a similar V10 thrill with a more robust reliability record and a manual transmission option.",
+                             "howDiffers":  "The M6 offers a more aggressive driving experience with a focus on performance over luxury.",
+                             "priceRange":  "$40,000â$60,000"
+                         },
+                         {
+                             "name":  "Porsche 911 Carrera (997)",
+                             "whySuited":  "For those who want a reliable sports car with iconic styling and a flat-six engine.",
+                             "howDiffers":  "The 911 offers a more engaging driving experience with a focus on handling and precision.",
+                             "priceRange":  "$50,000â$80,000"
+                         }
+                     ],
+    "investmentScore":  3,
+    "vibeScore":  8
+}

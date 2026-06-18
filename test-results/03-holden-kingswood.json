@@ -1,0 +1,166 @@
+﻿{
+    "vehicle":  {
+                    "make":  "Holden",
+                    "model":  "Kingswood Ute",
+                    "year":  "1981",
+                    "variant":  "",
+                    "mileage":  "",
+                    "price":  "",
+                    "transmission":  "",
+                    "colour":  "",
+                    "importStatus":  "NZ New",
+                    "location":  ""
+                },
+    "label":  "Future Classic",
+    "verdict":  "A classic Aussie ute with a V8 heart â it\u0027s a piece of history with a rumbling soundtrack.",
+    "whatMakesSpecial":  "The 1981 Holden Kingswood ute is a quintessential piece of Australian automotive history, especially with the 350 small block Chev V8 engine.",
+    "whyEnthusiastsCare":  "The Kingswood ute is a symbol of rugged Australian utility vehicles, known for their durability and the ability to take on any task, now with added V8 muscle.",
+    "ownerVibe":  {
+                      "label":  "Weekend Warrior",
+                      "reasoning":  "The owner has clearly invested in maintaining and upgrading the vehicle, with a focus on performance and aesthetics."
+                  },
+    "carsCoffee":  {
+                       "rating":  "High",
+                       "description":  "This ute will draw a crowd with its V8 rumble and classic Aussie charm."
+                   },
+    "communityCredibility":  {
+                                 "rating":  "High",
+                                 "description":  "The Kingswood ute is well-respected among classic car enthusiasts and those who appreciate Aussie automotive history."
+                             },
+    "socialStanding":  "The ute that makes you the hero of any DIY project and the star of the local meet.",
+    "specSignificance":  [
+                             {
+                                 "item":  "350 small block Chev V8",
+                                 "note":  "A significant upgrade from the original engine, adding power and appeal."
+                             },
+                             {
+                                 "item":  "Legally lowered",
+                                 "note":  "Enhances the stance and handling, appealing to enthusiasts."
+                             }
+                         ],
+    "priceVerdict":  {
+                         "assessment":  "Fair",
+                         "reason":  "The price reflects the modifications and condition, typical for a classic with a V8 swap."
+                     },
+    "enthusiastTax":  {
+                          "level":  "Moderate",
+                          "premium":  "+$3,000â5,000",
+                          "reasons":  [
+                                          "V8 engine swap adds desirability",
+                                          "Classic ute appeal in NZ",
+                                          "Legally lowered and modified for enthusiasts"
+                                      ]
+                      },
+    "priceOutlook":  {
+                         "trend":  "Rising",
+                         "reason":  "Interest in classic utes and V8 swaps is growing, especially as these become rarer."
+                     },
+    "ownershipPain":  {
+                          "score":  5,
+                          "issues":  [
+                                         {
+                                             "title":  "V8 Engine Maintenance",
+                                             "detail":  "The 350 small block Chev is robust but requires regular tuning and potential rebuilds, costing $2,000â4,000 NZD."
+                                         },
+                                         {
+                                             "title":  "Cooling System",
+                                             "detail":  "Despite new components, ensure the Fenix radiator and trans cooler are properly maintained to avoid overheating."
+                                         }
+                                     ]
+                      },
+    "drivingCharacter":  {
+                             "steeringFeel":  {
+                                                  "score":  5,
+                                                  "description":  "Steering is more about heft than precision, typical of older utes, but the power steering helps manage it."
+                                              },
+                             "engineCharacter":  {
+                                                     "score":  8,
+                                                     "description":  "The 350 V8 provides a deep, throaty roar and plenty of low-end torque, making every drive an event."
+                                                 },
+                             "dailyComfort":  {
+                                                  "score":  4,
+                                                  "description":  "Bench seats are comfy, but the lowered suspension and cabin noise from the dump pipes make it less ideal for long hauls."
+                                              },
+                             "overallFun":  {
+                                                "score":  7,
+                                                "description":  "The combination of V8 power and classic ute styling makes for a fun, nostalgic drive that turns heads."
+                                            },
+                             "summary":  "A classic ute with V8 grunt â it\u0027s all about the sound and presence."
+                         },
+    "classicPotential":  {
+                             "score":  7,
+                             "reasons":  [
+                                             "Classic utes are gaining popularity",
+                                             "V8 swaps add to the allure and rarity"
+                                         ]
+                         },
+    "regretRisk":  {
+                       "level":  "Medium",
+                       "reason":  "Potential maintenance costs and the impracticality of a lowered, V8-powered ute could deter some buyers."
+                   },
+    "marketTrend":  {
+                        "trend":  "Rising",
+                        "reason":  "Classic utes with V8 swaps are becoming more desirable as they become rarer."
+                    },
+    "worstFinancialDecision":  {
+                                   "rating":  "Manageable Pain",
+                                   "reasons":  [
+                                                   "V8 maintenance costs",
+                                                   "Fuel consumption",
+                                                   "Potential for rust in older utes"
+                                               ]
+                               },
+    "redFlags":  [
+
+                 ],
+    "modPotential":  {
+                         "relevance":  "medium",
+                         "powerCeiling":  "With further tuning and exhaust upgrades, you could push it to 300kW â budget $5,000â7,000 NZD for a reliable build.",
+                         "firstMods":  [
+                                           "Upgrade the ignition system for reliability",
+                                           "Consider a performance carburetor for better throttle response"
+                                       ],
+                         "handlingUpgrades":  "Consider Bilstein or Koni shocks to improve ride quality and handling.",
+                         "partsEcosystem":  "Strong support from both local and international suppliers for Holden and Chev parts.",
+                         "collectorRisk":  "Modifications like the V8 swap enhance value rather than detract, given the ute\u0027s classic status."
+                     },
+    "questionsToAsk":  [
+                           "Has the V8 engine been rebuilt or modified beyond the swap?",
+                           "Are there any rust issues, particularly in the tray or undercarriage?",
+                           "How does the cooling system perform under load?"
+                       ],
+    "enthusiastTake":  "This Kingswood ute is a slice of Aussie motoring history with a V8 heart â perfect for those who appreciate classic utility with a side of grunt.",
+    "performanceSpecs":  {
+                             "engine":  "350 Small Block Chev V8",
+                             "powerKw":  194,
+                             "powerHp":  260,
+                             "torqueNm":  515,
+                             "torqueRpm":  "",
+                             "zeroToHundred":  "",
+                             "kerbWeightKg":  0,
+                             "drivetrain":  "FR, RWD",
+                             "jdmNote":  ""
+                         },
+    "alternatives":  [
+                         {
+                             "name":  "Ford Falcon XY Ute",
+                             "whySuited":  "Another classic Aussie ute with strong community support and potential for V8 swaps.",
+                             "howDiffers":  "The Falcon offers a slightly different styling and brand heritage, with similar mod potential.",
+                             "priceRange":  "$30,000â$50,000"
+                         },
+                         {
+                             "name":  "Holden Commodore VB-VH",
+                             "whySuited":  "For those who want a classic Holden with more modern amenities and similar V8 potential.",
+                             "howDiffers":  "The Commodore offers a more refined ride and interior compared to the rugged Kingswood.",
+                             "priceRange":  "$20,000â$35,000"
+                         },
+                         {
+                             "name":  "Toyota Land Cruiser FJ40",
+                             "whySuited":  "For those who appreciate classic utility vehicles with a reputation for reliability and off-road prowess.",
+                             "howDiffers":  "The Land Cruiser is more about off-road capability and durability than on-road performance.",
+                             "priceRange":  "$35,000â$50,000"
+                         }
+                     ],
+    "investmentScore":  7,
+    "vibeScore":  8
+}

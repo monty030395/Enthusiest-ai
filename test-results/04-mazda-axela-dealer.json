@@ -1,0 +1,160 @@
+﻿{
+    "vehicle":  {
+                    "make":  "Mazda",
+                    "model":  "Axela",
+                    "year":  "",
+                    "variant":  "",
+                    "mileage":  "",
+                    "price":  "",
+                    "transmission":  "",
+                    "colour":  "",
+                    "importStatus":  "JDM Import",
+                    "location":  ""
+                },
+    "label":  "Peak Daily Driver",
+    "verdict":  "A solid choice for a reliable daily with modern features, but don\u0027t expect it to set your heart racing.",
+    "whatMakesSpecial":  "The Axela offers a blend of sporty design and practical features like adaptive cruise control and paddle shifters, rare in this segment.",
+    "whyEnthusiastsCare":  "Mazda\u0027s SkyActiv technology is praised for its efficiency and driving dynamics, making the Axela a popular choice among those who want a bit more engagement from their daily driver.",
+    "ownerVibe":  {
+                      "label":  "Dealer Dressed as Private",
+                      "reasoning":  "The listing reads like a polished dealership ad with a focus on finance options and warranties."
+                  },
+    "carsCoffee":  {
+                       "rating":  "Low",
+                       "description":  "While well-equipped, the Axela isn\u0027t a head-turner at enthusiast meets."
+                   },
+    "communityCredibility":  {
+                                 "rating":  "Medium",
+                                 "description":  "Respected for its reliability and driving dynamics, but not a standout in the enthusiast community."
+                             },
+    "socialStanding":  "A practical choice that won\u0027t embarrass you, but won\u0027t earn you extra points at a meet either.",
+    "specSignificance":  [
+                             {
+                                 "item":  "Adaptive Cruise Control",
+                                 "note":  "A premium feature not commonly found in this class."
+                             },
+                             {
+                                 "item":  "Paddle Shifters",
+                                 "note":  "Adds a sporty touch to the driving experience."
+                             },
+                             {
+                                 "item":  "SkyActiv Engine",
+                                 "note":  "Known for efficiency and improved driving dynamics."
+                             }
+                         ],
+    "priceVerdict":  {
+                         "assessment":  "Fair",
+                         "reason":  "The price seems in line with market expectations for a well-equipped Axela."
+                     },
+    "enthusiastTax":  {
+                          "level":  "None",
+                          "premium":  "None",
+                          "reasons":  [
+                                          "The Axela does not command an enthusiast premium due to its focus on practicality over performance."
+                                      ]
+                      },
+    "priceOutlook":  {
+                         "trend":  "Stable",
+                         "reason":  "Mazda Axelas hold their value reasonably well due to their reliability and practicality."
+                     },
+    "ownershipPain":  {
+                          "score":  3,
+                          "issues":  [
+                                         {
+                                             "title":  "SkyActiv Engine Oil Consumption",
+                                             "detail":  "Some owners report higher oil consumption, especially if maintenance is neglected. Regular checks are advised."
+                                         }
+                                     ]
+                      },
+    "drivingCharacter":  {
+                             "steeringFeel":  {
+                                                  "score":  6,
+                                                  "description":  "The steering is light and precise, offering decent feedback for a car in this class. It\u0027s not sports car sharp, but it feels connected enough for spirited driving."
+                                              },
+                             "engineCharacter":  {
+                                                     "score":  5,
+                                                     "description":  "The SkyActiv engine is efficient and smooth, but lacks the punch and sound of a performance-oriented engine. It\u0027s more about balance than thrills."
+                                                 },
+                             "dailyComfort":  {
+                                                  "score":  8,
+                                                  "description":  "The Axela offers a comfortable ride with well-damped suspension, making it a great companion for daily commutes and longer journeys."
+                                              },
+                             "overallFun":  {
+                                                "score":  5,
+                                                "description":  "While not exhilarating, the Axela is enjoyable enough for a daily driver with its responsive handling and modern features."
+                                            },
+                             "summary":  "A competent and comfortable daily driver with a hint of sportiness."
+                         },
+    "classicPotential":  {
+                             "score":  2,
+                             "reasons":  [
+                                             "The Axela is unlikely to become a classic due to its focus on practicality and mass appeal rather than unique characteristics."
+                                         ]
+                         },
+    "regretRisk":  {
+                       "level":  "Low",
+                       "reason":  "The Axela\u0027s reliability and practicality make it a safe choice with little chance of buyer\u0027s remorse."
+                   },
+    "marketTrend":  {
+                        "trend":  "Stable",
+                        "reason":  "The Axela\u0027s value is supported by its reputation for reliability and efficiency, keeping demand steady."
+                    },
+    "worstFinancialDecision":  {
+                                   "rating":  "Sensible Purchase",
+                                   "reasons":  [
+                                                   "Parts are readily available and affordable, and the car\u0027s reliability minimizes unexpected costs."
+                                               ]
+                               },
+    "redFlags":  [
+
+                 ],
+    "modPotential":  {
+                         "relevance":  "medium",
+                         "powerCeiling":  "A mild tune can enhance performance slightly, but significant gains are costly and complex.",
+                         "firstMods":  [
+                                           "Upgraded air intake for better breathing",
+                                           "Performance brake pads for improved stopping power"
+                                       ],
+                         "handlingUpgrades":  "Coilovers from brands like BC Racing can improve handling without sacrificing comfort.",
+                         "partsEcosystem":  "Good support from both local and international suppliers, with a range of performance and aesthetic parts available.",
+                         "collectorRisk":  "Modding is unlikely to hurt resale value significantly, as the Axela is not a collector\u0027s item."
+                     },
+    "questionsToAsk":  [
+                           "Has the SkyActiv engine shown any signs of oil consumption?",
+                           "Are there any records of the adaptive cruise control system being serviced?"
+                       ],
+    "enthusiastTake":  "The Axela is a solid daily driver with a touch of sportiness, but it\u0027s not going to set the enthusiast world on fire.",
+    "performanceSpecs":  {
+                             "engine":  "SkyActiv 2.0L NA I4",
+                             "powerKw":  114,
+                             "powerHp":  153,
+                             "torqueNm":  200,
+                             "torqueRpm":  "4000",
+                             "zeroToHundred":  "8.9s",
+                             "kerbWeightKg":  1300,
+                             "drivetrain":  "FF, FWD",
+                             "jdmNote":  ""
+                         },
+    "alternatives":  [
+                         {
+                             "name":  "Toyota Corolla E210",
+                             "whySuited":  "For those considering the Axela, the Corolla offers similar reliability and practicality.",
+                             "howDiffers":  "The Corolla is less sporty but offers a more conservative design and potentially lower running costs.",
+                             "priceRange":  "$15,000â$25,000"
+                         },
+                         {
+                             "name":  "Honda Civic FK7",
+                             "whySuited":  "The Civic provides a similar blend of practicality and a touch of sportiness.",
+                             "howDiffers":  "The Civic has a more aggressive design and a slightly more engaging driving experience.",
+                             "priceRange":  "$18,000â$28,000"
+                         },
+                         {
+                             "name":  "Hyundai i30 PD",
+                             "whySuited":  "The i30 is a solid alternative with good features and a reliable reputation.",
+                             "howDiffers":  "It offers a more understated design and often comes with a longer warranty period.",
+                             "priceRange":  "$16,000â$26,000"
+                         }
+                     ],
+    "investmentScore":  6,
+    "vibeScore":  5
+}
