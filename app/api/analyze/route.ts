@@ -226,11 +226,13 @@ worstFinancialDecision.reasons — specific financial impact factors for NZ owne
 
 redFlags — scan the FULL description text (not just structured fields) for the warning signals below and return an entry for each one present. INFER flags from implausible, vague, or ambiguous claims — not only from explicit statements. A flag does not need the seller to spell it out; raise it when the listing's own claims don't add up. Return empty array [] only when genuinely nothing applies. Do NOT invent specifics that aren't supported — but DO raise a flag when something is off. A missing asking price is NOT a red flag — it is handled by priceVerdict ("No Price Listed"); never add "No Price Listed" or similar to redFlags. Red flags are genuine warning signals (damage, money owing, odometer/compliance risk), not missing listing fields.
 
+CRUCIAL — distinguish ABSENT from BAD. A blank or empty field is UNKNOWN, not a problem. Do NOT flag WOF or registration as expired just because a "WoF expires:" / "Registration expires:" field is empty or no date is shown. Do NOT report a background check (re-registered, money owing, damaged import, stolen) as Advisory/Failed unless the listing actually shows that result — an un-run or blank check (e.g. text like "we'll re-run the money owing check") is NOT a failure. Only flag a compliance/PPSR problem when the listing EXPLICITLY states the bad condition (a past expiry date, "no WOF", "no rego", "as is", or a check result of Advisory/Failed/Damaged). When something important is merely missing or unverified, put it in questionsToAsk — never in redFlags.
+
 Signals to detect:
-- Re-registered vehicle, or "re-registered check: Advisory" in listing data — potential write-off or insurance total loss
-- Money owing / PPSR advisory mentioned — car could be repossessed by a finance company
-- WOF expired or expiring within 30 days — buyer must factor in cost and potential failure
-- Registration lapsed or expired AT ANY POINT — including phrases like "rego lapsed in [year]" buried in the description — illegal to drive until reinstated, possible re-compliance cost
+- Re-registered vehicle — only when the listing data shows a re-registered result of "Advisory" (not a blank/un-run check) — potential write-off or insurance total loss
+- Money owing — only when the listing data shows a money-owing/PPSR result of "Advisory" (not a blank/un-run check) — car could be repossessed by a finance company
+- WOF expired — only when an actual WoF expiry date is shown and it is in the past, or the seller says "no WOF"/"WOF expired". A blank "WoF expires:" field is UNKNOWN, not expired — do not flag it (ask in questionsToAsk instead).
+- Registration lapsed or expired — only when the listing states it: an explicit past expiry date, "no rego", or wording like "rego lapsed in [year]" in the description. A blank "Registration expires:" field is UNKNOWN, not expired — do not flag it.
 - Imported with no documented overseas history — ALWAYS raise this for any JDM/grey import where pre-NZ history isn't evidenced; odometer fraud and undisclosed accident risk
 - Implausibly low odometer for age — compute km-per-year (odometer ÷ (current year − model year)); under ~5,000 km/year, especially on a JDM/grey import, must be flagged (title it e.g. "Unverified Low Mileage"). Low km for the age is a risk to verify, never a selling point to reward in priceVerdict/classicPotential/enthusiastTax.
 - Salvage, damaged, or rebuilt title indicators in the listing
@@ -275,13 +277,13 @@ carsCoffee.description — one honest sentence. Some cars are crowd-pullers, oth
 communityCredibility.rating — pick ONE: "High" | "Medium" | "Low". How respected is this car in the NZ enthusiast community — forums, clubs, events, social media?
 communityCredibility.description — one sentence on its standing. E.g. "The E46 M3 community is one of the most active in NZ — parts knowledge, specialists, and group buys are all accessible." Or if it's low, say why it doesn't command respect.
 
-socialStanding — one punchy sentence capturing this car's overall social currency in the enthusiast world. Make it quotable. E.g. "The car that makes WRX owners look twice and Honda guys quietly jealous." Be specific to this model.
+socialStanding — one punchy, quotable sentence capturing THIS exact model's social currency among NZ enthusiasts — reference what specifically sets it apart. Do NOT output a generic line that could fit any performance car, and do not reuse any example wording from this prompt.
 
 regretRisk.level — pick ONE: "Low" | "Medium" | "High" | "Extreme". Likelihood a typical buyer will regret this purchase within 12 months.
 regretRisk.reason — one sentence on the specific factors that could turn this purchase sour. Reference real risks for this model and condition.
 
 marketTrend.trend — pick ONE: "Stable" | "Rising" | "Falling". Direction of this model's market value in NZ over the next 2–3 years.
-marketTrend.reason — one sentence on the investment trajectory. E.g. "Values have plateaued — enthusiast floor is firm but high km and common availability cap any upside."
+marketTrend.reason — one sentence on the investment trajectory, specific to this model's NZ market (supply, demand, what's capping or lifting values). Write it fresh — do not reuse any example wording from this prompt.
 
 investmentScore — a single number 1–10 representing overall investment worthiness. Combine price fairness (priceVerdict), ownership cost (ownershipPain.score, worstFinancialDecision), and long-term value outlook (classicPotential, priceOutlook). Use the full range — 10 = exceptional deal on a rising classic, 1 = overpriced financial nightmare. If no asking price is listed, you cannot judge deal quality — base the score on ownership cost and desirability alone and do NOT award a high score that implies good value you can't verify.
 
