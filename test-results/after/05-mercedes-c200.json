@@ -1,0 +1,160 @@
+﻿{
+    "vehicle":  {
+                    "make":  "Mercedes-Benz",
+                    "model":  "C-Class",
+                    "year":  "2020",
+                    "variant":  "C200 AMG Line",
+                    "mileage":  "58,500",
+                    "price":  "NZ$33,990",
+                    "transmission":  "",
+                    "colour":  "",
+                    "importStatus":  "NZ New",
+                    "location":  "Christchurch"
+                },
+    "label":  "Premium Asking Price",
+    "verdict":  "Priced at the premium end for a C200, but the AMG Line and low mileage justify it for those seeking a stylish daily driver.",
+    "whatMakesSpecial":  "The AMG Line package adds a sporty edge to the C-Class, with unique styling and wheels that set it apart from standard models.",
+    "whyEnthusiastsCare":  "The C-Class has long been a staple in the luxury sedan market, known for its balance of comfort, technology, and brand prestige.",
+    "ownerVibe":  {
+                      "label":  "Dealer / Trade Listing",
+                      "reasoning":  "The listing is clearly from a dealer, offering finance and highlighting the vehicle\u0027s condition and features."
+                  },
+    "carsCoffee":  {
+                       "rating":  "Medium",
+                       "description":  "While not a head-turner like an AMG model, the AMG Line styling will still garner some attention."
+                   },
+    "communityCredibility":  {
+                                 "rating":  "Medium",
+                                 "description":  "Respected as a solid luxury sedan, but not as revered as AMG or classic models."
+                             },
+    "socialStanding":  "A stylish choice for those who want a touch of luxury without the full AMG price tag.",
+    "specSignificance":  [
+                             {
+                                 "item":  "AMG Line package",
+                                 "note":  "Includes AMG wheels and styling, enhancing the car\u0027s sporty appearance."
+                             },
+                             {
+                                 "item":  "Panoramic sunroof",
+                                 "note":  "Adds a premium feel to the interior."
+                             }
+                         ],
+    "priceVerdict":  {
+                         "assessment":  "Premium Justified",
+                         "reason":  "The AMG Line and low mileage support the higher price, appealing to buyers seeking a near-new luxury sedan."
+                     },
+    "enthusiastTax":  {
+                          "level":  "Mild",
+                          "premium":  "+$1,000â2,000",
+                          "reasons":  [
+                                          "AMG Line styling and features add a small premium over standard C200 models."
+                                      ]
+                      },
+    "priceOutlook":  {
+                         "trend":  "Stable",
+                         "reason":  "C-Class values hold steady due to consistent demand for luxury sedans in NZ."
+                     },
+    "ownershipPain":  {
+                          "score":  4,
+                          "issues":  [
+                                         {
+                                             "title":  "Turbocharged Engine Maintenance",
+                                             "detail":  "Regular servicing is crucial to avoid turbo-related issues; expect $500â800 per service."
+                                         },
+                                         {
+                                             "title":  "AMG Line Suspension Wear",
+                                             "detail":  "Sportier suspension components can wear faster; budget $1,000â1,500 for replacements."
+                                         }
+                                     ]
+                      },
+    "drivingCharacter":  {
+                             "steeringFeel":  {
+                                                  "score":  6,
+                                                  "description":  "The steering is precise with a light feel, typical of modern luxury sedans, but lacks the feedback of older hydraulic setups."
+                                              },
+                             "engineCharacter":  {
+                                                     "score":  6,
+                                                     "description":  "The turbocharged engine delivers smooth power with a refined note, but lacks the visceral thrill of larger engines."
+                                                 },
+                             "dailyComfort":  {
+                                                  "score":  8,
+                                                  "description":  "Exceptionally comfortable with a plush ride, high-quality interior materials, and advanced tech features."
+                                              },
+                             "overallFun":  {
+                                                "score":  5,
+                                                "description":  "While not a sports car, the AMG Line adds a touch of excitement to an otherwise comfort-focused package."
+                                            },
+                             "summary":  "A refined and comfortable daily driver with a hint of sportiness thanks to the AMG Line."
+                         },
+    "classicPotential":  {
+                             "score":  3,
+                             "reasons":  [
+                                             "Modern luxury sedans typically depreciate as newer models are released."
+                                         ]
+                         },
+    "regretRisk":  {
+                       "level":  "Low",
+                       "reason":  "The C-Class offers a reliable and luxurious ownership experience with minimal surprises."
+                   },
+    "marketTrend":  {
+                        "trend":  "Stable",
+                        "reason":  "Consistent demand for luxury sedans keeps values steady, but they won\u0027t appreciate significantly."
+                    },
+    "worstFinancialDecision":  {
+                                   "rating":  "Manageable Pain",
+                                   "reasons":  [
+                                                   "Luxury car servicing costs can add up, but depreciation is predictable and manageable."
+                                               ]
+                               },
+    "redFlags":  [
+
+                 ],
+    "modPotential":  {
+                         "relevance":  "low",
+                         "powerCeiling":  "",
+                         "firstMods":  [
+
+                                       ],
+                         "handlingUpgrades":  "",
+                         "partsEcosystem":  "",
+                         "collectorRisk":  "Modifying a luxury sedan like this can hurt resale value, as buyers typically seek originality."
+                     },
+    "questionsToAsk":  [
+                           "Has the turbocharger been inspected or serviced?",
+                           "Are there any records of suspension component replacements?",
+                           "Is there any remaining warranty coverage?"
+                       ],
+    "enthusiastTake":  "A solid choice for those who want a luxury daily driver with a bit of sporty flair, but not one for the hardcore performance enthusiast.",
+    "performanceSpecs":  {
+                             "engine":  "M264 1.5L Turbo I4",
+                             "powerKw":  135,
+                             "powerHp":  181,
+                             "torqueNm":  280,
+                             "torqueRpm":  "3000â4000",
+                             "zeroToHundred":  "7.7s",
+                             "kerbWeightKg":  1495,
+                             "drivetrain":  "FR, RWD",
+                             "jdmNote":  ""
+                         },
+    "alternatives":  [
+                         {
+                             "name":  "BMW 320i G20",
+                             "whySuited":  "Offers similar luxury and performance with a sporty edge.",
+                             "howDiffers":  "The BMW is known for its sharper handling and driver-focused experience.",
+                             "priceRange":  "$30,000â$40,000"
+                         },
+                         {
+                             "name":  "Audi A4 B9",
+                             "whySuited":  "A direct competitor with a high-quality interior and tech features.",
+                             "howDiffers":  "The Audi offers quattro all-wheel drive for better traction in all conditions.",
+                             "priceRange":  "$30,000â$40,000"
+                         },
+                         {
+                             "name":  "Volvo S60 T5",
+                             "whySuited":  "Combines Scandinavian design with safety and comfort.",
+                             "howDiffers":  "The Volvo focuses more on safety and comfort than sporty driving dynamics.",
+                             "priceRange":  "$28,000â$38,000"
+                         }
+                     ],
+    "investmentScore":  6,
+    "vibeScore":  6
+}

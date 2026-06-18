@@ -1,0 +1,172 @@
+﻿{
+    "vehicle":  {
+                    "make":  "Holden",
+                    "model":  "Kingswood",
+                    "year":  "1981",
+                    "variant":  "Ute",
+                    "mileage":  "",
+                    "price":  "",
+                    "transmission":  "",
+                    "colour":  "",
+                    "importStatus":  "NZ New",
+                    "location":  ""
+                },
+    "label":  "Classic Aussie Icon",
+    "verdict":  "A classic piece of Aussie motoring history with a rumbling V8 heart, but be cautious of the modifications and ensure compliance.",
+    "whatMakesSpecial":  "The 1981 Holden Kingswood ute is a quintessential Aussie workhorse, known for its rugged durability and classic styling.",
+    "whyEnthusiastsCare":  "The Kingswood is a staple of Australian motoring culture, representing the era of simple, robust vehicles that could handle anything thrown at them.",
+    "ownerVibe":  {
+                      "label":  "Weekend Warrior",
+                      "reasoning":  "The listing suggests a well-loved vehicle with tasteful modifications, indicating an owner who enjoys driving and maintaining their classic."
+                  },
+    "carsCoffee":  {
+                       "rating":  "Medium",
+                       "description":  "It\u0027ll draw attention from those who appreciate classic Aussie metal, but it\u0027s not a showstopper."
+                   },
+    "communityCredibility":  {
+                                 "rating":  "High",
+                                 "description":  "Among classic Holden enthusiasts, this ute commands respect for its iconic status and V8 power."
+                             },
+    "socialStanding":  "The kind of ute that makes you nostalgic for the days of Aussie muscle and simple mechanics.",
+    "specSignificance":  [
+                             {
+                                 "item":  "350 small block chev V8",
+                                 "note":  "Engine swap adds power and character."
+                             },
+                             {
+                                 "item":  "Legally lowered",
+                                 "note":  "Enhances stance but ensure compliance."
+                             }
+                         ],
+    "priceVerdict":  {
+                         "assessment":  "No Price Listed",
+                         "reason":  "Without a listed price, it\u0027s hard to judge value, but a fair range for a well-maintained example with these mods would be $20,000â30,000 NZD."
+                     },
+    "enthusiastTax":  {
+                          "level":  "Moderate",
+                          "premium":  "+$3,000â5,000",
+                          "reasons":  [
+                                          "V8 engine swap increases desirability among enthusiasts.",
+                                          "Classic Holden utes are increasingly collectible."
+                                      ]
+                      },
+    "priceOutlook":  {
+                         "trend":  "Rising",
+                         "reason":  "Classic Holdens are gaining value as they become rarer and more sought after by collectors."
+                     },
+    "ownershipPain":  {
+                          "score":  7,
+                          "issues":  [
+                                         {
+                                             "title":  "Engine Swap Compliance",
+                                             "detail":  "Ensure the 350 Chev V8 swap is certified for road use in NZ."
+                                         },
+                                         {
+                                             "title":  "Rust Potential",
+                                             "detail":  "Check for rust in common areas like the sills and underbody, especially given its age."
+                                         },
+                                         {
+                                             "title":  "Cooling System",
+                                             "detail":  "Although upgraded, monitor for leaks or overheating, especially with the V8."
+                                         }
+                                     ]
+                      },
+    "drivingCharacter":  {
+                             "steeringFeel":  {
+                                                  "score":  5,
+                                                  "description":  "Steering is likely heavy and old-school, with minimal feedback compared to modern systems, but it suits the ute\u0027s character."
+                                              },
+                             "engineCharacter":  {
+                                                     "score":  8,
+                                                     "description":  "The 350 Chev V8 provides a classic rumble and plenty of grunt, making for an engaging drive."
+                                                 },
+                             "dailyComfort":  {
+                                                  "score":  4,
+                                                  "description":  "Bench seats and a basic cabin mean comfort is secondary to character, and the lowered suspension may impact ride quality."
+                                              },
+                             "overallFun":  {
+                                                "score":  7,
+                                                "description":  "It\u0027s a fun, nostalgic drive with the V8 soundtrack and classic ute feel, but not the most practical for daily use."
+                                            },
+                             "summary":  "A classic ute with a V8 heart that offers a raw, engaging drive."
+                         },
+    "classicPotential":  {
+                             "score":  8,
+                             "reasons":  [
+                                             "Classic Aussie utes are becoming collectible.",
+                                             "V8 swaps add to the appeal for enthusiasts."
+                                         ]
+                         },
+    "regretRisk":  {
+                       "level":  "Medium",
+                       "reason":  "Potential compliance issues with the engine swap and the age-related maintenance could be daunting."
+                   },
+    "marketTrend":  {
+                        "trend":  "Rising",
+                        "reason":  "Classic Holdens are increasingly sought after, especially those with V8 engines."
+                    },
+    "worstFinancialDecision":  {
+                                   "rating":  "Manageable Pain",
+                                   "reasons":  [
+                                                   "Parts availability can be challenging.",
+                                                   "Fuel costs with a V8 are significant.",
+                                                   "Potential compliance costs if mods aren\u0027t certified."
+                                               ]
+                               },
+    "redFlags":  [
+                     {
+                         "flag":  "Engine Swap Compliance",
+                         "explanation":  "Ensure the 350 Chev V8 swap is certified for road use in NZ â uncertified swaps can lead to legal and insurance issues."
+                     }
+                 ],
+    "modPotential":  {
+                         "relevance":  "medium",
+                         "powerCeiling":  "With further mods, the 350 Chev can push well over 300hp, but reliability and compliance must be managed.",
+                         "firstMods":  [
+                                           "Ensure current mods are certified for compliance.",
+                                           "Upgrade brakes to handle the increased power."
+                                       ],
+                         "handlingUpgrades":  "Consider upgrading to adjustable coilovers for better handling and ride quality.",
+                         "partsEcosystem":  "Good support for Holden and Chev parts in NZ, but some items may need importing.",
+                         "collectorRisk":  "Modifications can enhance appeal but ensure they are tasteful and reversible for future value."
+                     },
+    "questionsToAsk":  [
+                           "Is the 350 Chev V8 swap certified for road use in NZ?",
+                           "Are there any rust issues, particularly in the sills and underbody?",
+                           "How does the cooling system perform under load?"
+                       ],
+    "enthusiastTake":  "This Kingswood ute is a slice of Aussie motoring history with a V8 heart, but ensure the mods are compliant and the body is rust-free.",
+    "performanceSpecs":  {
+                             "engine":  "350 Chev V8 (swapped)",
+                             "powerKw":  0,
+                             "powerHp":  0,
+                             "torqueNm":  0,
+                             "torqueRpm":  "",
+                             "zeroToHundred":  "",
+                             "kerbWeightKg":  0,
+                             "drivetrain":  "FR, RWD",
+                             "jdmNote":  ""
+                         },
+    "alternatives":  [
+                         {
+                             "name":  "Ford Falcon XB GT",
+                             "whySuited":  "For those seeking classic Aussie muscle with a V8 rumble.",
+                             "howDiffers":  "More of a muscle car vibe with a focus on performance rather than utility.",
+                             "priceRange":  "$40,000â60,000"
+                         },
+                         {
+                             "name":  "Chevrolet El Camino",
+                             "whySuited":  "Another classic ute with a V8 heart and American flair.",
+                             "howDiffers":  "Offers a more American muscle car aesthetic and feel.",
+                             "priceRange":  "$30,000â50,000"
+                         },
+                         {
+                             "name":  "Toyota Hilux 1980s",
+                             "whySuited":  "For those who want a classic ute with legendary reliability.",
+                             "howDiffers":  "Less power and character but unmatched reliability and practicality.",
+                             "priceRange":  "$15,000â25,000"
+                         }
+                     ],
+    "investmentScore":  6,
+    "vibeScore":  7
+}

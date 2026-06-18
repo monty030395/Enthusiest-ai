@@ -1,0 +1,161 @@
+﻿{
+    "vehicle":  {
+                    "make":  "Volkswagen",
+                    "model":  "Golf",
+                    "year":  "2016",
+                    "variant":  "1.4 TSI R-Line",
+                    "mileage":  "",
+                    "price":  "",
+                    "transmission":  "",
+                    "colour":  "Gloss Silver",
+                    "importStatus":  "Unknown",
+                    "location":  ""
+                },
+    "label":  "Premium Asking Price",
+    "verdict":  "R-Line trim adds visual flair but doesn\u0027t justify a significant premium over a standard Golf TSI.",
+    "whatMakesSpecial":  "The R-Line package offers a sportier aesthetic with features like full leather and a panoramic sunroof, which are uncommon in non-performance Golfs.",
+    "whyEnthusiastsCare":  "The Golf R-Line provides a taste of the sportier Golf R\u0027s styling without the associated running costs, appealing to those who want a sporty look in a daily driver.",
+    "ownerVibe":  {
+                      "label":  "Dealer / Trade Listing",
+                      "reasoning":  "Listed by a registered motor vehicle trader with emphasis on finance and warranty options."
+                  },
+    "carsCoffee":  {
+                       "rating":  "Low",
+                       "description":  "An R-Line Golf might catch a few eyes due to its sporty trim, but it\u0027s not a showstopper."
+                   },
+    "communityCredibility":  {
+                                 "rating":  "Medium",
+                                 "description":  "Respected for its practicality and style, but lacks the performance pedigree of a GTI or R."
+                             },
+    "socialStanding":  "A stylish daily driver that hints at performance without the associated costs.",
+    "specSignificance":  [
+                             {
+                                 "item":  "R-Line Package",
+                                 "note":  "Adds sporty styling elements and premium interior features."
+                             },
+                             {
+                                 "item":  "Panoramic Roof",
+                                 "note":  "Rare feature in this segment, adds a premium feel."
+                             }
+                         ],
+    "priceVerdict":  {
+                         "assessment":  "No Price Listed",
+                         "reason":  "Without a listed price, it\u0027s hard to judge value, but R-Line Golfs typically command a slight premium over standard models."
+                     },
+    "enthusiastTax":  {
+                          "level":  "Mild",
+                          "premium":  "+$1,000â2,000",
+                          "reasons":  [
+                                          "R-Line trim adds a small premium for its sporty appearance and interior features."
+                                      ]
+                      },
+    "priceOutlook":  {
+                         "trend":  "Stable",
+                         "reason":  "R-Line Golfs hold steady value due to their desirable features without the high running costs of performance models."
+                     },
+    "ownershipPain":  {
+                          "score":  5,
+                          "issues":  [
+                                         {
+                                             "title":  "1.4 TSI Timing Chain Tensioner",
+                                             "detail":  "Known to fail, leading to potential engine damage â replacement costs around $1,500â2,000 NZD."
+                                         },
+                                         {
+                                             "title":  "DSG Transmission Mechatronics",
+                                             "detail":  "Potential issues around 100,000km â repair costs $2,000â3,000 NZD."
+                                         }
+                                     ]
+                      },
+    "drivingCharacter":  {
+                             "steeringFeel":  {
+                                                  "score":  6,
+                                                  "description":  "Electric steering is precise but lacks the feedback of hydraulic systems. Light at low speeds, it firms up nicely on the open road."
+                                              },
+                             "engineCharacter":  {
+                                                     "score":  5,
+                                                     "description":  "The 1.4 TSI is smooth and efficient, but lacks the punch of larger engines. It\u0027s quiet and refined, ideal for daily commuting."
+                                                 },
+                             "dailyComfort":  {
+                                                  "score":  7,
+                                                  "description":  "Comfortable ride with supportive seats and a quiet cabin. The R-Line suspension is firmer than standard but still compliant."
+                                              },
+                             "overallFun":  {
+                                                "score":  5,
+                                                "description":  "While not a performance car, the R-Line offers a sporty look and a comfortable drive, making it a pleasant daily driver."
+                                            },
+                             "summary":  "A stylish and comfortable daily driver with sporty looks but modest performance."
+                         },
+    "classicPotential":  {
+                             "score":  3,
+                             "reasons":  [
+                                             "R-Line trim adds some desirability, but it\u0027s not a future classic like the GTI or R models."
+                                         ]
+                         },
+    "regretRisk":  {
+                       "level":  "Medium",
+                       "reason":  "Potential DSG issues and timing chain concerns could lead to costly repairs if not addressed."
+                   },
+    "marketTrend":  {
+                        "trend":  "Stable",
+                        "reason":  "The R-Line\u0027s appeal is steady, with no major shifts in demand expected."
+                    },
+    "worstFinancialDecision":  {
+                                   "rating":  "Manageable Pain",
+                                   "reasons":  [
+                                                   "Potential for DSG and timing chain issues, but manageable with proper maintenance."
+                                               ]
+                               },
+    "redFlags":  [
+
+                 ],
+    "modPotential":  {
+                         "relevance":  "medium",
+                         "powerCeiling":  "Stage 1 tune can push power to around 110kW â budget $1,500â2,000 NZD for a reliable increase.",
+                         "firstMods":  [
+                                           "Upgraded air intake for better breathing",
+                                           "Stage 1 ECU tune for improved power delivery"
+                                       ],
+                         "handlingUpgrades":  "Coilovers from brands like KW or Bilstein can enhance handling without sacrificing comfort.",
+                         "partsEcosystem":  "Decent aftermarket support with parts available from both local and international suppliers.",
+                         "collectorRisk":  "Modding won\u0027t hurt value significantly, but keep it tasteful to maintain appeal."
+                     },
+    "questionsToAsk":  [
+                           "Has the timing chain tensioner been replaced or checked?",
+                           "Any DSG transmission services or repairs done?",
+                           "Is there a full service history available, especially for the DSG?"
+                       ],
+    "enthusiastTake":  "The R-Line Golf is a stylish choice for those who want a sporty look without the running costs of a GTI or R, but be wary of potential DSG and timing chain issues.",
+    "performanceSpecs":  {
+                             "engine":  "1.4 TSI 4-cylinder Turbo",
+                             "powerKw":  92,
+                             "powerHp":  123,
+                             "torqueNm":  200,
+                             "torqueRpm":  "1400â4000",
+                             "zeroToHundred":  "9.1s",
+                             "kerbWeightKg":  1270,
+                             "drivetrain":  "FF, FWD",
+                             "jdmNote":  ""
+                         },
+    "alternatives":  [
+                         {
+                             "name":  "Mazda 3 SP25",
+                             "whySuited":  "Offers a similar blend of style and practicality with a more engaging driving experience.",
+                             "howDiffers":  "The naturally aspirated engine provides linear power delivery and a more connected feel.",
+                             "priceRange":  "$15,000â$22,000"
+                         },
+                         {
+                             "name":  "Ford Focus ST-Line",
+                             "whySuited":  "Appeals to those wanting sporty looks and features in a compact package.",
+                             "howDiffers":  "The Focus offers sharper handling and a more dynamic drive.",
+                             "priceRange":  "$18,000â$25,000"
+                         },
+                         {
+                             "name":  "Honda Civic RS",
+                             "whySuited":  "For buyers seeking a reliable and stylish sedan with sporty touches.",
+                             "howDiffers":  "The Civic RS offers a more spacious interior and a reputation for bulletproof reliability.",
+                             "priceRange":  "$20,000â$28,000"
+                         }
+                     ],
+    "investmentScore":  5,
+    "vibeScore":  6
+}

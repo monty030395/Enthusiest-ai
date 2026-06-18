@@ -1,0 +1,169 @@
+﻿{
+    "vehicle":  {
+                    "make":  "Aston Martin",
+                    "model":  "DB9",
+                    "year":  "2005",
+                    "variant":  "",
+                    "mileage":  "79,233 kms",
+                    "price":  "",
+                    "transmission":  "6-speed automatic with Touchtronic paddle-shift manual mode",
+                    "colour":  "Grey",
+                    "importStatus":  "Unknown",
+                    "location":  "Christchurch"
+                },
+    "label":  "Money Pit",
+    "verdict":  "Structurally damaged history makes this a risky purchase despite its allure.",
+    "whatMakesSpecial":  "The DB9 is a quintessential grand tourer with a hand-built naturally aspirated V12, offering a driving experience that modern turbocharged engines can\u0027t replicate.",
+    "whyEnthusiastsCare":  "Aston Martin\u0027s DB9 is celebrated for its timeless design and the symphonic V12, representing an era of luxury grand tourers that are becoming increasingly rare.",
+    "ownerVibe":  {
+                      "label":  "Dealer / Trade Listing",
+                      "reasoning":  "Listed by a dealership on behalf of a private seller, with professional sales language and finance options."
+                  },
+    "carsCoffee":  {
+                       "rating":  "High",
+                       "description":  "Aston Martins always draw a crowd, and a DB9 is no exception with its elegant design and V12 soundtrack."
+                   },
+    "communityCredibility":  {
+                                 "rating":  "High",
+                                 "description":  "The DB9 is respected among enthusiasts for its design and performance, though the damaged history may dampen some of its appeal."
+                             },
+    "socialStanding":  "The car that turns heads and makes people wonder if you\u0027re a secret agent.",
+    "specSignificance":  [
+                             {
+                                 "item":  "5.9L V12",
+                                 "note":  "Naturally aspirated V12 engines are increasingly rare and highly sought after."
+                             },
+                             {
+                                 "item":  "Touchtronic transmission",
+                                 "note":  "Offers a blend of automatic convenience and manual control."
+                             }
+                         ],
+    "priceVerdict":  {
+                         "assessment":  "No Price Listed",
+                         "reason":  "Without a listed price, it\u0027s impossible to judge value; however, the structural damage history significantly impacts its worth."
+                     },
+    "enthusiastTax":  {
+                          "level":  "High",
+                          "premium":  "+$10,000+",
+                          "reasons":  [
+                                          "Aston Martin badge and V12 engine command a premium despite the damage history."
+                                      ]
+                      },
+    "priceOutlook":  {
+                         "trend":  "Falling",
+                         "reason":  "Structural damage history will deter collectors and depress resale value."
+                     },
+    "ownershipPain":  {
+                          "score":  9,
+                          "issues":  [
+                                         {
+                                             "title":  "Structural Damage History",
+                                             "detail":  "Significant risk of hidden issues and reduced resale value; repairs may not have restored original integrity."
+                                         },
+                                         {
+                                             "title":  "V12 Maintenance Costs",
+                                             "detail":  "Routine servicing and potential repairs can be exorbitant, with parts often needing to be sourced from overseas."
+                                         },
+                                         {
+                                             "title":  "Touchtronic Transmission",
+                                             "detail":  "Known for occasional electronic issues, with repairs costing upwards of $5,000 NZD."
+                                         }
+                                     ]
+                      },
+    "drivingCharacter":  {
+                             "steeringFeel":  {
+                                                  "score":  8,
+                                                  "description":  "The steering is precise and well-weighted, offering excellent feedback that enhances the grand touring experience."
+                                              },
+                             "engineCharacter":  {
+                                                     "score":  9,
+                                                     "description":  "The V12 delivers a rich, sonorous soundtrack with linear power delivery that builds smoothly to redline, a hallmark of classic Aston Martin performance."
+                                                 },
+                             "dailyComfort":  {
+                                                  "score":  6,
+                                                  "description":  "While the ride is comfortable for long journeys, the low seating position and limited rear visibility can make daily driving challenging."
+                                              },
+                             "overallFun":  {
+                                                "score":  8,
+                                                "description":  "The combination of V12 power, elegant design, and grand touring capability makes it a joy to drive, especially on open roads."
+                                            },
+                             "summary":  "A thrilling grand tourer with a V12 soundtrack that elevates any drive."
+                         },
+    "classicPotential":  {
+                             "score":  5,
+                             "reasons":  [
+                                             "V12 engines are becoming rare, but structural damage limits collectibility."
+                                         ]
+                         },
+    "regretRisk":  {
+                       "level":  "High",
+                       "reason":  "The structural damage history and high maintenance costs could lead to buyer\u0027s remorse."
+                   },
+    "marketTrend":  {
+                        "trend":  "Falling",
+                        "reason":  "Damage history and high running costs will limit appeal and depress values."
+                    },
+    "worstFinancialDecision":  {
+                                   "rating":  "Dangerous",
+                                   "reasons":  [
+                                                   "Structural damage history severely impacts resale value.",
+                                                   "V12 maintenance and repair costs are extremely high.",
+                                                   "Potential for significant depreciation due to damage history."
+                                               ]
+                               },
+    "redFlags":  [
+                     {
+                         "flag":  "Re-registered Vehicle",
+                         "explanation":  "This car has been recorded as structurally damaged, indicating a previous write-off or insurance total loss â request a full PPSR report before proceeding."
+                     }
+                 ],
+    "modPotential":  {
+                         "relevance":  "low",
+                         "powerCeiling":  "",
+                         "firstMods":  [
+
+                                       ],
+                         "handlingUpgrades":  "",
+                         "partsEcosystem":  "",
+                         "collectorRisk":  "Modifying a DB9, especially one with a damage history, will further reduce its already limited resale value."
+                     },
+    "questionsToAsk":  [
+                           "Can you provide the full damage and repair history?",
+                           "Has the Touchtronic transmission received any recent servicing?",
+                           "Are there any outstanding issues from the structural damage?"
+                       ],
+    "enthusiastTake":  "While the DB9 is a stunning grand tourer with a V12 heart, the structural damage history is a major concern that could lead to significant financial headaches.",
+    "performanceSpecs":  {
+                             "engine":  "5.9L DOHC 48-valve V12",
+                             "powerKw":  335,
+                             "powerHp":  450,
+                             "torqueNm":  570,
+                             "torqueRpm":  "",
+                             "zeroToHundred":  "4.7s",
+                             "kerbWeightKg":  0,
+                             "drivetrain":  "FR, RWD",
+                             "jdmNote":  ""
+                         },
+    "alternatives":  [
+                         {
+                             "name":  "Jaguar XKR (X150)",
+                             "whySuited":  "Offers a similar British grand tourer experience with a supercharged V8.",
+                             "howDiffers":  "The XKR is generally more reliable and less expensive to maintain than the Aston.",
+                             "priceRange":  "$30,000â$50,000"
+                         },
+                         {
+                             "name":  "BMW E63 M6",
+                             "whySuited":  "Provides a V10 experience with similar grand touring capabilities.",
+                             "howDiffers":  "The M6\u0027s V10 is high-revving and more aggressive, but maintenance is similarly costly.",
+                             "priceRange":  "$25,000â$40,000"
+                         },
+                         {
+                             "name":  "Maserati GranTurismo",
+                             "whySuited":  "Another Italian grand tourer with a sonorous V8 and stunning design.",
+                             "howDiffers":  "The GranTurismo offers a more exotic flair but also comes with high maintenance costs.",
+                             "priceRange":  "$40,000â$60,000"
+                         }
+                     ],
+    "investmentScore":  3,
+    "vibeScore":  7
+}

@@ -1,0 +1,159 @@
+﻿{
+    "vehicle":  {
+                    "make":  "Mazda",
+                    "model":  "Axela",
+                    "year":  "",
+                    "variant":  "",
+                    "mileage":  "",
+                    "price":  "",
+                    "transmission":  "",
+                    "colour":  "",
+                    "importStatus":  "JDM Import",
+                    "location":  ""
+                },
+    "label":  "Peak Daily Driver",
+    "verdict":  "A solid choice for a reliable daily with modern features, but don\u0027t expect it to turn heads at a meet.",
+    "whatMakesSpecial":  "The Mazda Axela offers a blend of sporty styling and practicality with its SkyActiv engine technology and modern features like adaptive cruise control.",
+    "whyEnthusiastsCare":  "Mazda\u0027s Axela, known as the Mazda3 in other markets, is appreciated for its engaging driving dynamics and reliability, making it a popular choice among those seeking a fun yet practical daily driver.",
+    "ownerVibe":  {
+                      "label":  "Dealer / Trade Listing",
+                      "reasoning":  "The listing is clearly from a dealership, with a focus on finance options and warranty packages."
+                  },
+    "carsCoffee":  {
+                       "rating":  "Low",
+                       "description":  "While practical and stylish, the Axela isn\u0027t a standout at enthusiast gatherings."
+                   },
+    "communityCredibility":  {
+                                 "rating":  "Medium",
+                                 "description":  "Respected for its reliability and driving dynamics, but not a car that commands attention in enthusiast circles."
+                             },
+    "socialStanding":  "A competent daily driver that won\u0027t embarrass you, but won\u0027t earn you bragging rights either.",
+    "specSignificance":  [
+                             {
+                                 "item":  "SkyActiv Engine",
+                                 "note":  "Known for efficiency and performance balance."
+                             },
+                             {
+                                 "item":  "Adaptive Cruise Control",
+                                 "note":  "Modern feature enhancing daily driving comfort."
+                             }
+                         ],
+    "priceVerdict":  {
+                         "assessment":  "No Price Listed",
+                         "reason":  "Without a listed price, it\u0027s impossible to assess value; expect $10,000â15,000 NZD for a well-kept example."
+                     },
+    "enthusiastTax":  {
+                          "level":  "None",
+                          "premium":  "None",
+                          "reasons":  [
+                                          "The Axela is a common model with no significant enthusiast premium."
+                                      ]
+                      },
+    "priceOutlook":  {
+                         "trend":  "Stable",
+                         "reason":  "The Axela\u0027s value is stable due to its reputation for reliability and practicality."
+                     },
+    "ownershipPain":  {
+                          "score":  3,
+                          "issues":  [
+                                         {
+                                             "title":  "SkyActiv Engine Maintenance",
+                                             "detail":  "Regular oil changes are crucial to avoid carbon buildup â budget $200â300 NZD annually."
+                                         }
+                                     ]
+                      },
+    "drivingCharacter":  {
+                             "steeringFeel":  {
+                                                  "score":  6,
+                                                  "description":  "The steering is light yet precise, offering decent feedback for a car in this class."
+                                              },
+                             "engineCharacter":  {
+                                                     "score":  5,
+                                                     "description":  "The SkyActiv engine is smooth and efficient, but lacks the punch of a turbocharged unit."
+                                                 },
+                             "dailyComfort":  {
+                                                  "score":  8,
+                                                  "description":  "Comfortable and practical for daily use, with a well-appointed interior and modern features."
+                                              },
+                             "overallFun":  {
+                                                "score":  6,
+                                                "description":  "While not a sports car, the Axela provides an engaging drive for its class, with a good balance of comfort and handling."
+                                            },
+                             "summary":  "A well-rounded daily driver that offers a bit of fun without compromising practicality."
+                         },
+    "classicPotential":  {
+                             "score":  3,
+                             "reasons":  [
+                                             "Unlikely to become a classic due to its mass-market appeal and commonality."
+                                         ]
+                         },
+    "regretRisk":  {
+                       "level":  "Low",
+                       "reason":  "Solid reliability and practicality make it a safe choice for most buyers."
+                   },
+    "marketTrend":  {
+                        "trend":  "Stable",
+                        "reason":  "The Axela maintains steady demand due to its reputation for reliability and efficiency."
+                    },
+    "worstFinancialDecision":  {
+                                   "rating":  "Sensible Purchase",
+                                   "reasons":  [
+                                                   "Low maintenance costs and stable depreciation make it a financially sound choice."
+                                               ]
+                               },
+    "redFlags":  [
+                     {
+                         "flag":  "Imported with no documented overseas history",
+                         "explanation":  "Odometer fraud and undisclosed accident history are risks â request the Japanese auction sheet for verification."
+                     }
+                 ],
+    "modPotential":  {
+                         "relevance":  "medium",
+                         "powerCeiling":  "SkyActiv engines can be tuned for modest gains, but significant power increases require substantial investment.",
+                         "firstMods":  [
+                                           "Cold air intake for improved airflow and slight power gain."
+                                       ],
+                         "handlingUpgrades":  "Coilovers from brands like BC Racing can improve handling without sacrificing ride quality.",
+                         "partsEcosystem":  "Decent aftermarket support with parts available from both local and international suppliers.",
+                         "collectorRisk":  "Modding won\u0027t hurt resale significantly, but don\u0027t expect it to add value either."
+                     },
+    "questionsToAsk":  [
+                           "Can you provide the Japanese auction sheet or any documentation verifying the odometer reading?",
+                           "Has the SkyActiv engine had regular oil changes to prevent carbon buildup?",
+                           "Are there any known issues with the adaptive cruise control system?"
+                       ],
+    "enthusiastTake":  "While the Axela won\u0027t win any awards at a car meet, it\u0027s a reliable and enjoyable daily driver with enough features to keep things interesting.",
+    "performanceSpecs":  {
+                             "engine":  "SkyActiv 2.0L NA I4",
+                             "powerKw":  114,
+                             "powerHp":  153,
+                             "torqueNm":  200,
+                             "torqueRpm":  "4000",
+                             "zeroToHundred":  "8.9s",
+                             "kerbWeightKg":  1300,
+                             "drivetrain":  "FF, FWD",
+                             "jdmNote":  ""
+                         },
+    "alternatives":  [
+                         {
+                             "name":  "Honda Civic FK7",
+                             "whySuited":  "Another reliable and efficient daily driver with a sporty edge.",
+                             "howDiffers":  "The Civic offers a more engaging drive with a turbocharged engine option.",
+                             "priceRange":  "$12,000â18,000"
+                         },
+                         {
+                             "name":  "Toyota Corolla E210",
+                             "whySuited":  "Known for bulletproof reliability and low running costs.",
+                             "howDiffers":  "Less sporty but offers unmatched reliability and resale value.",
+                             "priceRange":  "$10,000â16,000"
+                         },
+                         {
+                             "name":  "Ford Focus Mk3",
+                             "whySuited":  "Offers a dynamic driving experience and modern features.",
+                             "howDiffers":  "More driver-focused with sharper handling but potentially higher maintenance costs.",
+                             "priceRange":  "$9,000â14,000"
+                         }
+                     ],
+    "investmentScore":  5,
+    "vibeScore":  6
+}

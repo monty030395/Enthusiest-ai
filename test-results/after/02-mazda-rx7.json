@@ -1,0 +1,180 @@
+﻿{
+    "vehicle":  {
+                    "make":  "Mazda",
+                    "model":  "RX-7",
+                    "year":  "1998",
+                    "variant":  "Efini Type R",
+                    "mileage":  "77,000",
+                    "price":  "",
+                    "transmission":  "",
+                    "colour":  "",
+                    "importStatus":  "JDM Import",
+                    "location":  ""
+                },
+    "label":  "Future Classic",
+    "verdict":  "A rare opportunity to own a well-preserved RX-7, but the modifications and import status require careful consideration.",
+    "whatMakesSpecial":  "The RX-7 Efini Type R is one of the last great rotary sports cars, featuring a factory twin-turbo engine and a lightweight chassis.",
+    "whyEnthusiastsCare":  "The FD RX-7 is revered for its rotary engine, balanced handling, and timeless design, making it a staple in the JDM enthusiast community.",
+    "ownerVibe":  {
+                      "label":  "Optimistic Dreamer",
+                      "reasoning":  "The seller is clearly aware of the car\u0027s value and rarity, aiming for collectors and serious buyers, but the lack of a listed price suggests high expectations."
+                  },
+    "carsCoffee":  {
+                       "rating":  "High",
+                       "description":  "An RX-7 in this condition will draw a crowd and plenty of admiration at any meet."
+                   },
+    "communityCredibility":  {
+                                 "rating":  "High",
+                                 "description":  "The RX-7 FD is highly respected in the JDM community, with a strong following and active enthusiast groups."
+                             },
+    "socialStanding":  "The RX-7 FD is a JDM icon that commands respect and admiration wherever it goes.",
+    "specSignificance":  [
+                             {
+                                 "item":  "Twin Turbo Engine",
+                                 "note":  "Factory twin-turbo rotary engine is a key highlight."
+                             },
+                             {
+                                 "item":  "URAS Type GT Body Kit",
+                                 "note":  "Adds a unique and aggressive look."
+                             },
+                             {
+                                 "item":  "HKS Adjustable Suspension",
+                                 "note":  "Improves handling and stance, with LVV certification."
+                             }
+                         ],
+    "priceVerdict":  {
+                         "assessment":  "No Price Listed",
+                         "reason":  "Without a listed price, it\u0027s impossible to judge value, but expect a premium for the low mileage and condition."
+                     },
+    "enthusiastTax":  {
+                          "level":  "High",
+                          "premium":  "+$6,000â10,000",
+                          "reasons":  [
+                                          "Low mileage and condition command a significant premium in the JDM market."
+                                      ]
+                      },
+    "priceOutlook":  {
+                         "trend":  "Rising",
+                         "reason":  "As a rare and desirable JDM classic, values are expected to continue climbing."
+                     },
+    "ownershipPain":  {
+                          "score":  8,
+                          "issues":  [
+                                         {
+                                             "title":  "13B Rotary Engine Rebuilds",
+                                             "detail":  "Rotary engines require rebuilds every 80,000â100,000km, costing $5,000â10,000 NZD."
+                                         },
+                                         {
+                                             "title":  "Cooling System",
+                                             "detail":  "Upgraded twin oil coolers help, but rotary engines are sensitive to overheating."
+                                         },
+                                         {
+                                             "title":  "Fuel Consumption",
+                                             "detail":  "Expect poor fuel economy, with rotary engines known for high consumption."
+                                         }
+                                     ]
+                      },
+    "drivingCharacter":  {
+                             "steeringFeel":  {
+                                                  "score":  8,
+                                                  "description":  "The steering is precise and communicative, offering excellent feedback and a direct connection to the road."
+                                              },
+                             "engineCharacter":  {
+                                                     "score":  9,
+                                                     "description":  "The twin-turbo rotary engine delivers a unique power band and sound, with a thrilling rush to the redline."
+                                                 },
+                             "dailyComfort":  {
+                                                  "score":  5,
+                                                  "description":  "While the suspension is adjustable, the ride can be harsh on NZ roads, and the cabin is snug and focused on the driver."
+                                              },
+                             "overallFun":  {
+                                                "score":  9,
+                                                "description":  "The RX-7 offers a pure, engaging driving experience that few modern cars can match, with its lightweight and responsive handling."
+                                            },
+                             "summary":  "An exhilarating drive with a unique rotary character that rewards the enthusiast driver."
+                         },
+    "classicPotential":  {
+                             "score":  9,
+                             "reasons":  [
+                                             "The RX-7 FD is a JDM legend with increasing collector interest and limited availability."
+                                         ]
+                         },
+    "regretRisk":  {
+                       "level":  "Medium",
+                       "reason":  "While the RX-7 is a joy to drive, the potential for high maintenance costs and the need for specialist knowledge can be daunting."
+                   },
+    "marketTrend":  {
+                        "trend":  "Rising",
+                        "reason":  "Interest in JDM classics is growing, and the RX-7\u0027s rarity and desirability support a strong market."
+                    },
+    "worstFinancialDecision":  {
+                                   "rating":  "Manageable Pain",
+                                   "reasons":  [
+                                                   "Rotary rebuilds are costly, and fuel consumption is high, but the car\u0027s value appreciation offsets some costs."
+                                               ]
+                               },
+    "redFlags":  [
+                     {
+                         "flag":  "Imported with No Documented Overseas History",
+                         "explanation":  "Odometer fraud and undisclosed accident history are risks with JDM imports â verify with auction sheets or independent checks."
+                     },
+                     {
+                         "flag":  "ODOMETER PLAUSIBILITY",
+                         "explanation":  "Low mileage for age is a risk to verify, not a selling point â obtain Japanese auction sheet or independent odometer verification."
+                     },
+                     {
+                         "flag":  "Off the Road / Stored",
+                         "explanation":  "Stored cars can have unresolved issues or compliance problems â ensure thorough inspection."
+                     }
+                 ],
+    "modPotential":  {
+                         "relevance":  "high",
+                         "powerCeiling":  "With a single turbo conversion and supporting mods, 300kW is achievable â budget $10,000â15,000 NZD for a reliable build.",
+                         "firstMods":  [
+                                           "Upgrade fuel system components to handle increased power.",
+                                           "Install a wideband O2 sensor for better tuning accuracy."
+                                       ],
+                         "handlingUpgrades":  "Coilovers from brands like Tein or BC Racing are popular, and a limited-slip diff enhances traction.",
+                         "partsEcosystem":  "Strong support with parts available from NZ suppliers and international sources like Racing Beat and Mazdatrix.",
+                         "collectorRisk":  "Modifications can enhance performance but may reduce collectible value â keep original parts to maintain resale options."
+                     },
+    "questionsToAsk":  [
+                           "Can you provide the Japanese auction sheet or any documentation verifying the odometer reading?",
+                           "Have there been any recent rotary engine rebuilds or major maintenance?",
+                           "What is the condition of the cooling system, given the rotary\u0027s sensitivity to overheating?"
+                       ],
+    "enthusiastTake":  "A stunning example of a JDM icon, but ensure the mileage is verified and be prepared for rotary-specific maintenance.",
+    "performanceSpecs":  {
+                             "engine":  "13B-REW 1.3L Twin Turbo Rotary",
+                             "powerKw":  206,
+                             "powerHp":  276,
+                             "torqueNm":  314,
+                             "torqueRpm":  "5000",
+                             "zeroToHundred":  "5.3s",
+                             "kerbWeightKg":  1280,
+                             "drivetrain":  "FR, RWD",
+                             "jdmNote":  "JDM models often have higher power ratings than export versions."
+                         },
+    "alternatives":  [
+                         {
+                             "name":  "Nissan 300ZX Z32 Twin Turbo",
+                             "whySuited":  "Another iconic JDM sports car with a strong enthusiast following and twin-turbo power.",
+                             "howDiffers":  "Heavier and more GT-oriented than the RX-7, with a V6 engine offering a different driving experience.",
+                             "priceRange":  "$20,000â$35,000"
+                         },
+                         {
+                             "name":  "Toyota Supra JZA80",
+                             "whySuited":  "A legendary JDM sports car with a bulletproof engine and a cult following.",
+                             "howDiffers":  "The Supra is larger and more powerful, with a focus on straight-line speed and tuning potential.",
+                             "priceRange":  "$50,000â$100,000"
+                         },
+                         {
+                             "name":  "Honda NSX NA1",
+                             "whySuited":  "A mid-engine sports car with a naturally aspirated V6 and exceptional handling.",
+                             "howDiffers":  "The NSX offers a more exotic feel with its mid-engine layout and is renowned for its reliability.",
+                             "priceRange":  "$80,000â$120,000"
+                         }
+                     ],
+    "investmentScore":  7,
+    "vibeScore":  9
+}

@@ -1,0 +1,178 @@
+﻿{
+    "vehicle":  {
+                    "make":  "Alfa Romeo",
+                    "model":  "147 GTA",
+                    "year":  "",
+                    "variant":  "Manual",
+                    "mileage":  "",
+                    "price":  "",
+                    "transmission":  "Manual",
+                    "colour":  "",
+                    "importStatus":  "NZ New",
+                    "location":  ""
+                },
+    "label":  "Future Classic",
+    "verdict":  "A rare and charismatic hot hatch with a manual gearbox and tasteful upgrades, but the lapsed rego needs addressing.",
+    "whatMakesSpecial":  "The Alfa Romeo 147 GTA is renowned for its sonorous Busso V6 engine and distinctive Italian styling, making it a standout in the hot hatch segment.",
+    "whyEnthusiastsCare":  "Enthusiasts love the 147 GTA for its characterful V6 engine, unique design, and the driving pleasure it offers, especially with a manual gearbox.",
+    "ownerVibe":  {
+                      "label":  "Mature Enthusiast Owner",
+                      "reasoning":  "The detailed maintenance history and tasteful upgrades suggest a knowledgeable owner who has cared for the car."
+                  },
+    "carsCoffee":  {
+                       "rating":  "High",
+                       "description":  "This car\u0027s rarity and the legendary Busso V6 will draw a crowd at any meet."
+                   },
+    "communityCredibility":  {
+                                 "rating":  "High",
+                                 "description":  "The Alfa Romeo 147 GTA is highly respected among enthusiasts for its engine and driving dynamics."
+                             },
+    "socialStanding":  "The car that makes even the most jaded enthusiast nod in appreciation.",
+    "specSignificance":  [
+                             {
+                                 "item":  "Manual Transmission",
+                                 "note":  "Highly sought after for driver engagement."
+                             },
+                             {
+                                 "item":  "LSD",
+                                 "note":  "Enhances handling and traction."
+                             },
+                             {
+                                 "item":  "330mm Brembo Brakes",
+                                 "note":  "Crucial upgrade for improved stopping power."
+                             },
+                             {
+                                 "item":  "Wizard Exhaust",
+                                 "note":  "Enhances the iconic V6 sound."
+                             }
+                         ],
+    "priceVerdict":  {
+                         "assessment":  "No Price Listed",
+                         "reason":  "Without a listed price, it\u0027s impossible to judge value, but a fair range for this spec would be $20,000â30,000 NZD."
+                     },
+    "enthusiastTax":  {
+                          "level":  "High",
+                          "premium":  "+$6,000â10,000",
+                          "reasons":  [
+                                          "Manual gearbox and LSD add significant value.",
+                                          "Rarity of the model in NZ increases demand."
+                                      ]
+                      },
+    "priceOutlook":  {
+                         "trend":  "Rising",
+                         "reason":  "As a rare manual with the Busso V6, demand is likely to increase as these become harder to find."
+                     },
+    "ownershipPain":  {
+                          "score":  6,
+                          "issues":  [
+                                         {
+                                             "title":  "Busso V6 Timing Belt",
+                                             "detail":  "Requires replacement every 60,000km or 5 years â budget $1,500â2,000 NZD."
+                                         },
+                                         {
+                                             "title":  "Clear Coat Cracking",
+                                             "detail":  "Common issue with age, especially on Italian cars â respray could cost $1,000â1,500 NZD."
+                                         },
+                                         {
+                                             "title":  "Front Suspension Wishbones",
+                                             "detail":  "Wear out and need replacement â budget $600â800 NZD."
+                                         }
+                                     ]
+                      },
+    "drivingCharacter":  {
+                             "steeringFeel":  {
+                                                  "score":  8,
+                                                  "description":  "The steering is direct and communicative, offering excellent feedback through the wheel, enhancing driver confidence."
+                                              },
+                             "engineCharacter":  {
+                                                     "score":  9,
+                                                     "description":  "The Busso V6 is a masterpiece, with a deep rumble at low revs and a glorious scream at high RPMs, making every drive an event."
+                                                 },
+                             "dailyComfort":  {
+                                                  "score":  5,
+                                                  "description":  "While the ride is firm and sporty, the cabin is comfortable enough for daily use, though road noise can be intrusive on coarse chip surfaces."
+                                              },
+                             "overallFun":  {
+                                                "score":  9,
+                                                "description":  "The combination of the V6\u0027s character, manual gearbox, and sharp handling makes it a joy to drive on twisty roads."
+                                            },
+                             "summary":  "A thrilling and engaging hot hatch that rewards the enthusiastic driver."
+                         },
+    "classicPotential":  {
+                             "score":  8,
+                             "reasons":  [
+                                             "Busso V6 is a dying breed.",
+                                             "Manual hot hatches are increasingly rare and sought after."
+                                         ]
+                         },
+    "regretRisk":  {
+                       "level":  "Medium",
+                       "reason":  "Potential for costly maintenance and the lapsed rego could complicate ownership."
+                   },
+    "marketTrend":  {
+                        "trend":  "Rising",
+                        "reason":  "The rarity and enthusiast demand for manual 147 GTAs are driving prices up."
+                    },
+    "worstFinancialDecision":  {
+                                   "rating":  "Manageable Pain",
+                                   "reasons":  [
+                                                   "Maintenance costs can be high, but the car\u0027s rarity and desirability can offset this over time."
+                                               ]
+                               },
+    "redFlags":  [
+                     {
+                         "flag":  "Registration Lapsed",
+                         "explanation":  "The car\u0027s rego lapsed in 2019, which means it cannot be legally driven until reinstated â check for any re-compliance requirements."
+                     }
+                 ],
+    "modPotential":  {
+                         "relevance":  "medium",
+                         "powerCeiling":  "With a remap and exhaust, expect around 190kW â budget $3,000â5,000 NZD for a reliable setup.",
+                         "firstMods":  [
+                                           "Upgrade the intake system to improve airflow and engine response.",
+                                           "Consider a remap for better power delivery."
+                                       ],
+                         "handlingUpgrades":  "Bilstein or Koni coilovers are popular choices to improve handling without sacrificing too much comfort.",
+                         "partsEcosystem":  "Good support from both local specialists and international suppliers, with a strong community backing.",
+                         "collectorRisk":  "Modifications should be tasteful and reversible to maintain collectible value."
+                     },
+    "questionsToAsk":  [
+                           "Has the timing belt been replaced recently, and do you have receipts?",
+                           "What is required to reinstate the registration, and are there any compliance issues?",
+                           "Can you provide the receipts for the maintenance work done by the Italian Auto Center?"
+                       ],
+    "enthusiastTake":  "A rare opportunity to own a manual 147 GTA with the legendary Busso V6, but the lapsed rego needs careful consideration.",
+    "performanceSpecs":  {
+                             "engine":  "3.2L V6",
+                             "powerKw":  184,
+                             "powerHp":  247,
+                             "torqueNm":  300,
+                             "torqueRpm":  "4800",
+                             "zeroToHundred":  "6.3s",
+                             "kerbWeightKg":  1360,
+                             "drivetrain":  "FF, FWD",
+                             "jdmNote":  ""
+                         },
+    "alternatives":  [
+                         {
+                             "name":  "Volkswagen Golf GTI Mk5",
+                             "whySuited":  "For those seeking a practical yet sporty hatch with a strong enthusiast following.",
+                             "howDiffers":  "Offers turbocharged power and a more refined ride, but lacks the raw character of the Alfa\u0027s V6.",
+                             "priceRange":  "$10,000â15,000"
+                         },
+                         {
+                             "name":  "Renault Megane RS 225",
+                             "whySuited":  "A great choice for someone who values handling prowess and unique styling.",
+                             "howDiffers":  "Focuses more on handling precision with its chassis, but doesn\u0027t have the same engine note as the Alfa.",
+                             "priceRange":  "$12,000â18,000"
+                         },
+                         {
+                             "name":  "BMW E46 330i",
+                             "whySuited":  "For those who want a rear-wheel-drive experience with a smooth inline-six engine.",
+                             "howDiffers":  "Offers a more balanced chassis and rear-wheel-drive dynamics, but is less of a hot hatch.",
+                             "priceRange":  "$8,000â14,000"
+                         }
+                     ],
+    "investmentScore":  7,
+    "vibeScore":  8
+}

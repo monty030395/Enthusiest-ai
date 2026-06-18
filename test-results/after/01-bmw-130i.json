@@ -1,0 +1,177 @@
+﻿{
+    "vehicle":  {
+                    "make":  "BMW",
+                    "model":  "130i",
+                    "year":  "",
+                    "variant":  "",
+                    "mileage":  "",
+                    "price":  "",
+                    "transmission":  "Manual",
+                    "colour":  "",
+                    "importStatus":  "Unknown",
+                    "location":  ""
+                },
+    "label":  "Hidden Gem",
+    "verdict":  "A well-maintained and tastefully modified 130i with a manual gearbox â a rare find in NZ.",
+    "whatMakesSpecial":  "The 130i is one of the last naturally aspirated straight-six hatchbacks with a manual gearbox, offering a pure driving experience.",
+    "whyEnthusiastsCare":  "The E87 130i is revered for its N52 engine, hydraulic steering, and rear-wheel drive layout, making it a favourite among driving purists.",
+    "ownerVibe":  {
+                      "label":  "Mature Enthusiast Owner",
+                      "reasoning":  "Extensive maintenance and tasteful modifications suggest a knowledgeable owner who cared for the car."
+                  },
+    "carsCoffee":  {
+                       "rating":  "High",
+                       "description":  "A manual 130i with tasteful mods will draw attention from BMW enthusiasts and driving purists alike."
+                   },
+    "communityCredibility":  {
+                                 "rating":  "High",
+                                 "description":  "The E87 130i is well-regarded in the BMW community for its driving dynamics and the N52 engine."
+                             },
+    "socialStanding":  "A sleeper hatch that commands respect from those who know what it is.",
+    "specSignificance":  [
+                             {
+                                 "item":  "Manual Transmission",
+                                 "note":  "Rare and highly sought after in the 130i."
+                             },
+                             {
+                                 "item":  "Ohlins Coil Over Suspension",
+                                 "note":  "Enhances handling and ride quality."
+                             },
+                             {
+                                 "item":  "Supersprint Exhaust",
+                                 "note":  "Improves sound and performance."
+                             }
+                         ],
+    "priceVerdict":  {
+                         "assessment":  "No Price Listed",
+                         "reason":  "Without a listed price, it\u0027s hard to judge value, but a fair range for a well-maintained manual 130i would be $15,000â$20,000 NZD."
+                     },
+    "enthusiastTax":  {
+                          "level":  "Moderate",
+                          "premium":  "+$3,000â5,000",
+                          "reasons":  [
+                                          "Manual gearbox adds $3â5k over equivalent auto in NZ",
+                                          "Tasteful modifications and maintenance history add value."
+                                      ]
+                      },
+    "priceOutlook":  {
+                         "trend":  "Rising",
+                         "reason":  "Manual N52-powered BMWs are becoming more desirable as modern cars move away from naturally aspirated engines."
+                     },
+    "ownershipPain":  {
+                          "score":  5,
+                          "issues":  [
+                                         {
+                                             "title":  "N52 Water Pump",
+                                             "detail":  "Known to fail around 100,000â150,000km; replacement costs $800â1,200 NZD."
+                                         },
+                                         {
+                                             "title":  "DISA Valve Failure",
+                                             "detail":  "Can cause rough idle and loss of power; replacement costs $500â700 NZD."
+                                         },
+                                         {
+                                             "title":  "Vanos Solenoid Issues",
+                                             "detail":  "Can lead to poor performance; replacement costs $300â500 NZD."
+                                         }
+                                     ]
+                      },
+    "drivingCharacter":  {
+                             "steeringFeel":  {
+                                                  "score":  8,
+                                                  "description":  "The hydraulic steering is direct and communicative, offering excellent feedback and confidence through corners."
+                                              },
+                             "engineCharacter":  {
+                                                     "score":  8,
+                                                     "description":  "The N52 engine is smooth and linear, with a satisfying growl and a willingness to rev."
+                                                 },
+                             "dailyComfort":  {
+                                                  "score":  6,
+                                                  "description":  "The Ohlins coilovers provide a firm but controlled ride, which may be harsh for some on rough NZ roads."
+                                              },
+                             "overallFun":  {
+                                                "score":  9,
+                                                "description":  "The combination of a manual gearbox, rear-wheel drive, and a lively straight-six makes for an engaging and rewarding drive."
+                                            },
+                             "summary":  "A driver\u0027s hatchback that combines practicality with genuine driving pleasure."
+                         },
+    "classicPotential":  {
+                             "score":  7,
+                             "reasons":  [
+                                             "Manuals are becoming rare",
+                                             "Last of the naturally aspirated straight-six hatches",
+                                             "Strong enthusiast following."
+                                         ]
+                         },
+    "regretRisk":  {
+                       "level":  "Medium",
+                       "reason":  "Potential maintenance costs and the firm ride might deter some buyers, but enthusiasts will appreciate its character."
+                   },
+    "marketTrend":  {
+                        "trend":  "Rising",
+                        "reason":  "Enthusiast demand for manual, naturally aspirated BMWs is increasing as they become rarer."
+                    },
+    "worstFinancialDecision":  {
+                                   "rating":  "Manageable Pain",
+                                   "reasons":  [
+                                                   "N52 engine maintenance can be costly",
+                                                   "Parts availability is good but not cheap."
+                                               ]
+                               },
+    "redFlags":  [
+                     {
+                         "flag":  "No Price Listed",
+                         "explanation":  "Without a price, it\u0027s difficult to assess value or negotiate effectively."
+                     }
+                 ],
+    "modPotential":  {
+                         "relevance":  "high",
+                         "powerCeiling":  "With a tune and intake, the N52 can push close to 200kW â budget $2,000â4,000 NZD for a reliable setup.",
+                         "firstMods":  [
+                                           "Upgraded intake to enhance airflow and sound.",
+                                           "Performance tune for increased power and throttle response."
+                                       ],
+                         "handlingUpgrades":  "Ohlins coilovers are already fitted, enhancing handling; consider a limited-slip differential for improved traction.",
+                         "partsEcosystem":  "Strong support from both local and international BMW specialists and forums.",
+                         "collectorRisk":  "Modifications are generally accepted in the BMW community, but keep original parts for potential resale."
+                     },
+    "questionsToAsk":  [
+                           "Can you provide documentation of the clutch replacement?",
+                           "Is there any documentation for the modifications and maintenance on Bimmersport?",
+                           "Have the Vanos solenoids been replaced recently?",
+                           "Can you confirm the mileage and provide any service records?"
+                       ],
+    "enthusiastTake":  "This 130i is a rare find with its manual gearbox and tasteful mods, but ensure the price aligns with the market and verify the maintenance history.",
+    "performanceSpecs":  {
+                             "engine":  "N52B30 3.0L NA I6",
+                             "powerKw":  195,
+                             "powerHp":  261,
+                             "torqueNm":  315,
+                             "torqueRpm":  "2750â3000",
+                             "zeroToHundred":  "6.0s",
+                             "kerbWeightKg":  1395,
+                             "drivetrain":  "FR, RWD",
+                             "jdmNote":  ""
+                         },
+    "alternatives":  [
+                         {
+                             "name":  "Volkswagen Golf GTI Mk5",
+                             "whySuited":  "A hot hatch with a strong enthusiast following and good aftermarket support.",
+                             "howDiffers":  "Turbocharged engine offers more torque but lacks the naturally aspirated character of the BMW.",
+                             "priceRange":  "$10,000â$15,000"
+                         },
+                         {
+                             "name":  "Mazda MX-5 NC",
+                             "whySuited":  "Offers a similar engaging driving experience with a lightweight, rear-wheel-drive setup.",
+                             "howDiffers":  "Two-seater roadster with less practicality but more open-top fun.",
+                             "priceRange":  "$12,000â$18,000"
+                         },
+                         {
+                             "name":  "Subaru WRX STI (GD)",
+                             "whySuited":  "For those wanting AWD grip and rally heritage with similar power output.",
+                             "howDiffers":  "AWD and turbocharged, offering a different driving dynamic and more practicality.",
+                             "priceRange":  "$15,000â$25,000"
+                         }
+                     ],
+    "investmentScore":  7,
+    "vibeScore":  8
+}
