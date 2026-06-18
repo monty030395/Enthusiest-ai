@@ -1,0 +1,176 @@
+﻿{
+    "vehicle":  {
+                    "make":  "Nissan",
+                    "model":  "Skyline",
+                    "year":  "1995",
+                    "variant":  "R33",
+                    "mileage":  "190,000km",
+                    "price":  "$36,000",
+                    "transmission":  "Manual",
+                    "colour":  "Silver",
+                    "importStatus":  "JDM Import",
+                    "location":  "Napier"
+                },
+    "label":  "Premium Asking Price",
+    "verdict":  "Overpriced because the seller knows what they have, but the spec justifies a small premium.",
+    "whatMakesSpecial":  "Factory RB25DET manual in a sedan body, offering a rare combination of practicality and performance.",
+    "whyEnthusiastsCare":  "The R33 Skyline is a staple in the JDM community, known for its tunability and the legendary RB engine series.",
+    "ownerVibe":  {
+                      "label":  "Optimistic Dreamer",
+                      "reasoning":  "The asking price is high compared to market norms, suggesting the seller is banking on the car\u0027s enthusiast appeal."
+                  },
+    "carsCoffee":  {
+                       "rating":  "High",
+                       "description":  "An R33 Skyline with a factory RB25DET is a head-turner at any meet, drawing attention from JDM fans."
+                   },
+    "communityCredibility":  {
+                                 "rating":  "High",
+                                 "description":  "The R33 Skyline is well-respected in the NZ car community, with a strong following and plenty of tuning support."
+                             },
+    "socialStanding":  "The car that makes WRX owners look twice and Honda guys quietly jealous.",
+    "specSignificance":  [
+                             {
+                                 "item":  "Factory RB25DET",
+                                 "note":  "Desirable engine known for its power and tuning potential."
+                             },
+                             {
+                                 "item":  "Manual Transmission",
+                                 "note":  "Preferred by enthusiasts for a more engaging driving experience."
+                             }
+                         ],
+    "priceVerdict":  {
+                         "assessment":  "Overpriced",
+                         "reason":  "The price is steep for an R33 with 190,000km, even with the desirable RB25DET and manual combo."
+                     },
+    "enthusiastTax":  {
+                          "level":  "High",
+                          "premium":  "+$6,000â10,000",
+                          "reasons":  [
+                                          "manual gearbox adds $3â5k over equivalent auto in NZ",
+                                          "declining NZ supply as JDM import pool dries up"
+                                      ]
+                      },
+    "priceOutlook":  {
+                         "trend":  "Rising",
+                         "reason":  "Enthusiast demand for clean R33s is increasing as they become rarer."
+                     },
+    "ownershipPain":  {
+                          "score":  7,
+                          "issues":  [
+                                         {
+                                             "title":  "RB25DET Turbo Failure",
+                                             "detail":  "Turbochargers can fail around 150,000km, costing $1,500â2,500 NZD to replace."
+                                         },
+                                         {
+                                             "title":  "Rust in Rear Arches",
+                                             "detail":  "Common issue with R33s, especially imports, requiring bodywork to fix."
+                                         }
+                                     ]
+                      },
+    "drivingCharacter":  {
+                             "steeringFeel":  {
+                                                  "score":  7,
+                                                  "description":  "The steering is precise and offers good feedback, though not as sharp as the R32."
+                                              },
+                             "engineCharacter":  {
+                                                     "score":  8,
+                                                     "description":  "The RB25DET delivers a strong mid-range punch with a distinctive inline-six growl."
+                                                 },
+                             "dailyComfort":  {
+                                                  "score":  6,
+                                                  "description":  "The ride is firm but manageable, with decent cabin space for a sports sedan."
+                                              },
+                             "overallFun":  {
+                                                "score":  8,
+                                                "description":  "The combination of turbo power and manual control makes it a joy on twisty roads."
+                                            },
+                             "summary":  "A thrilling drive with the classic turbocharged inline-six experience."
+                         },
+    "classicPotential":  {
+                             "score":  7,
+                             "reasons":  [
+                                             "Rising interest in JDM classics",
+                                             "Manual Skylines becoming rarer and more sought after."
+                                         ]
+                         },
+    "regretRisk":  {
+                       "level":  "Medium",
+                       "reason":  "While the car is desirable, maintenance costs and the high entry price could lead to buyer\u0027s remorse."
+                   },
+    "marketTrend":  {
+                        "trend":  "Rising",
+                        "reason":  "Values are climbing as enthusiasts snap up remaining good examples."
+                    },
+    "worstFinancialDecision":  {
+                                   "rating":  "Manageable Pain",
+                                   "reasons":  [
+                                                   "Turbo replacement costs",
+                                                   "Potential rust repairs",
+                                                   "High initial purchase price."
+                                               ]
+                               },
+    "redFlags":  [
+                     {
+                         "flag":  "Expired WOF",
+                         "explanation":  "The car cannot be legally driven until a new WOF is obtained, which could reveal costly issues."
+                     },
+                     {
+                         "flag":  "Registration Expired",
+                         "explanation":  "The car is illegal to drive until registration is renewed, potentially requiring re-compliance."
+                     },
+                     {
+                         "flag":  "Imported with no documented overseas history",
+                         "explanation":  "Odometer fraud and undisclosed accident risk are concerns â verify with auction sheets."
+                     }
+                 ],
+    "modPotential":  {
+                         "relevance":  "high",
+                         "powerCeiling":  "With a bigger turbo and supporting mods, 400kW is achievable â budget $10,000+ NZD for a reliable build.",
+                         "firstMods":  [
+                                           "Replace factory intercooler with a larger unit to handle increased boost.",
+                                           "Upgrade fuel pump and injectors to support more power."
+                                       ],
+                         "handlingUpgrades":  "BC Racing coilovers and a Whiteline sway bar kit are popular choices for improving handling.",
+                         "partsEcosystem":  "Strong aftermarket support with parts readily available from NZ suppliers and international sources.",
+                         "collectorRisk":  "Modding can enhance performance but may reduce appeal to collectors seeking original examples."
+                     },
+    "questionsToAsk":  [
+                           "Has the turbo been replaced or serviced recently?",
+                           "Is there any rust present, particularly in the rear arches?",
+                           "Can you provide the Japanese auction sheet or any proof of the car\u0027s history before import?"
+                       ],
+    "enthusiastTake":  "While the R33 Skyline is a desirable piece of JDM history, the expired WOF and rego, along with the lack of documented history, are significant concerns. Verify the car\u0027s condition and history thoroughly before committing.",
+    "performanceSpecs":  {
+                             "engine":  "RB25DET 2.5L Turbo I6",
+                             "powerKw":  186,
+                             "powerHp":  250,
+                             "torqueNm":  294,
+                             "torqueRpm":  "4800",
+                             "zeroToHundred":  "6.0s",
+                             "kerbWeightKg":  1400,
+                             "drivetrain":  "FR, RWD",
+                             "jdmNote":  ""
+                         },
+    "alternatives":  [
+                         {
+                             "name":  "Toyota Chaser JZX100",
+                             "whySuited":  "Another JDM classic with a turbocharged inline-six and rear-wheel drive.",
+                             "howDiffers":  "The Chaser offers a more understated look and often better interior quality.",
+                             "priceRange":  "$25,000â$35,000"
+                         },
+                         {
+                             "name":  "Mazda RX-7 FD3S",
+                             "whySuited":  "For those who want a lightweight, rotary-powered sports car with iconic styling.",
+                             "howDiffers":  "The RX-7 is more focused on performance but comes with higher maintenance demands.",
+                             "priceRange":  "$40,000â$60,000"
+                         },
+                         {
+                             "name":  "Subaru Impreza WRX STI GC8",
+                             "whySuited":  "Offers rally-bred performance with a turbocharged flat-four and AWD.",
+                             "howDiffers":  "The STI provides all-weather capability and a different driving experience with its AWD system.",
+                             "priceRange":  "$20,000â$30,000"
+                         }
+                     ],
+    "investmentScore":  5,
+    "vibeScore":  7
+}

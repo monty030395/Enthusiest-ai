@@ -1,0 +1,156 @@
+﻿{
+    "vehicle":  {
+                    "make":  "Tesla",
+                    "model":  "Model Y",
+                    "year":  "2022",
+                    "variant":  "Rear Wheel Drive",
+                    "mileage":  "73,931km",
+                    "price":  "$43,900",
+                    "transmission":  "Automatic",
+                    "colour":  "White",
+                    "importStatus":  "NZ New",
+                    "location":  "North Shore, Auckland"
+                },
+    "label":  "Peak Daily Driver",
+    "verdict":  "A well-priced, NZ new Model Y with warranty coverage, ideal for those looking to switch to electric without breaking the bank.",
+    "whatMakesSpecial":  "The Tesla Model Y offers a blend of practicality and performance with its electric powertrain and advanced technology, making it a standout in the EV market.",
+    "whyEnthusiastsCare":  "Tesla has revolutionized the electric vehicle market with its cutting-edge technology, impressive range, and performance, making the Model Y a desirable choice for tech-savvy enthusiasts.",
+    "ownerVibe":  {
+                      "label":  "Dealer / Trade Listing",
+                      "reasoning":  "Listed by a registered motor vehicle trader, offering finance options and warranties, indicating a professional sale."
+                  },
+    "carsCoffee":  {
+                       "rating":  "Medium",
+                       "description":  "While not a head-turner like a classic sports car, the Model Y\u0027s tech and EV status still draw interest."
+                   },
+    "communityCredibility":  {
+                                 "rating":  "High",
+                                 "description":  "Tesla\u0027s strong community presence and innovative tech make it highly respected among EV enthusiasts."
+                             },
+    "socialStanding":  "The Model Y is the go-to choice for those wanting cutting-edge EV tech without the luxury price tag.",
+    "specSignificance":  [
+                             {
+                                 "item":  "NZ New",
+                                 "note":  "Full compliance history and no odometer fraud risk."
+                             },
+                             {
+                                 "item":  "Tesla Warranty",
+                                 "note":  "Comprehensive coverage until 2030 for battery and drive unit."
+                             }
+                         ],
+    "priceVerdict":  {
+                         "assessment":  "Fair",
+                         "reason":  "The asking price reflects the car\u0027s condition, mileage, and remaining warranty, making it a competitive option in the NZ market."
+                     },
+    "enthusiastTax":  {
+                          "level":  "None",
+                          "premium":  "None",
+                          "reasons":  [
+                                          "EV market is competitive with no significant enthusiast markup for this model."
+                                      ]
+                      },
+    "priceOutlook":  {
+                         "trend":  "Stable",
+                         "reason":  "EVs like the Model Y are holding their value well as demand for electric vehicles remains strong."
+                     },
+    "ownershipPain":  {
+                          "score":  2,
+                          "issues":  [
+                                         {
+                                             "title":  "Battery Degradation",
+                                             "detail":  "Minimal at this mileage, but worth monitoring as it approaches 160,000km warranty limit."
+                                         }
+                                     ]
+                      },
+    "drivingCharacter":  {
+                             "steeringFeel":  {
+                                                  "score":  6,
+                                                  "description":  "The steering is precise and responsive, though lacks the tactile feedback of a hydraulic system."
+                                              },
+                             "engineCharacter":  {
+                                                     "score":  8,
+                                                     "description":  "Instant torque delivery makes for brisk acceleration, with a smooth and silent powertrain typical of EVs."
+                                                 },
+                             "dailyComfort":  {
+                                                  "score":  8,
+                                                  "description":  "The Model Y offers a comfortable ride with ample space and tech features, making it ideal for daily commutes."
+                                              },
+                             "overallFun":  {
+                                                "score":  7,
+                                                "description":  "While not a sports car, the Model Y\u0027s instant torque and tech features provide an engaging driving experience."
+                                            },
+                             "summary":  "Effortless to drive with a modern tech suite, the Model Y is a practical yet exciting daily driver."
+                         },
+    "classicPotential":  {
+                             "score":  5,
+                             "reasons":  [
+                                             "EVs are gaining traction, but the Model Y\u0027s mass production limits its classic appeal."
+                                         ]
+                         },
+    "regretRisk":  {
+                       "level":  "Low",
+                       "reason":  "With warranty coverage and strong resale value, the Model Y is a safe bet for EV buyers."
+                   },
+    "marketTrend":  {
+                        "trend":  "Stable",
+                        "reason":  "The EV market is maturing with steady demand, keeping prices consistent."
+                    },
+    "worstFinancialDecision":  {
+                                   "rating":  "Sensible Purchase",
+                                   "reasons":  [
+                                                   "Low running costs, strong warranty coverage, and stable resale value make it a financially sound choice."
+                                               ]
+                               },
+    "redFlags":  [
+
+                 ],
+    "modPotential":  {
+                         "relevance":  "low",
+                         "powerCeiling":  "",
+                         "firstMods":  [
+
+                                       ],
+                         "handlingUpgrades":  "",
+                         "partsEcosystem":  "",
+                         "collectorRisk":  "Modding is unlikely to enhance value; keeping it stock is advisable for warranty and resale."
+                     },
+    "questionsToAsk":  [
+                           "Has the battery health been checked recently?",
+                           "Are there any software updates pending for the vehicle?",
+                           "Can you provide the full service history and any maintenance records?"
+                       ],
+    "enthusiastTake":  "The Model Y is a smart choice for those wanting to embrace the EV lifestyle with minimal hassle, backed by Tesla\u0027s strong warranty and tech support.",
+    "performanceSpecs":  {
+                             "engine":  "Electric Motor",
+                             "powerKw":  220,
+                             "powerHp":  295,
+                             "torqueNm":  420,
+                             "torqueRpm":  "",
+                             "zeroToHundred":  "6.9s",
+                             "kerbWeightKg":  1909,
+                             "drivetrain":  "FR, RWD",
+                             "jdmNote":  ""
+                         },
+    "alternatives":  [
+                         {
+                             "name":  "Hyundai Ioniq 5",
+                             "whySuited":  "Offers similar range and tech features with a unique design.",
+                             "howDiffers":  "More traditional SUV styling with a focus on comfort and practicality.",
+                             "priceRange":  "$50,000â$60,000"
+                         },
+                         {
+                             "name":  "Kia EV6",
+                             "whySuited":  "A stylish and well-equipped EV with strong performance credentials.",
+                             "howDiffers":  "Slightly sportier driving dynamics and a more aggressive design.",
+                             "priceRange":  "$55,000â$65,000"
+                         },
+                         {
+                             "name":  "Nissan Leaf e+",
+                             "whySuited":  "A reliable and affordable EV option with a decent range.",
+                             "howDiffers":  "Less performance-oriented but offers excellent value for money.",
+                             "priceRange":  "$40,000â$50,000"
+                         }
+                     ],
+    "investmentScore":  7,
+    "vibeScore":  6
+}

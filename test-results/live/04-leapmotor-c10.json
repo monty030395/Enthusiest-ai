@@ -1,0 +1,152 @@
+﻿{
+    "vehicle":  {
+                    "make":  "Leapmotor",
+                    "model":  "C10",
+                    "year":  "2026",
+                    "variant":  "Design REEV Ultra Hybrid",
+                    "mileage":  "0 km",
+                    "price":  "$49,990",
+                    "transmission":  "Automatic",
+                    "colour":  "",
+                    "importStatus":  "NZ New",
+                    "location":  "Auckland"
+                },
+    "label":  "Overrated",
+    "verdict":  "A brand-new model with unproven reliability and resale value, priced ambitiously for a market unfamiliar with the brand.",
+    "whatMakesSpecial":  "The Leapmotor C10 offers a cutting-edge range extender hybrid system, promising nearly 1,000 km of driving range.",
+    "whyEnthusiastsCare":  "As a new entrant in the hybrid market, it represents the shift towards more sustainable and efficient driving solutions, though its impact on the enthusiast community remains to be seen.",
+    "ownerVibe":  {
+                      "label":  "Dealer / Trade Listing",
+                      "reasoning":  "Listed by Armstrong\u0027s, a well-known dealership, with standard dealer language and finance options."
+                  },
+    "carsCoffee":  {
+                       "rating":  "Low",
+                       "description":  "As a new and unfamiliar brand in NZ, it won\u0027t draw much attention at enthusiast gatherings."
+                   },
+    "communityCredibility":  {
+                                 "rating":  "Low",
+                                 "description":  "Leapmotor lacks the established reputation among NZ car enthusiasts, making it a niche choice."
+                             },
+    "socialStanding":  "A curiosity more than a status symbol among enthusiasts.",
+    "specSignificance":  [
+                             {
+                                 "item":  "Range Extender Hybrid",
+                                 "note":  "Combines electric and petrol power for extended range."
+                             }
+                         ],
+    "priceVerdict":  {
+                         "assessment":  "Overpriced",
+                         "reason":  "The price reflects a premium for new technology and brand novelty, but lacks the brand recognition to justify it."
+                     },
+    "enthusiastTax":  {
+                          "level":  "None",
+                          "premium":  "None",
+                          "reasons":  [
+                                          "New brand with no established enthusiast following or demand."
+                                      ]
+                      },
+    "priceOutlook":  {
+                         "trend":  "Falling",
+                         "reason":  "As a new entrant, resale values are uncertain and likely to drop as the market tests reliability and desirability."
+                     },
+    "ownershipPain":  {
+                          "score":  6,
+                          "issues":  [
+                                         {
+                                             "title":  "Unproven Reliability",
+                                             "detail":  "As a new model, long-term reliability is unknown and parts availability could be limited."
+                                         }
+                                     ]
+                      },
+    "drivingCharacter":  {
+                             "steeringFeel":  {
+                                                  "score":  5,
+                                                  "description":  "Steering likely prioritizes comfort over feedback, typical of modern hybrids."
+                                              },
+                             "engineCharacter":  {
+                                                     "score":  4,
+                                                     "description":  "The hybrid setup focuses on efficiency rather than engaging power delivery."
+                                                 },
+                             "dailyComfort":  {
+                                                  "score":  8,
+                                                  "description":  "Features like heated seats and a panoramic sunroof enhance daily usability and comfort."
+                                              },
+                             "overallFun":  {
+                                                "score":  4,
+                                                "description":  "Designed for efficiency and comfort, not for spirited driving."
+                                            },
+                             "summary":  "A practical and efficient commuter, but lacks the engagement enthusiasts crave."
+                         },
+    "classicPotential":  {
+                             "score":  2,
+                             "reasons":  [
+                                             "Unlikely to become a classic due to lack of brand heritage and enthusiast appeal."
+                                         ]
+                         },
+    "regretRisk":  {
+                       "level":  "Medium",
+                       "reason":  "Potential for rapid depreciation and limited brand support could lead to buyer\u0027s remorse."
+                   },
+    "marketTrend":  {
+                        "trend":  "Falling",
+                        "reason":  "Initial depreciation expected as the market evaluates the brand\u0027s reliability and desirability."
+                    },
+    "worstFinancialDecision":  {
+                                   "rating":  "Manageable Pain",
+                                   "reasons":  [
+                                                   "High initial depreciation, potential parts scarcity, and uncertain long-term reliability."
+                                               ]
+                               },
+    "redFlags":  [
+
+                 ],
+    "modPotential":  {
+                         "relevance":  "low",
+                         "powerCeiling":  "",
+                         "firstMods":  [
+
+                                       ],
+                         "handlingUpgrades":  "",
+                         "partsEcosystem":  "",
+                         "collectorRisk":  "Modding is unlikely to affect resale value as the car lacks collectible appeal."
+                     },
+    "questionsToAsk":  [
+                           "What are the warranty terms and coverage specifics for this model?",
+                           "Is there a confirmed service network for Leapmotor in NZ?",
+                           "What is the expected battery life and replacement cost?"
+                       ],
+    "enthusiastTake":  "While the Leapmotor C10 offers modern hybrid technology, its lack of brand recognition and enthusiast appeal makes it a risky choice for those seeking community engagement and long-term value.",
+    "performanceSpecs":  {
+                             "engine":  "1,499 cc Range Extender Hybrid",
+                             "powerKw":  0,
+                             "powerHp":  0,
+                             "torqueNm":  0,
+                             "torqueRpm":  "",
+                             "zeroToHundred":  "",
+                             "kerbWeightKg":  0,
+                             "drivetrain":  "FF, FWD",
+                             "jdmNote":  ""
+                         },
+    "alternatives":  [
+                         {
+                             "name":  "Toyota RAV4 Hybrid",
+                             "whySuited":  "Offers proven hybrid technology with strong resale value and reliability.",
+                             "howDiffers":  "More established brand with a robust service network and community support.",
+                             "priceRange":  "$40,000â$55,000"
+                         },
+                         {
+                             "name":  "Mitsubishi Outlander PHEV",
+                             "whySuited":  "Combines plug-in hybrid efficiency with a trusted name in NZ.",
+                             "howDiffers":  "Offers a more conventional SUV experience with better-known reliability.",
+                             "priceRange":  "$45,000â$60,000"
+                         },
+                         {
+                             "name":  "Hyundai Ioniq 5",
+                             "whySuited":  "A modern EV with a growing reputation for quality and innovation.",
+                             "howDiffers":  "Fully electric with a focus on futuristic design and technology.",
+                             "priceRange":  "$50,000â$70,000"
+                         }
+                     ],
+    "investmentScore":  4,
+    "vibeScore":  3
+}

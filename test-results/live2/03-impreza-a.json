@@ -1,0 +1,152 @@
+﻿{
+    "vehicle":  {
+                    "make":  "Subaru",
+                    "model":  "Impreza Sport",
+                    "year":  "2012",
+                    "variant":  "1.6i-L",
+                    "mileage":  "96,460 km",
+                    "price":  "$9,949",
+                    "transmission":  "Automatic (CVT)",
+                    "colour":  "Pearl",
+                    "importStatus":  "Unknown",
+                    "location":  "New Lynn, Auckland"
+                },
+    "label":  "Peak Daily Driver",
+    "verdict":  "A solid daily driver with Subaru\u0027s AWD reliability, but the CVT and 1.6L engine won\u0027t excite enthusiasts.",
+    "whatMakesSpecial":  "Subaru\u0027s renowned Symmetrical All-Wheel Drive system offers excellent grip and stability, making it a practical choice for NZ\u0027s varied road conditions.",
+    "whyEnthusiastsCare":  "While not a performance model, the Impreza Sport\u0027s AWD system and hatchback practicality make it a reliable choice for those needing a versatile daily driver.",
+    "ownerVibe":  {
+                      "label":  "Dealer / Trade Listing",
+                      "reasoning":  "Listed by Portage Cars Ltd, an AA Preferred Dealer, with a focus on reliability and practicality rather than enthusiast appeal."
+                  },
+    "carsCoffee":  {
+                       "rating":  "Low",
+                       "description":  "This Impreza won\u0027t turn heads at a meet â it\u0027s more about practicality than presence."
+                   },
+    "communityCredibility":  {
+                                 "rating":  "Medium",
+                                 "description":  "Respected for its reliability and AWD practicality, but lacks the performance pedigree to excite Subaru enthusiasts."
+                             },
+    "socialStanding":  "The Impreza Sport is the sensible choice for those who value practicality over performance.",
+    "specSignificance":  [
+                             {
+                                 "item":  "Symmetrical AWD",
+                                 "note":  "Offers excellent grip and stability."
+                             }
+                         ],
+    "priceVerdict":  {
+                         "assessment":  "Fair",
+                         "reason":  "Priced appropriately for its mileage and condition, but the 1.6L engine limits enthusiast appeal."
+                     },
+    "enthusiastTax":  {
+                          "level":  "None",
+                          "premium":  "None",
+                          "reasons":  [
+                                          "The 1.6L engine and CVT transmission don\u0027t command an enthusiast premium."
+                                      ]
+                      },
+    "priceOutlook":  {
+                         "trend":  "Stable",
+                         "reason":  "Values for practical, reliable hatchbacks like this Impreza tend to hold steady, especially with AWD."
+                     },
+    "ownershipPain":  {
+                          "score":  3,
+                          "issues":  [
+                                         {
+                                             "title":  "CVT Transmission Longevity",
+                                             "detail":  "CVTs can develop issues over time; budget $2,000â3,000 NZD for potential repairs."
+                                         }
+                                     ]
+                      },
+    "drivingCharacter":  {
+                             "steeringFeel":  {
+                                                  "score":  5,
+                                                  "description":  "The steering is light and lacks the feedback of sportier models, but it\u0027s adequate for daily driving."
+                                              },
+                             "engineCharacter":  {
+                                                     "score":  4,
+                                                     "description":  "The 1.6L Boxer engine is smooth but lacks punch, with a focus on economy over excitement."
+                                                 },
+                             "dailyComfort":  {
+                                                  "score":  7,
+                                                  "description":  "Comfortable and practical with good visibility and a well-laid-out cabin, though road noise can intrude at speed."
+                                              },
+                             "overallFun":  {
+                                                "score":  4,
+                                                "description":  "The Impreza Sport is more about getting from A to B reliably than providing thrills."
+                                            },
+                             "summary":  "A practical and reliable daily driver with Subaru\u0027s AWD confidence, but not a car for spirited driving."
+                         },
+    "classicPotential":  {
+                             "score":  3,
+                             "reasons":  [
+                                             "Lacks the performance or unique features to become a classic, but AWD practicality keeps it relevant."
+                                         ]
+                         },
+    "regretRisk":  {
+                       "level":  "Low",
+                       "reason":  "A reliable and practical choice for daily driving, but won\u0027t excite those looking for performance."
+                   },
+    "marketTrend":  {
+                        "trend":  "Stable",
+                        "reason":  "Practical AWD hatchbacks like this Impreza maintain steady demand in NZ."
+                    },
+    "worstFinancialDecision":  {
+                                   "rating":  "Sensible Purchase",
+                                   "reasons":  [
+                                                   "Low running costs and reliable AWD system make it a safe financial choice for a daily driver."
+                                               ]
+                               },
+    "redFlags":  [
+
+                 ],
+    "modPotential":  {
+                         "relevance":  "low",
+                         "powerCeiling":  "",
+                         "firstMods":  [
+
+                                       ],
+                         "handlingUpgrades":  "",
+                         "partsEcosystem":  "",
+                         "collectorRisk":  "Modding this Impreza won\u0027t enhance its value; it\u0027s best kept stock for reliability."
+                     },
+    "questionsToAsk":  [
+                           "Has the CVT transmission been serviced or had any issues?",
+                           "Are there any service records available for the AWD system maintenance?",
+                           "Can you provide the Japanese auction sheet or any documentation verifying the odometer reading?"
+                       ],
+    "enthusiastTake":  "While not a performance icon, the Impreza Sport offers reliable AWD practicality for daily use.",
+    "performanceSpecs":  {
+                             "engine":  "1.6L Boxer Petrol",
+                             "powerKw":  84,
+                             "powerHp":  113,
+                             "torqueNm":  150,
+                             "torqueRpm":  "4000",
+                             "zeroToHundred":  "12.4s",
+                             "kerbWeightKg":  1360,
+                             "drivetrain":  "AWD",
+                             "jdmNote":  ""
+                         },
+    "alternatives":  [
+                         {
+                             "name":  "Toyota Corolla Fielder",
+                             "whySuited":  "For those seeking a reliable and practical hatchback with a strong reputation for durability.",
+                             "howDiffers":  "The Corolla offers a more conventional FWD setup and typically lower running costs.",
+                             "priceRange":  "$8,000â$12,000"
+                         },
+                         {
+                             "name":  "Mazda Axela (Mazda3)",
+                             "whySuited":  "A stylish and reliable choice with a more engaging driving experience than the Impreza.",
+                             "howDiffers":  "The Axela offers sharper handling and a more refined interior, but lacks AWD.",
+                             "priceRange":  "$9,000â$13,000"
+                         },
+                         {
+                             "name":  "Honda Civic Hatchback",
+                             "whySuited":  "A practical and reliable hatchback with a reputation for longevity and a bit more flair.",
+                             "howDiffers":  "The Civic offers a sportier design and driving dynamics, but without AWD.",
+                             "priceRange":  "$8,500â$13,500"
+                         }
+                     ],
+    "investmentScore":  6,
+    "vibeScore":  5
+}

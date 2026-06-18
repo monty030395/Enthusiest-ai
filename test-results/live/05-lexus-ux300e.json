@@ -1,0 +1,152 @@
+﻿{
+    "vehicle":  {
+                    "make":  "Lexus",
+                    "model":  "UX 300e",
+                    "year":  "2023",
+                    "variant":  "UX300E Limited Electric",
+                    "mileage":  "833 km",
+                    "price":  "$59,888",
+                    "transmission":  "Automatic",
+                    "colour":  "Graphite Black",
+                    "importStatus":  "NZ New",
+                    "location":  "Manukau"
+                },
+    "label":  "Premium Asking Price",
+    "verdict":  "A premium price for a nearly new electric Lexus, but the limited trim and low mileage justify the cost for those seeking luxury EVs.",
+    "whatMakesSpecial":  "The UX 300e Limited is a rare blend of Lexus luxury and cutting-edge electric technology, offering a substantial 437km range.",
+    "whyEnthusiastsCare":  "As Lexus\u0027s first fully electric vehicle, the UX 300e represents a significant shift towards sustainable luxury, appealing to eco-conscious buyers who value brand prestige.",
+    "ownerVibe":  {
+                      "label":  "Dealer / Trade Listing",
+                      "reasoning":  "Listed by Manukau Toyota, a reputable dealership, with a focus on premium features and low mileage."
+                  },
+    "carsCoffee":  {
+                       "rating":  "Medium",
+                       "description":  "While not a head-turner for petrolheads, the UX 300e\u0027s electric novelty and Lexus badge will attract some interest."
+                   },
+    "communityCredibility":  {
+                                 "rating":  "Medium",
+                                 "description":  "Respected for its luxury and innovation, but lacks the enthusiast community presence of more performance-oriented models."
+                             },
+    "socialStanding":  "The eco-friendly luxury choice for those who want to make a statement without shouting.",
+    "specSignificance":  [
+                             {
+                                 "item":  "Limited trim",
+                                 "note":  "Top-tier features and appointments elevate this model above the standard UX 300e."
+                             }
+                         ],
+    "priceVerdict":  {
+                         "assessment":  "Premium Justified",
+                         "reason":  "The low mileage and limited trim justify the premium for buyers seeking a nearly new luxury EV."
+                     },
+    "enthusiastTax":  {
+                          "level":  "Mild",
+                          "premium":  "+$1,000â2,000",
+                          "reasons":  [
+                                          "Limited trim and low mileage command a slight premium over standard models."
+                                      ]
+                      },
+    "priceOutlook":  {
+                         "trend":  "Stable",
+                         "reason":  "As more luxury EVs enter the market, prices for early models like the UX 300e are expected to stabilize."
+                     },
+    "ownershipPain":  {
+                          "score":  2,
+                          "issues":  [
+                                         {
+                                             "title":  "Battery Degradation",
+                                             "detail":  "While new, battery performance will need monitoring as it ages, though Lexus offers strong warranties."
+                                         }
+                                     ]
+                      },
+    "drivingCharacter":  {
+                             "steeringFeel":  {
+                                                  "score":  5,
+                                                  "description":  "The steering is light and precise, typical of electric vehicles, but lacks the feedback of traditional hydraulic systems."
+                                              },
+                             "engineCharacter":  {
+                                                     "score":  6,
+                                                     "description":  "Silent and smooth, the electric motor provides instant torque but lacks the aural drama of a combustion engine."
+                                                 },
+                             "dailyComfort":  {
+                                                  "score":  9,
+                                                  "description":  "With a plush interior, heated seats, and a quiet cabin, the UX 300e excels in daily comfort and practicality."
+                                              },
+                             "overallFun":  {
+                                                "score":  5,
+                                                "description":  "While not exhilarating, the UX 300e offers a serene and effortless driving experience, ideal for urban commutes."
+                                            },
+                             "summary":  "A comfortable and refined urban cruiser with a focus on luxury and sustainability."
+                         },
+    "classicPotential":  {
+                             "score":  4,
+                             "reasons":  [
+                                             "As Lexus\u0027s first EV, it holds some historical significance, but mass adoption of EVs may limit classic appeal."
+                                         ]
+                         },
+    "regretRisk":  {
+                       "level":  "Low",
+                       "reason":  "With Lexus\u0027s reputation for reliability and the novelty of a luxury EV, buyers are unlikely to regret this purchase."
+                   },
+    "marketTrend":  {
+                        "trend":  "Stable",
+                        "reason":  "The luxury EV market is expanding, but early models like the UX 300e will hold their value due to brand prestige."
+                    },
+    "worstFinancialDecision":  {
+                                   "rating":  "Sensible Purchase",
+                                   "reasons":  [
+                                                   "Lexus\u0027s reliability and the growing demand for EVs make this a sound financial choice."
+                                               ]
+                               },
+    "redFlags":  [
+
+                 ],
+    "modPotential":  {
+                         "relevance":  "low",
+                         "powerCeiling":  "",
+                         "firstMods":  [
+
+                                       ],
+                         "handlingUpgrades":  "",
+                         "partsEcosystem":  "",
+                         "collectorRisk":  "Modifying an EV like the UX 300e is unlikely to enhance its value or appeal."
+                     },
+    "questionsToAsk":  [
+                           "What is the remaining warranty period on the battery and drivetrain?",
+                           "Are there any software updates or recalls pending for this model?",
+                           "Can you provide a detailed service history, even at this low mileage?"
+                       ],
+    "enthusiastTake":  "While not a traditional enthusiast\u0027s car, the UX 300e offers a glimpse into the future of luxury motoring with its electric drivetrain and Lexus comfort.",
+    "performanceSpecs":  {
+                             "engine":  "Electric Motor",
+                             "powerKw":  150,
+                             "powerHp":  201,
+                             "torqueNm":  300,
+                             "torqueRpm":  "",
+                             "zeroToHundred":  "7.5s",
+                             "kerbWeightKg":  1840,
+                             "drivetrain":  "FF, FWD",
+                             "jdmNote":  ""
+                         },
+    "alternatives":  [
+                         {
+                             "name":  "Tesla Model 3 Standard Range Plus",
+                             "whySuited":  "For those seeking a more tech-focused electric vehicle with a similar price point.",
+                             "howDiffers":  "Offers a more dynamic driving experience and a larger charging network, but lacks the traditional luxury feel of a Lexus.",
+                             "priceRange":  "$55,000â$65,000"
+                         },
+                         {
+                             "name":  "Hyundai Kona Electric",
+                             "whySuited":  "A practical and well-rounded electric SUV with a similar range and price.",
+                             "howDiffers":  "More utilitarian and less luxurious, but offers excellent value and a strong warranty.",
+                             "priceRange":  "$50,000â$60,000"
+                         },
+                         {
+                             "name":  "BMW i3",
+                             "whySuited":  "For those interested in a unique design and BMW\u0027s driving dynamics in an electric package.",
+                             "howDiffers":  "Quirkier styling and a smaller interior, but offers a distinctive driving experience.",
+                             "priceRange":  "$40,000â$55,000"
+                         }
+                     ],
+    "investmentScore":  7,
+    "vibeScore":  6
+}

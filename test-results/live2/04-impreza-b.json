@@ -1,0 +1,156 @@
+﻿{
+    "vehicle":  {
+                    "make":  "Subaru",
+                    "model":  "Impreza",
+                    "year":  "2018",
+                    "variant":  "2.0 SPORT",
+                    "mileage":  "58,124 km",
+                    "price":  "$19,985",
+                    "transmission":  "Automatic",
+                    "colour":  "Blue",
+                    "importStatus":  "Unknown",
+                    "location":  "Auckland"
+                },
+    "label":  "Peak Daily Driver",
+    "verdict":  "A solid choice for a reliable, practical daily driver with AWD confidence, but the asking price is on the higher side for a non-enthusiast model.",
+    "whatMakesSpecial":  "The 2018 Subaru Impreza offers the practicality of a modern hatchback with the added confidence of Subaru\u0027s symmetrical AWD system.",
+    "whyEnthusiastsCare":  "While not a performance icon, the Impreza\u0027s AWD system and boxer engine layout have a loyal following for their reliability and capability in all conditions.",
+    "ownerVibe":  {
+                      "label":  "Dealer / Trade Listing",
+                      "reasoning":  "The listing is from a dealership with a focus on finance options and trade-ins, typical of a dealer environment."
+                  },
+    "carsCoffee":  {
+                       "rating":  "Low",
+                       "description":  "This model is more about practicality than turning heads at a meet."
+                   },
+    "communityCredibility":  {
+                                 "rating":  "Medium",
+                                 "description":  "Respected for its reliability and AWD capability, but not a standout in enthusiast circles."
+                             },
+    "socialStanding":  "A dependable choice for those who value practicality over performance flair.",
+    "specSignificance":  [
+                             {
+                                 "item":  "AWD",
+                                 "note":  "Subaru\u0027s symmetrical AWD system provides excellent traction."
+                             },
+                             {
+                                 "item":  "Subaru EyeSight",
+                                 "note":  "Advanced safety features enhance daily driving confidence."
+                             }
+                         ],
+    "priceVerdict":  {
+                         "assessment":  "Overpriced",
+                         "reason":  "The price is on the higher side for a non-performance variant, likely due to dealer markup."
+                     },
+    "enthusiastTax":  {
+                          "level":  "None",
+                          "premium":  "None",
+                          "reasons":  [
+                                          "This model doesn\u0027t command an enthusiast premium, being a standard Impreza rather than a WRX or STI."
+                                      ]
+                      },
+    "priceOutlook":  {
+                         "trend":  "Stable",
+                         "reason":  "Values for practical daily drivers like this tend to remain stable, with no significant appreciation expected."
+                     },
+    "ownershipPain":  {
+                          "score":  3,
+                          "issues":  [
+                                         {
+                                             "title":  "CVT Transmission",
+                                             "detail":  "Subaru\u0027s CVT can be a weak point; ensure it\u0027s been serviced regularly to avoid costly repairs."
+                                         }
+                                     ]
+                      },
+    "drivingCharacter":  {
+                             "steeringFeel":  {
+                                                  "score":  5,
+                                                  "description":  "The steering is light and easy, suitable for urban driving but lacks the feedback of sportier models."
+                                              },
+                             "engineCharacter":  {
+                                                     "score":  5,
+                                                     "description":  "The 2.0L boxer engine offers smooth and adequate performance, but lacks the punch of turbocharged variants."
+                                                 },
+                             "dailyComfort":  {
+                                                  "score":  8,
+                                                  "description":  "Comfortable ride with a spacious interior, making it ideal for daily commuting and family duties."
+                                              },
+                             "overallFun":  {
+                                                "score":  5,
+                                                "description":  "While not thrilling, the Impreza is competent and reassuring, especially in poor weather conditions."
+                                            },
+                             "summary":  "A practical and reliable daily driver with the added benefit of AWD."
+                         },
+    "classicPotential":  {
+                             "score":  2,
+                             "reasons":  [
+                                             "This model is unlikely to become a classic, as it lacks the performance pedigree of its WRX siblings."
+                                         ]
+                         },
+    "regretRisk":  {
+                       "level":  "Low",
+                       "reason":  "A reliable and practical choice with low likelihood of buyer\u0027s remorse."
+                   },
+    "marketTrend":  {
+                        "trend":  "Stable",
+                        "reason":  "The market for practical, reliable vehicles like this remains steady, with no major shifts expected."
+                    },
+    "worstFinancialDecision":  {
+                                   "rating":  "Sensible Purchase",
+                                   "reasons":  [
+                                                   "Low running costs and good reliability make this a financially sound choice for a daily driver."
+                                               ]
+                               },
+    "redFlags":  [
+
+                 ],
+    "modPotential":  {
+                         "relevance":  "low",
+                         "powerCeiling":  "",
+                         "firstMods":  [
+
+                                       ],
+                         "handlingUpgrades":  "",
+                         "partsEcosystem":  "",
+                         "collectorRisk":  "Modifications are unlikely to increase value and may deter future buyers looking for a reliable daily."
+                     },
+    "questionsToAsk":  [
+                           "Has the CVT transmission been serviced regularly?",
+                           "Are there any remaining warranties or service plans?",
+                           "Can you provide the AA appraisal report for review?"
+                       ],
+    "enthusiastTake":  "A practical and reliable choice for everyday use, but not the Impreza to buy if you\u0027re seeking performance thrills.",
+    "performanceSpecs":  {
+                             "engine":  "2.0L Boxer 4-Cylinder",
+                             "powerKw":  115,
+                             "powerHp":  154,
+                             "torqueNm":  196,
+                             "torqueRpm":  "4000",
+                             "zeroToHundred":  "9.8s",
+                             "kerbWeightKg":  1390,
+                             "drivetrain":  "4WD, AWD",
+                             "jdmNote":  ""
+                         },
+    "alternatives":  [
+                         {
+                             "name":  "Mazda 3 SP25",
+                             "whySuited":  "Offers a similar level of practicality with a more engaging driving experience.",
+                             "howDiffers":  "The Mazda 3 is known for its sharp handling and stylish design, but lacks AWD.",
+                             "priceRange":  "$15,000â$20,000"
+                         },
+                         {
+                             "name":  "Toyota Corolla GX",
+                             "whySuited":  "A reliable and practical alternative with a strong reputation for longevity.",
+                             "howDiffers":  "The Corolla is less exciting to drive but offers legendary reliability and lower running costs.",
+                             "priceRange":  "$14,000â$19,000"
+                         },
+                         {
+                             "name":  "Honda Civic RS",
+                             "whySuited":  "Combines practicality with a sportier edge and a well-regarded turbo engine.",
+                             "howDiffers":  "The Civic RS offers a more dynamic drive and modern styling, but again lacks AWD.",
+                             "priceRange":  "$18,000â$24,000"
+                         }
+                     ],
+    "investmentScore":  5,
+    "vibeScore":  5
+}

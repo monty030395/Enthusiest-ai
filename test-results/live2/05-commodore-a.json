@@ -1,0 +1,161 @@
+﻿{
+    "vehicle":  {
+                    "make":  "Holden",
+                    "model":  "Commodore Tourer V",
+                    "year":  "2019",
+                    "variant":  "3.6Pt",
+                    "mileage":  "85,000 km",
+                    "price":  "$29,990",
+                    "transmission":  "Automatic",
+                    "colour":  "Black",
+                    "importStatus":  "NZ New",
+                    "location":  "Lower Hutt"
+                },
+    "label":  "Peak Daily Driver",
+    "verdict":  "Solid all-rounder with a good mix of power, space, and features for the price.",
+    "whatMakesSpecial":  "The Commodore Tourer V offers a unique blend of European design with the practicality of a wagon, coupled with a powerful V6 engine.",
+    "whyEnthusiastsCare":  "The Holden Commodore has a strong legacy in New Zealand, known for its reliability and performance, particularly in the V6 and V8 variants.",
+    "ownerVibe":  {
+                      "label":  "Dealer / Trade Listing",
+                      "reasoning":  "Listed by Armstrong\u0027s Dongfeng \u0026 Nissan Lower Hutt, clearly a dealer listing with warranty options and delivery services."
+                  },
+    "carsCoffee":  {
+                       "rating":  "Medium",
+                       "description":  "While not a head-turner, the Commodore Tourer V\u0027s practicality and performance will still draw interest from fellow enthusiasts."
+                   },
+    "communityCredibility":  {
+                                 "rating":  "Medium",
+                                 "description":  "The Commodore name carries weight in NZ, but the Tourer V is more about practicality than pure enthusiast appeal."
+                             },
+    "socialStanding":  "The practical choice for those who want a bit of everything without compromising on style or power.",
+    "specSignificance":  [
+                             {
+                                 "item":  "AWD",
+                                 "note":  "All-wheel drive adds versatility and confidence in various driving conditions."
+                             },
+                             {
+                                 "item":  "Calais V Trim",
+                                 "note":  "Top-spec trim with luxury features like leather seats and a BOSE sound system."
+                             }
+                         ],
+    "priceVerdict":  {
+                         "assessment":  "Fair",
+                         "reason":  "The price is in line with market expectations for a well-equipped, NZ new, low-mileage example."
+                     },
+    "enthusiastTax":  {
+                          "level":  "None",
+                          "premium":  "None",
+                          "reasons":  [
+                                          "This model doesn\u0027t command a significant enthusiast premium due to its focus on practicality over performance."
+                                      ]
+                      },
+    "priceOutlook":  {
+                         "trend":  "Stable",
+                         "reason":  "Values for late-model Commodores are holding steady as they remain popular for their practicality and performance."
+                     },
+    "ownershipPain":  {
+                          "score":  3,
+                          "issues":  [
+                                         {
+                                             "title":  "Timing Chain Stretch",
+                                             "detail":  "The 3.6L V6 can suffer from timing chain stretch, which is costly to repair if not caught early."
+                                         },
+                                         {
+                                             "title":  "Transmission Issues",
+                                             "detail":  "The 9-speed automatic can develop shift quality issues; a fluid change may cost $300â500 NZD."
+                                         }
+                                     ]
+                      },
+    "drivingCharacter":  {
+                             "steeringFeel":  {
+                                                  "score":  6,
+                                                  "description":  "The steering is light and easy, making it a breeze for daily driving, though it lacks the feedback of a sports car."
+                                              },
+                             "engineCharacter":  {
+                                                     "score":  7,
+                                                     "description":  "The 3.6L V6 provides a smooth and linear power delivery, with enough grunt to make overtaking effortless."
+                                                 },
+                             "dailyComfort":  {
+                                                  "score":  8,
+                                                  "description":  "Comfortable ride with plenty of space and features; perfect for long trips or family duties."
+                                              },
+                             "overallFun":  {
+                                                "score":  6,
+                                                "description":  "While not a sports car, the Tourer V\u0027s power and AWD make it enjoyable for spirited drives."
+                                            },
+                             "summary":  "A well-rounded package that balances power, comfort, and practicality."
+                         },
+    "classicPotential":  {
+                             "score":  4,
+                             "reasons":  [
+                                             "Unlikely to become a classic due to its focus on practicality, but may hold value as a solid all-rounder."
+                                         ]
+                         },
+    "regretRisk":  {
+                       "level":  "Low",
+                       "reason":  "With a good mix of features and performance, it\u0027s unlikely to disappoint as a daily driver."
+                   },
+    "marketTrend":  {
+                        "trend":  "Stable",
+                        "reason":  "The demand for practical, well-equipped wagons remains steady in NZ."
+                    },
+    "worstFinancialDecision":  {
+                                   "rating":  "Sensible Purchase",
+                                   "reasons":  [
+                                                   "Reasonable maintenance costs and stable value make it a sound financial choice."
+                                               ]
+                               },
+    "redFlags":  [
+
+                 ],
+    "modPotential":  {
+                         "relevance":  "medium",
+                         "powerCeiling":  "A tune and exhaust can push power closer to 250kW, costing around $2,000â3,000 NZD.",
+                         "firstMods":  [
+                                           "Cold air intake for improved breathing and slight power gain.",
+                                           "Upgraded brake pads for better stopping power."
+                                       ],
+                         "handlingUpgrades":  "Coilovers from brands like BC Racing can improve handling without sacrificing comfort.",
+                         "partsEcosystem":  "Decent aftermarket support with parts available from both local and international suppliers.",
+                         "collectorRisk":  "Modifications are unlikely to impact resale negatively, as this model isn\u0027t a collector\u0027s item."
+                     },
+    "questionsToAsk":  [
+                           "Has the timing chain been inspected or replaced?",
+                           "Are there any service records for the transmission fluid change?",
+                           "Is there any remaining warranty or service plan?"
+                       ],
+    "enthusiastTake":  "A solid choice for those who need a practical daily driver with a bit of power and luxury thrown in.",
+    "performanceSpecs":  {
+                             "engine":  "3.6L V6",
+                             "powerKw":  235,
+                             "powerHp":  315,
+                             "torqueNm":  381,
+                             "torqueRpm":  "",
+                             "zeroToHundred":  "6.5s",
+                             "kerbWeightKg":  0,
+                             "drivetrain":  "AWD",
+                             "jdmNote":  ""
+                         },
+    "alternatives":  [
+                         {
+                             "name":  "Subaru Outback 3.6R",
+                             "whySuited":  "Similar AWD wagon with a strong reputation for reliability and practicality.",
+                             "howDiffers":  "The Outback offers a more rugged, off-road capable package with a slightly less premium interior.",
+                             "priceRange":  "$25,000â$35,000"
+                         },
+                         {
+                             "name":  "Mazda CX-9",
+                             "whySuited":  "Offers a spacious interior and similar power output with a turbocharged engine.",
+                             "howDiffers":  "The CX-9 is more SUV-like with higher ride height and a focus on family comfort.",
+                             "priceRange":  "$30,000â$40,000"
+                         },
+                         {
+                             "name":  "Ford Mondeo Wagon",
+                             "whySuited":  "A practical and spacious wagon with a good balance of features and driving dynamics.",
+                             "howDiffers":  "The Mondeo offers a more European driving feel with a slightly smaller engine.",
+                             "priceRange":  "$20,000â$30,000"
+                         }
+                     ],
+    "investmentScore":  6,
+    "vibeScore":  6
+}

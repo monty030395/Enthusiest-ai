@@ -1,0 +1,157 @@
+﻿{
+    "vehicle":  {
+                    "make":  "Nissan",
+                    "model":  "Skyline",
+                    "year":  "2013",
+                    "variant":  "250GT",
+                    "mileage":  "128,565 km",
+                    "price":  "$12,999",
+                    "transmission":  "Automatic",
+                    "colour":  "Black",
+                    "importStatus":  "Unknown",
+                    "location":  "New Lynn, Auckland"
+                },
+    "label":  "Premium Asking Price",
+    "verdict":  "Overpriced because the seller knows what they have, but the spec justifies a small premium.",
+    "whatMakesSpecial":  "The V36 Skyline 250GT offers a refined balance of luxury and performance with a naturally aspirated V6.",
+    "whyEnthusiastsCare":  "The Skyline name carries a legacy of performance and style, with the V36 being a popular choice for those seeking a blend of comfort and sportiness.",
+    "ownerVibe":  {
+                      "label":  "Dealer / Trade Listing",
+                      "reasoning":  "The listing is from a dealer with finance options and a polished sales pitch."
+                  },
+    "carsCoffee":  {
+                       "rating":  "Medium",
+                       "description":  "While not a showstopper, the V36 Skyline will still garner interest from those who appreciate Japanese sedans."
+                   },
+    "communityCredibility":  {
+                                 "rating":  "Medium",
+                                 "description":  "The V36 Skyline is respected for its balance of comfort and performance, though it lacks the cult status of earlier Skylines."
+                             },
+    "socialStanding":  "A solid choice for those who want a stylish sedan without the flashiness of a sports car.",
+    "specSignificance":  [
+                             {
+                                 "item":  "V6 Engine",
+                                 "note":  "The naturally aspirated V6 provides smooth power delivery."
+                             }
+                         ],
+    "priceVerdict":  {
+                         "assessment":  "Overpriced",
+                         "reason":  "The asking price is on the high side for a V36 Skyline with this mileage, likely due to dealer markup."
+                     },
+    "enthusiastTax":  {
+                          "level":  "Mild",
+                          "premium":  "+$1,000â2,000",
+                          "reasons":  [
+                                          "Dealer markup and the Skyline name carry a small premium."
+                                      ]
+                      },
+    "priceOutlook":  {
+                         "trend":  "Stable",
+                         "reason":  "Values for the V36 Skyline are stable as they are not yet considered classics but remain desirable."
+                     },
+    "ownershipPain":  {
+                          "score":  5,
+                          "issues":  [
+                                         {
+                                             "title":  "VQ25HR Timing Chain Tensioner",
+                                             "detail":  "The timing chain tensioner can wear, leading to chain rattle â replacement costs $1,500â2,500 NZD."
+                                         },
+                                         {
+                                             "title":  "Transmission Valve Body",
+                                             "detail":  "The automatic transmission valve body can fail, costing $2,000â3,000 NZD to repair."
+                                         }
+                                     ]
+                      },
+    "drivingCharacter":  {
+                             "steeringFeel":  {
+                                                  "score":  6,
+                                                  "description":  "The steering is light and precise, offering decent feedback for a sedan, though it lacks the sharpness of a sports car."
+                                              },
+                             "engineCharacter":  {
+                                                     "score":  7,
+                                                     "description":  "The V6 engine is smooth and responsive, with a pleasant growl under acceleration but lacks the high-revving excitement of a turbocharged unit."
+                                                 },
+                             "dailyComfort":  {
+                                                  "score":  8,
+                                                  "description":  "The ride is comfortable and composed, making it an excellent daily driver with ample cabin space and a quiet interior."
+                                              },
+                             "overallFun":  {
+                                                "score":  6,
+                                                "description":  "While not a sports car, the V36 Skyline offers a satisfying balance of performance and comfort for everyday driving."
+                                            },
+                             "summary":  "A refined and comfortable sedan with a touch of sportiness."
+                         },
+    "classicPotential":  {
+                             "score":  4,
+                             "reasons":  [
+                                             "The V36 lacks the iconic status of earlier Skylines and is unlikely to become a classic soon."
+                                         ]
+                         },
+    "regretRisk":  {
+                       "level":  "Medium",
+                       "reason":  "Potential maintenance costs and the high asking price could lead to buyer\u0027s remorse if not carefully considered."
+                   },
+    "marketTrend":  {
+                        "trend":  "Stable",
+                        "reason":  "The market for V36 Skylines is stable as they maintain a steady demand without significant appreciation."
+                    },
+    "worstFinancialDecision":  {
+                                   "rating":  "Manageable Pain",
+                                   "reasons":  [
+                                                   "Potential high repair costs for timing chain and transmission issues."
+                                               ]
+                               },
+    "redFlags":  [
+
+                 ],
+    "modPotential":  {
+                         "relevance":  "medium",
+                         "powerCeiling":  "With a tune and exhaust, the VQ25HR can reach around 200kW â budget $3,000â5,000 NZD.",
+                         "firstMods":  [
+                                           "Upgraded exhaust for better sound and slight power gain.",
+                                           "ECU tune to optimize performance."
+                                       ],
+                         "handlingUpgrades":  "Coilovers from brands like BC Racing improve handling without sacrificing comfort.",
+                         "partsEcosystem":  "Decent aftermarket support with parts available from both NZ and international suppliers.",
+                         "collectorRisk":  "Modifying won\u0027t significantly hurt value, but keep it tasteful to maintain resale appeal."
+                     },
+    "questionsToAsk":  [
+                           "Has the timing chain tensioner been replaced?",
+                           "Are there any issues with the transmission valve body?",
+                           "Is the vehicle\u0027s service history complete and available?"
+                       ],
+    "enthusiastTake":  "The V36 Skyline offers a balanced package of style and comfort, but ensure the mechanicals are sound to avoid costly repairs.",
+    "performanceSpecs":  {
+                             "engine":  "VQ25HR 2.5L V6",
+                             "powerKw":  165,
+                             "powerHp":  221,
+                             "torqueNm":  243,
+                             "torqueRpm":  "4800",
+                             "zeroToHundred":  "7.5s",
+                             "kerbWeightKg":  1600,
+                             "drivetrain":  "FR, RWD",
+                             "jdmNote":  ""
+                         },
+    "alternatives":  [
+                         {
+                             "name":  "Toyota Mark X GRX130",
+                             "whySuited":  "Offers a similar blend of comfort and performance with a V6 engine.",
+                             "howDiffers":  "The Mark X is often seen as more reliable with a slightly softer ride.",
+                             "priceRange":  "$10,000â$15,000"
+                         },
+                         {
+                             "name":  "Mazda Atenza GH",
+                             "whySuited":  "A stylish and practical alternative with good handling dynamics.",
+                             "howDiffers":  "The Atenza offers a more engaging drive but lacks the prestige of the Skyline badge.",
+                             "priceRange":  "$8,000â$12,000"
+                         },
+                         {
+                             "name":  "Honda Accord Euro CL9",
+                             "whySuited":  "Known for its reliability and sporty handling, appealing to those considering a Skyline.",
+                             "howDiffers":  "The Accord Euro is more focused on handling precision but offers less power.",
+                             "priceRange":  "$7,000â$11,000"
+                         }
+                     ],
+    "investmentScore":  5,
+    "vibeScore":  6
+}

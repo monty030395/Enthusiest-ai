@@ -1,0 +1,156 @@
+﻿{
+    "vehicle":  {
+                    "make":  "Kia",
+                    "model":  "EV5",
+                    "year":  "2026",
+                    "variant":  "GT-Line AWD 84kWh",
+                    "mileage":  "5,100 km",
+                    "price":  "$79,990",
+                    "transmission":  "Automatic",
+                    "colour":  "Iceberg Green/Black",
+                    "importStatus":  "NZ New",
+                    "location":  "Auckland"
+                },
+    "label":  "Premium Asking Price",
+    "verdict":  "A high-tech, feature-packed EV with a premium price reflecting its newness and spec.",
+    "whatMakesSpecial":  "The 2026 Kia EV5 GT-Line offers cutting-edge electric technology with dual motors and a long-range battery, making it a standout in the current EV market.",
+    "whyEnthusiastsCare":  "As electric vehicles become more mainstream, models like the EV5 GT-Line represent the future of motoring with advanced safety features and impressive range, appealing to tech-savvy enthusiasts.",
+    "ownerVibe":  {
+                      "label":  "Dealer / Trade Listing",
+                      "reasoning":  "Listed by Andrew Simms Botany, a well-known dealership, with a polished, professional description and finance options."
+                  },
+    "carsCoffee":  {
+                       "rating":  "Medium",
+                       "description":  "While not a head-turner like a classic or exotic, its new tech and design will draw interest from EV enthusiasts."
+                   },
+    "communityCredibility":  {
+                                 "rating":  "Medium",
+                                 "description":  "The Kia EV5 is respected for its tech and practicality, but lacks the cult following of more established performance or classic models."
+                             },
+    "socialStanding":  "A practical, tech-forward choice that shows you\u0027re ahead of the curve in embracing EVs.",
+    "specSignificance":  [
+                             {
+                                 "item":  "Dual-Motor eAWD",
+                                 "note":  "Provides 230kW and 480Nm, offering strong performance for an SUV."
+                             },
+                             {
+                                 "item":  "84kWh Battery",
+                                 "note":  "Long-range capability with up to 470km WLTP range."
+                             }
+                         ],
+    "priceVerdict":  {
+                         "assessment":  "Overpriced",
+                         "reason":  "Reflects the newness and high spec, but EV depreciation and rapid tech advancements could impact future value."
+                     },
+    "enthusiastTax":  {
+                          "level":  "None",
+                          "premium":  "None",
+                          "reasons":  [
+                                          "EVs are not yet commanding enthusiast premiums due to rapid tech changes and depreciation."
+                                      ]
+                      },
+    "priceOutlook":  {
+                         "trend":  "Falling",
+                         "reason":  "EVs typically depreciate quickly as newer models with better tech are released."
+                     },
+    "ownershipPain":  {
+                          "score":  3,
+                          "issues":  [
+                                         {
+                                             "title":  "Battery Degradation",
+                                             "detail":  "Over time, the battery\u0027s capacity will decrease, potentially impacting range and resale value."
+                                         }
+                                     ]
+                      },
+    "drivingCharacter":  {
+                             "steeringFeel":  {
+                                                  "score":  6,
+                                                  "description":  "Electric steering is precise but lacks the feedback of hydraulic systems, typical for modern EVs."
+                                              },
+                             "engineCharacter":  {
+                                                     "score":  7,
+                                                     "description":  "Instant torque from the dual motors provides brisk acceleration, though it lacks the aural drama of an ICE."
+                                                 },
+                             "dailyComfort":  {
+                                                  "score":  8,
+                                                  "description":  "Comfortable ride with premium interior features, making it a great daily driver for families."
+                                              },
+                             "overallFun":  {
+                                                "score":  6,
+                                                "description":  "While not a sports car, the instant torque and tech features make it enjoyable in a modern, practical sense."
+                                            },
+                             "summary":  "A tech-savvy SUV with strong performance and practicality, but lacking the visceral thrills of a traditional performance car."
+                         },
+    "classicPotential":  {
+                             "score":  3,
+                             "reasons":  [
+                                             "EVs are not yet seen as classics, and rapid tech evolution means today\u0027s models quickly become outdated."
+                                         ]
+                         },
+    "regretRisk":  {
+                       "level":  "Medium",
+                       "reason":  "Rapid depreciation and potential for better tech in newer models could lead to buyer\u0027s remorse."
+                   },
+    "marketTrend":  {
+                        "trend":  "Falling",
+                        "reason":  "EVs face quick depreciation as technology improves and newer models enter the market."
+                    },
+    "worstFinancialDecision":  {
+                                   "rating":  "Manageable Pain",
+                                   "reasons":  [
+                                                   "EV depreciation is typically steep, and replacement parts like batteries can be costly."
+                                               ]
+                               },
+    "redFlags":  [
+
+                 ],
+    "modPotential":  {
+                         "relevance":  "low",
+                         "powerCeiling":  "",
+                         "firstMods":  [
+
+                                       ],
+                         "handlingUpgrades":  "",
+                         "partsEcosystem":  "",
+                         "collectorRisk":  "Modifying an EV like this is unlikely to enhance value and could void warranties."
+                     },
+    "questionsToAsk":  [
+                           "Has the battery been independently tested for degradation?",
+                           "Are there any software updates or recalls pending for this model?",
+                           "What is the warranty coverage on the battery and drivetrain?"
+                       ],
+    "enthusiastTake":  "While the Kia EV5 GT-Line is packed with tech and offers a glimpse into the future of motoring, its rapid depreciation and the pace of EV tech advancements mean it\u0027s not a surefire investment.",
+    "performanceSpecs":  {
+                             "engine":  "Dual-Motor Electric",
+                             "powerKw":  230,
+                             "powerHp":  308,
+                             "torqueNm":  480,
+                             "torqueRpm":  "",
+                             "zeroToHundred":  "5.2s",
+                             "kerbWeightKg":  0,
+                             "drivetrain":  "AWD",
+                             "jdmNote":  ""
+                         },
+    "alternatives":  [
+                         {
+                             "name":  "Tesla Model Y Long Range",
+                             "whySuited":  "Offers similar range and tech features with Tesla\u0027s strong brand appeal.",
+                             "howDiffers":  "Tesla\u0027s Supercharger network and software updates give it an edge in convenience and tech.",
+                             "priceRange":  "$85,000â$95,000"
+                         },
+                         {
+                             "name":  "Hyundai Ioniq 5",
+                             "whySuited":  "Shares a similar platform and tech with a slightly different design ethos.",
+                             "howDiffers":  "The Ioniq 5 offers a retro-futuristic design and a more established reputation in the EV space.",
+                             "priceRange":  "$75,000â$85,000"
+                         },
+                         {
+                             "name":  "Ford Mustang Mach-E",
+                             "whySuited":  "Combines EV practicality with a sporty design and performance.",
+                             "howDiffers":  "The Mach-E offers a more performance-oriented drive with a distinctive style.",
+                             "priceRange":  "$80,000â$90,000"
+                         }
+                     ],
+    "investmentScore":  5,
+    "vibeScore":  6
+}

@@ -1,0 +1,152 @@
+﻿{
+    "vehicle":  {
+                    "make":  "Dongfeng",
+                    "model":  "Box",
+                    "year":  "2026",
+                    "variant":  "44KWH/EV/AT",
+                    "mileage":  "20 km",
+                    "price":  "$30,980",
+                    "transmission":  "Automatic",
+                    "colour":  "Metropolitan Red + Stone White R",
+                    "importStatus":  "NZ New",
+                    "location":  "Auckland"
+                },
+    "label":  "Peak Daily Driver",
+    "verdict":  "A modern urban EV with all the tech bells and whistles, but the price is steep for an unproven brand in NZ.",
+    "whatMakesSpecial":  "The Dongfeng Box offers a unique design with frameless doors and a floating roof, setting it apart from typical urban EVs.",
+    "whyEnthusiastsCare":  "While not traditionally an enthusiast\u0027s choice, the Box represents a new wave of accessible, tech-laden EVs for city dwellers.",
+    "ownerVibe":  {
+                      "label":  "Dealer / Trade Listing",
+                      "reasoning":  "Listed by Armstrong\u0027s dealership with a focus on pre-order and launch pricing."
+                  },
+    "carsCoffee":  {
+                       "rating":  "Low",
+                       "description":  "Most enthusiasts will walk past this unless they\u0027re curious about new EV tech."
+                   },
+    "communityCredibility":  {
+                                 "rating":  "Low",
+                                 "description":  "Dongfeng is not a well-known brand in the NZ enthusiast community, and this model is too new to have established credibility."
+                             },
+    "socialStanding":  "A curiosity rather than a status symbol among car enthusiasts.",
+    "specSignificance":  [
+                             {
+                                 "item":  "Electric drivetrain",
+                                 "note":  "Represents the shift towards urban electric mobility."
+                             }
+                         ],
+    "priceVerdict":  {
+                         "assessment":  "Overpriced",
+                         "reason":  "The price is high for a brand-new, unproven EV brand in the NZ market, especially with additional on-road costs."
+                     },
+    "enthusiastTax":  {
+                          "level":  "None",
+                          "premium":  "None",
+                          "reasons":  [
+                                          "This is a new model with no established enthusiast following or demand."
+                                      ]
+                      },
+    "priceOutlook":  {
+                         "trend":  "Stable",
+                         "reason":  "As a new model, its value will likely hold steady until more is known about its reliability and market acceptance."
+                     },
+    "ownershipPain":  {
+                          "score":  4,
+                          "issues":  [
+                                         {
+                                             "title":  "Brand unfamiliarity",
+                                             "detail":  "Potential challenges with parts availability and service support as Dongfeng is not yet established in NZ."
+                                         }
+                                     ]
+                      },
+    "drivingCharacter":  {
+                             "steeringFeel":  {
+                                                  "score":  5,
+                                                  "description":  "The steering is likely to be light and geared towards urban maneuverability rather than enthusiast feedback."
+                                              },
+                             "engineCharacter":  {
+                                                     "score":  5,
+                                                     "description":  "As an EV, it offers instant torque and silent operation, but lacks the aural excitement of a combustion engine."
+                                                 },
+                             "dailyComfort":  {
+                                                  "score":  8,
+                                                  "description":  "Designed for urban comfort with features like a heated and ventilated driver\u0027s seat and a smooth electric drivetrain."
+                                              },
+                             "overallFun":  {
+                                                "score":  5,
+                                                "description":  "While not thrilling, the tech features and instant torque make it a competent city commuter."
+                                            },
+                             "summary":  "A practical and tech-savvy urban EV, but not one for driving thrills."
+                         },
+    "classicPotential":  {
+                             "score":  2,
+                             "reasons":  [
+                                             "As a new EV model, it lacks the historical or enthusiast appeal to become a classic."
+                                         ]
+                         },
+    "regretRisk":  {
+                       "level":  "Medium",
+                       "reason":  "Potential buyers may regret the purchase if the brand fails to establish a strong service and support network in NZ."
+                   },
+    "marketTrend":  {
+                        "trend":  "Stable",
+                        "reason":  "The market for new EVs is growing, but brand reputation will play a key role in future value."
+                    },
+    "worstFinancialDecision":  {
+                                   "rating":  "Manageable Pain",
+                                   "reasons":  [
+                                                   "High initial cost for an unproven brand, potential depreciation if the brand doesn\u0027t gain traction."
+                                               ]
+                               },
+    "redFlags":  [
+
+                 ],
+    "modPotential":  {
+                         "relevance":  "low",
+                         "powerCeiling":  "",
+                         "firstMods":  [
+
+                                       ],
+                         "handlingUpgrades":  "",
+                         "partsEcosystem":  "",
+                         "collectorRisk":  "Modifying this car is unlikely to affect its value, as it has no collector appeal."
+                     },
+    "questionsToAsk":  [
+                           "What is the expected service and parts support network for Dongfeng in NZ?",
+                           "Are there any plans for software updates to enhance features or range?",
+                           "What are the real-world range figures in NZ conditions?"
+                       ],
+    "enthusiastTake":  "While it\u0027s a fresh face in the EV market, the Dongfeng Box is more about urban practicality than enthusiast appeal.",
+    "performanceSpecs":  {
+                             "engine":  "Electric Motor",
+                             "powerKw":  0,
+                             "powerHp":  0,
+                             "torqueNm":  0,
+                             "torqueRpm":  "",
+                             "zeroToHundred":  "",
+                             "kerbWeightKg":  0,
+                             "drivetrain":  "FF, FWD",
+                             "jdmNote":  ""
+                         },
+    "alternatives":  [
+                         {
+                             "name":  "Nissan Leaf ZE1",
+                             "whySuited":  "A proven and popular choice for urban EV buyers with established support in NZ.",
+                             "howDiffers":  "The Leaf has a solid reputation and resale value, with a more conservative design.",
+                             "priceRange":  "$25,000â$35,000"
+                         },
+                         {
+                             "name":  "Hyundai Kona Electric",
+                             "whySuited":  "Offers a similar urban-friendly EV experience with a reputable brand backing.",
+                             "howDiffers":  "The Kona Electric is known for its range and features, backed by Hyundai\u0027s service network.",
+                             "priceRange":  "$30,000â$40,000"
+                         },
+                         {
+                             "name":  "MG ZS EV",
+                             "whySuited":  "An affordable entry into the electric SUV market with a growing presence in NZ.",
+                             "howDiffers":  "The ZS EV offers SUV practicality and a competitive price point.",
+                             "priceRange":  "$28,000â$38,000"
+                         }
+                     ],
+    "investmentScore":  4,
+    "vibeScore":  4
+}
