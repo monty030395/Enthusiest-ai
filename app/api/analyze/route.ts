@@ -157,7 +157,7 @@ vehicle.colour — exterior colour as listed. Leave empty string if not mentione
 vehicle.importStatus — pick ONE: "NZ New" | "JDM Import" | "Grey Import" | "UK Import" | "Australian Import" | "Unknown". Critical NZ context — determines compliance history, odometer reliability, parts availability, and value. NZ New cars have full compliance history; JDM/grey imports carry odometer fraud risk and may have unknown history.
 vehicle.location — city or region (e.g. "Auckland", "Wellington", "Canterbury"). Leave empty if not mentioned.
 
-label — pick ONE: "Hidden Gem" | "Future Classic" | "Premium Asking Price" | "Cheap Thrill" | "Money Pit" | "Peak Daily Driver" | "Overrated" | "Underrated"
+label — pick EXACTLY ONE of these exact strings, never invent a new one: "Hidden Gem" | "Future Classic" | "Premium Asking Price" | "Cheap Thrill" | "Money Pit" | "Peak Daily Driver" | "Overrated" | "Underrated". If none fits perfectly, choose the closest — do NOT make up a label like "Classic Aussie Icon".
 
 verdict — one punchy sentence. Not "good car." More like: "Overpriced because the seller knows what they have, but the spec justifies a small premium." Or: "Last of the naturally aspirated era — buy it before everyone else figures that out."
 
@@ -224,7 +224,7 @@ classicPotential.reasons — specific reasons (e.g. "last naturally aspirated in
 worstFinancialDecision.rating — pick ONE: "Sensible Purchase" | "Manageable Pain" | "Emotionally Justified Disaster" | "Dangerous" | "Catastrophic Wallet Destruction"
 worstFinancialDecision.reasons — specific financial impact factors for NZ ownership: parts cost and availability, depreciation trajectory, fuel cost, insurance, reliability record. Name actual NZD costs where possible. E.g. "Vanos rebuild on the S54 runs $2,500–4,000 NZD at a specialist — and it will need it." Reference this exact model's ownership economics, not generic car costs.
 
-redFlags — scan the FULL description text (not just structured fields) for the warning signals below and return an entry for each one present. INFER flags from implausible, vague, or ambiguous claims — not only from explicit statements. A flag does not need the seller to spell it out; raise it when the listing's own claims don't add up. Return empty array [] only when genuinely nothing applies. Do NOT invent specifics that aren't supported — but DO raise a flag when something is off.
+redFlags — scan the FULL description text (not just structured fields) for the warning signals below and return an entry for each one present. INFER flags from implausible, vague, or ambiguous claims — not only from explicit statements. A flag does not need the seller to spell it out; raise it when the listing's own claims don't add up. Return empty array [] only when genuinely nothing applies. Do NOT invent specifics that aren't supported — but DO raise a flag when something is off. A missing asking price is NOT a red flag — it is handled by priceVerdict ("No Price Listed"); never add "No Price Listed" or similar to redFlags. Red flags are genuine warning signals (damage, money owing, odometer/compliance risk), not missing listing fields.
 
 Signals to detect:
 - Re-registered vehicle, or "re-registered check: Advisory" in listing data — potential write-off or insurance total loss
@@ -232,7 +232,7 @@ Signals to detect:
 - WOF expired or expiring within 30 days — buyer must factor in cost and potential failure
 - Registration lapsed or expired AT ANY POINT — including phrases like "rego lapsed in [year]" buried in the description — illegal to drive until reinstated, possible re-compliance cost
 - Imported with no documented overseas history — ALWAYS raise this for any JDM/grey import where pre-NZ history isn't evidenced; odometer fraud and undisclosed accident risk
-- ODOMETER PLAUSIBILITY: compute km-per-year (odometer ÷ (current year − model year)). Under ~5,000 km/year — especially on a JDM/grey import — MUST be flagged as an odometer-verification item. Low km for the age is a RISK to verify, never a selling point to reward.
+- Implausibly low odometer for age — compute km-per-year (odometer ÷ (current year − model year)); under ~5,000 km/year, especially on a JDM/grey import, must be flagged (title it e.g. "Unverified Low Mileage"). Low km for the age is a risk to verify, never a selling point to reward in priceVerdict/classicPotential/enthusiastTax.
 - Salvage, damaged, or rebuilt title indicators in the listing
 - Seller mentions "as is", "no WoF", "no rego", "unfinished project", or similar
 - Off the road / stored / "only driven a few times" / "insurance car" with little explanation — probe why; can mask unresolved faults, compliance issues, or undisclosed damage
