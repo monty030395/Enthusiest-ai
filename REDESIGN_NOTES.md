@@ -94,15 +94,11 @@ was removed in an earlier change).
 
 ## Before / after
 
-Side-by-side composites in [`screenshots/compare/`](screenshots/compare):
+The `screenshots/` folder (~6 MB of PNGs) was dropped from this branch before merge to
+keep it out of main's history. The full set lives in this branch's earlier history at
+commit `e5d9652`, and the key composites are attached to the merge PR.
 
-- [Landing](screenshots/compare/landing-desktop.png)
-- [Results hero](screenshots/compare/results-hero.png)
-- [Landing — mobile](screenshots/compare/landing-mobile.png)
-- [Privacy](screenshots/compare/privacy-desktop.png)
-
-Full sets in [`screenshots/before/`](screenshots/before) and
-[`screenshots/after/`](screenshots/after):
+Set names for reference:
 
 | View | Before | After |
 |---|---|---|
