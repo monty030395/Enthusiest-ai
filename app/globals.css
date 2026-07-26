@@ -1,26 +1,62 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* ── Motormind design tokens ─────────────────────────────────────────
+   Editorial dark theme: warm charcoal surfaces, ivory ink, ember accent.
+   Defined here because Tailwind 4 is CSS-first (no tailwind.config.ts). */
+@theme {
+  /* Surfaces — warm near-black scale */
+  --color-carbon-950: #0b0b0c;
+  --color-carbon-900: #121214;
+  --color-carbon-850: #17171a;
+  --color-carbon-800: #1d1d21;
+  --color-carbon-700: #28282e;
+  --color-carbon-600: #36363e;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /* Ink — warm off-whites, editorial paper feel */
+  --color-ink: #f4f2ed;
+  --color-ink-muted: #a39f96;
+  --color-ink-faint: #6e6a63;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Brand accent — ember */
+  --color-ember-300: #ffce7a;
+  --color-ember-400: #f5b04c;
+  --color-ember-500: #e89a2b;
+  --color-ember-600: #c77f1b;
+  --color-ember-700: #9a6112;
+
+  /* Hairlines */
+  --color-line: rgba(255, 255, 255, 0.08);
+  --color-line-strong: rgba(255, 255, 255, 0.15);
+
+  /* Type — Syne display, Inter body, JetBrains Mono data */
+  --font-display: var(--font-syne);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jbmono);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-carbon-950);
+  color: var(--color-ink);
+}
+
+/* Film grain — subtle editorial texture over everything */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+::selection {
+  background: var(--color-ember-500);
+  color: var(--color-carbon-950);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-ember-500);
+  outline-offset: 2px;
 }
