@@ -51,6 +51,21 @@ export default function PrivacyPage() {
         </section>
 
         <section className="space-y-3">
+          <h2 className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-ember-400">Shared links</h2>
+          <div className="h-px bg-line" />
+          <p className="text-ink-muted text-sm leading-relaxed">
+            This is the one case where a check leaves your device. When you tap Share on a check or a tally,
+            that single result is uploaded so it can be viewed at a motormind.nz link — no account, no name,
+            nothing about you attached, just the analysis itself. The rest of your Garage stays local.
+          </p>
+          <p className="text-ink-muted text-sm leading-relaxed">
+            Treat a shared link as public: anyone who has it can open it, and search engines could index it if
+            it gets posted somewhere public. Shared links are deleted automatically 90 days after they are
+            created. If you want one removed sooner, email the address below with the link.
+          </p>
+        </section>
+
+        <section className="space-y-3">
           <h2 className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-ember-400">AI processing</h2>
           <div className="h-px bg-line" />
           <p className="text-ink-muted text-sm leading-relaxed">

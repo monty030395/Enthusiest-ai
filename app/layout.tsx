@@ -18,9 +18,18 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
 });
 
+// Shared /c/<id> links need absolute URLs for their OG images. Preview
+// deployments get VERCEL_URL; production falls back to the real domain.
+const siteUrl = process.env.VERCEL_ENV === "production"
+  ? "https://www.motormind.nz"
+  : process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : "http://localhost:3000";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "Motormind — NZ Car Buying Copilot",
-  description: "AI-powered enthusiast analysis for NZ car listings. Paste a URL or upload screenshots.",
+  description: "AI-powered enthusiast analysis for NZ car listings. Paste the listing text or upload screenshots.",
   manifest: "/manifest.json",
 };
 
