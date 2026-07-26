@@ -7,7 +7,9 @@ import {
   isSpecified,
   computeCharacterScore,
   getQuip,
+  buildShareText,
 } from "../_lib/analysis";
+import { shareOrCopy, createShareLink } from "../_lib/share";
 import {
   V_RED, V_AMBER, V_GREEN, V_NEUTRAL,
   VERDICT_THEME_MAP, TAX_LEVEL_THEMES,
@@ -145,7 +147,14 @@ function TileHeader({ label, score, quip, index }: { label: string; score: numbe
 
 // The full results view, rendered purely from an Analysis object — used for
 // fresh checks on the home page and reopened checks in the Garage.
-export default function AnalysisResults({ analysis: result }: { analysis: Analysis }) {
+export default function AnalysisResults({
+  analysis: result,
+  showShare = true,
+}: {
+  analysis: Analysis;
+  // Public shared pages render read-only — no re-sharing a shared link
+  showShare?: boolean;
+}) {
   const investmentSectionRef = useRef<HTMLDivElement>(null);
   const characterSectionRef = useRef<HTMLDivElement>(null);
   const streetCredSectionRef = useRef<HTMLDivElement>(null);
@@ -153,6 +162,25 @@ export default function AnalysisResults({ analysis: result }: { analysis: Analys
   const ownerVibeRef = useRef<HTMLDivElement>(null);
 
   const characterScore = computeCharacterScore(result);
+  const [shareNote, setShareNote] = useState("");
+  const [sharing, setSharing] = useState(false);
+
+  async function shareVerdict() {
+    setSharing(true);
+    setShareNote("");
+    // A link lets them read the whole thing in the real app; if link sharing
+    // isn't available the text summary still goes out on its own
+    const link = await createShareLink({ kind: "check", analysis: result });
+    setSharing(false);
+    const outcome = await shareOrCopy(buildShareText(result), link ?? undefined);
+    if (outcome === "shared" || outcome === "cancelled") return;
+    setShareNote(
+      outcome === "copied"
+        ? link ? "Link copied — paste it in the group chat." : "Copied — paste it in the group chat."
+        : "Couldn't share from here — screenshot the verdict instead."
+    );
+    setTimeout(() => setShareNote(""), 4000);
+  }
 
   return (
     <div className="space-y-4">
@@ -649,6 +677,22 @@ export default function AnalysisResults({ analysis: result }: { analysis: Analys
           <div className="px-6 py-5">
             <p className="text-ink leading-relaxed text-[15px]">{result.enthusiastTake}</p>
           </div>
+        </div>
+      )}
+
+      {/* Share */}
+      {showShare && (
+        <div className="space-y-2">
+          <button
+            onClick={shareVerdict}
+            disabled={sharing}
+            className="w-full border border-ember-600/50 hover:border-ember-500 disabled:border-line disabled:text-ink-faint text-ember-400 hover:text-ember-300 rounded-lg py-3.5 font-mono text-[11px] font-medium uppercase tracking-[0.2em] transition-all"
+          >
+            {sharing ? "Building the link..." : "Share the Verdict"}
+          </button>
+          {shareNote && (
+            <p className="font-mono text-[10px] text-ink-faint text-center">{shareNote}</p>
+          )}
         </div>
       )}
 

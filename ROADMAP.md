@@ -16,9 +16,16 @@ policy honest (nothing uploaded, no accounts).
 | 1 | **The Garage** — auto-save every completed check to localStorage (`app/_lib/garage.ts`), Garage page with list/reopen/remove/clear, masthead nav, privacy policy updated for device-only storage | 🔨 this branch |
 | 2 | **Compare: tally table** — select two checks in the Garage → side-by-side rows (Investment / Character / Street Cred, price, enthusiast tax, reliability pain, wallet damage, classic potential) with per-row winner highlighting and a totted-up score. Pure client-side, no API cost. Closes [#6](https://github.com/monty030395/Enthusiest-ai/issues/6) with Phase 3. | 🔨 this branch |
 | 3 | **Compare: head-to-head** — new `/api/compare` route takes two saved analysis JSONs, returns a verdict in the app's voice: which one to buy, the deal-breaker each way, the "if it were my money" call. One API call per head-to-head, cached per pair per session. | 🔨 this branch |
-| 4 | **Export / import / share** — export a check as JSON, import a mate's check into your Garage (cross-device tally), "Share verdict" button using the Web Share API (car, price, scores, one-liner, red-flag count). | ⬜ |
+| 4 | **Export / import / share** — export a check as JSON, import a mate's check into your Garage (cross-device tally), "Share verdict" button using the Web Share API (car, price, scores, one-liner, red-flag count). | 🔨 this branch |
+| 4b | **Hosted share links** — Share now uploads that one check/tally to Vercel Blob and shares a `motormind.nz/c/<id>` link. The page renders the real results UI read-only with a "check your own" CTA, and a generated OG card gives rich previews in chat. Daily cron purges links after 90 days. Doubles as the marketing surface. | 🔨 this branch |
 
 Phase 1 also closes out the core of [#7 (virtual garage / saved analyses)](https://github.com/monty030395/Enthusiest-ai/issues/7).
+
+### Share-link follow-ups
+
+- ⬜ **Revoke a link from the Garage** — store created share ids (+ a revoke token) against the local check so you can pull a link before the 90 days is up. Today the only route is emailing to ask.
+- ⬜ **Brand fonts in the OG card** — the card currently renders in the default sans because Satori needs font files loaded explicitly; embedding Syne/JetBrains Mono would make previews fully on-brand.
+- ⬜ **Rate limiting on `/api/share`** — it's an unauthenticated write endpoint. Fine at current traffic, not fine if the app gets posted somewhere busy.
 
 ## Usability backlog
 

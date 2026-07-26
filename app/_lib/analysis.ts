@@ -90,6 +90,28 @@ export function computeCharacterScore(a: Analysis): number | null {
   return Math.round(scores.reduce((acc, s) => acc + s, 0) / scores.length);
 }
 
+// Text summary for the Web Share sheet / clipboard — the group-chat verdict.
+export function buildShareText(a: Analysis): string {
+  const v = a.vehicle;
+  const title = [v.year, v.make, v.model].filter(isSpecified).join(" ");
+  const price = v.price ? ` — ${v.price}` : "";
+  const character = computeCharacterScore(a);
+  const scores = [
+    a.investmentScore != null ? `Investment ${a.investmentScore}/10` : "",
+    character != null ? `Character ${character}/10` : "",
+    a.vibeScore != null ? `Street Cred ${a.vibeScore}/10` : "",
+  ].filter(Boolean).join(" · ");
+  const flags = a.redFlags?.length
+    ? `${a.redFlags.length} red flag${a.redFlags.length === 1 ? "" : "s"}.`
+    : "No red flags.";
+  return [
+    `Motormind check: ${title}${price}`,
+    [a.label, scores].filter(Boolean).join(" · "),
+    a.verdict ? `"${a.verdict}"` : "",
+    `${flags} Full read: www.motormind.nz`,
+  ].filter(Boolean).join("\n");
+}
+
 export function getQuip(section: "character" | "investment", score: number | null): string {
   if (score === null) return "";
   if (section === "character") {

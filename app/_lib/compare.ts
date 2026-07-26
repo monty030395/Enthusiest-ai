@@ -2,7 +2,7 @@
 // Winner-per-row semantics: colour tracks sentiment, so "lower" wins on
 // cost/pain rows and "higher" wins on score rows. Rows where either side
 // has no data score no points for anyone.
-import { type Analysis, computeCharacterScore } from "./analysis";
+import { type Analysis, computeCharacterScore, isSpecified } from "./analysis";
 
 const TAX_RANK: Record<string, number> = {
   "None": 0, "Mild": 1, "Moderate": 2, "High": 3, "Extreme": 4,
@@ -145,6 +145,50 @@ export type HeadToHead = {
   myMoney: string;
   curveball?: string;
 };
+
+// Text summary of a tally for the share sheet — includes the head-to-head
+// call when one has been run, since that's the bit worth arguing about.
+export function buildTallyShareText(
+  a: Analysis,
+  b: Analysis,
+  tally: Tally,
+  h2h?: HeadToHead | null
+): string {
+  const name = (x: Analysis) => `${x.vehicle.make} ${x.vehicle.model}`;
+  const titled = (x: Analysis) => {
+    const withYear = [isSpecified(x.vehicle.year) ? x.vehicle.year : "", name(x)].filter(Boolean).join(" ");
+    return x.vehicle.price ? `${withYear} (${x.vehicle.price})` : withYear;
+  };
+
+  const scoreLine = (["Investment", "Character", "Street Cred"] as const)
+    .map((label) => {
+      const row = tally.rows.find((r) => r.label === label);
+      return row && row.aDisplay !== "—" && row.bDisplay !== "—"
+        ? `${label} ${row.aDisplay.replace("/10", "")} v ${row.bDisplay.replace("/10", "")}`
+        : "";
+    })
+    .filter(Boolean)
+    .join(" · ");
+
+  const tallyLine =
+    tally.aWins === tally.bWins
+      ? `Tally: dead heat, ${tally.aWins}–${tally.bWins}.`
+      : tally.aWins > tally.bWins
+        ? `Tally: ${name(a)} ${tally.aWins}–${tally.bWins}.`
+        : `Tally: ${name(b)} ${tally.bWins}–${tally.aWins}.`;
+
+  const h2hLine = h2h
+    ? `Head-to-head calls it: ${name(h2h.winner === "a" ? a : b)}${h2h.tagline ? ` — "${h2h.tagline}"` : "."}`
+    : "";
+
+  return [
+    `Motormind tally: ${titled(a)} v ${titled(b)}`,
+    tallyLine,
+    scoreLine,
+    h2hLine,
+    "Settle yours: www.motormind.nz",
+  ].filter(Boolean).join("\n");
+}
 
 export async function fetchHeadToHead(a: Analysis, b: Analysis): Promise<HeadToHead> {
   const res = await fetch("/api/compare", {

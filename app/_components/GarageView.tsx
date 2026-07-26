@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { computeCharacterScore } from "../_lib/analysis";
-import { type SavedCheck, loadGarage, deleteCheck, clearGarage } from "../_lib/garage";
+import { type SavedCheck, loadGarage, deleteCheck, clearGarage, exportCheck, importCheck } from "../_lib/garage";
 import { verdictBadgeStyle } from "./badges";
 import { Card } from "./ui";
 import Masthead from "./Masthead";
@@ -46,6 +46,8 @@ export default function GarageView() {
   // Tally Up selection: up to two check ids; picking a third swaps out the oldest pick
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const [comparing, setComparing] = useState(false);
+  const [importError, setImportError] = useState("");
+  const importInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setChecks(loadGarage());
@@ -76,6 +78,28 @@ export default function GarageView() {
     );
   }
 
+  function handleExport(check: SavedCheck) {
+    const { filename, json } = exportCheck(check);
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
+  async function handleImportFile(file: File) {
+    const updated = importCheck(await file.text());
+    if (updated) {
+      setChecks(updated);
+      setImportError("");
+    } else {
+      setImportError("That file isn't a Motormind check — export one from a Garage on another device and try again.");
+      setTimeout(() => setImportError(""), 5000);
+    }
+  }
+
   const comparePair = compareIds
     .map((id) => checks.find((c) => c.id === id))
     .filter((c): c is SavedCheck => !!c);
@@ -99,7 +123,15 @@ export default function GarageView() {
               >
                 <span className="text-ember-400">←</span> Back to Garage
               </button>
-              <p className="font-mono text-[10px] text-ink-faint">Checked {checkedOn(selected.savedAt)}</p>
+              <div className="flex items-center gap-3">
+                <p className="font-mono text-[10px] text-ink-faint">Checked {checkedOn(selected.savedAt)}</p>
+                <button
+                  onClick={() => handleExport(selected)}
+                  className="font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-ember-400 hover:text-ember-300 transition-colors py-2"
+                >
+                  Export
+                </button>
+              </div>
             </div>
             <AnalysisResults analysis={selected.analysis} />
           </>
@@ -130,6 +162,15 @@ export default function GarageView() {
                 >
                   Analyse a listing →
                 </Link>
+                <p className="font-mono text-[10px] text-ink-faint">
+                  or{" "}
+                  <button
+                    onClick={() => importInputRef.current?.click()}
+                    className="text-ink-muted hover:text-ink underline underline-offset-2 decoration-ember-500/50 py-2"
+                  >
+                    import a mate&apos;s check
+                  </button>
+                </p>
               </Card>
             )}
 
@@ -189,7 +230,14 @@ export default function GarageView() {
                   );
                 })}
 
-                <div className="flex justify-center pt-2">
+                <div className="flex justify-center items-center gap-2 pt-2">
+                  <button
+                    onClick={() => importInputRef.current?.click()}
+                    className="font-mono text-[10px] font-medium uppercase tracking-[0.2em] text-ink-faint hover:text-ink-muted transition-colors py-3 px-4"
+                  >
+                    Import Check
+                  </button>
+                  <div className="h-3 w-px bg-line-strong" />
                   <button
                     onClick={handleClearAll}
                     className={`font-mono text-[10px] font-medium uppercase tracking-[0.2em] transition-colors py-3 px-4 ${
@@ -201,6 +249,25 @@ export default function GarageView() {
                 </div>
               </div>
             )}
+
+            {importError && (
+              <p className="font-mono text-[10px] text-center leading-relaxed" style={{ color: "#ff9d8a" }}>
+                {importError}
+              </p>
+            )}
+
+            {/* Hidden import input — shared by empty state and list controls */}
+            <input
+              ref={importInputRef}
+              type="file"
+              accept="application/json,.json"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) handleImportFile(file);
+                e.target.value = "";
+              }}
+            />
 
             <p className="font-mono text-ink-faint text-[10px] leading-relaxed text-center pt-4">
               Checks live in this browser&apos;s storage only — clearing your browser data clears the Garage too.
