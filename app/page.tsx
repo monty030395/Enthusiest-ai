@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback, useEffect, Suspense } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 
 type DriveMetric = { score: number; description: string };
 
@@ -127,6 +127,9 @@ function themeToStyle(t: VerdictTheme) {
     textTransform: "uppercase" as const,
     padding: "4px 10px",
     borderRadius: "3px",
+    // Never wrap inside a badge — header rows flex-wrap instead, so a long
+    // badge drops to its own line rather than breaking mid-label
+    whiteSpace: "nowrap" as const,
   };
 }
 
@@ -146,24 +149,11 @@ function RatingBadge({ rating }: { rating: string }) {
   return <span style={themeToStyle(RATING_THEME_MAP[rating] ?? V_NEUTRAL)}>{rating}</span>;
 }
 
-const TAX_LEVEL_STYLES: Record<string, { icon: string }> = {
-  "None":     { icon: "text-ink-faint" },
-  "Mild":     { icon: "text-emerald-500" },
-  "Moderate": { icon: "text-amber-500" },
-  "High":     { icon: "text-orange-500" },
-  "Extreme":  { icon: "text-red-500" },
+// $ bullet colour tracks the same V_* theme as the level's badge, so the
+// bullets and the premium badge can never disagree about severity.
+const TAX_LEVEL_THEMES: Record<string, VerdictTheme> = {
+  "None": V_BLUE, "Mild": V_AMBER, "Moderate": V_AMBER, "High": V_RED, "Extreme": V_RED,
 };
-
-
-
-const FINANCIAL_RATING_STYLES: Record<string, { color: string; bg: string; stripe: string }> = {
-  "Sensible Purchase":               { color: "text-emerald-400", bg: "",                  stripe: "bg-emerald-600" },
-  "Manageable Pain":                 { color: "text-amber-400",   bg: "",                  stripe: "bg-amber-600" },
-  "Emotionally Justified Disaster":  { color: "text-orange-400",  bg: "bg-orange-950/25",  stripe: "bg-orange-600" },
-  "Dangerous":                       { color: "text-red-400",     bg: "bg-red-950/30",     stripe: "bg-red-600" },
-  "Catastrophic Wallet Destruction": { color: "text-red-300",     bg: "bg-red-950/50",     stripe: "bg-red-500" },
-};
-// color key kept for the → arrow bullets in wallet damage reasons
 
 // Single-column drive row — matches mockup layout
 function DriveScoreRow({ metric, label }: { metric: DriveMetric; label: string }) {
@@ -277,19 +267,6 @@ function Pill({ children }: { children: React.ReactNode }) {
   );
 }
 
-function computeValueScore(a: Analysis): number | null {
-  const base: Record<string, number> = {
-    "Fair": 7, "Underpriced": 9, "Premium Justified": 6,
-    "Overpriced": 3, "Paying the Premium": 4,
-  };
-  const adj: Record<string, number> = {
-    "None": 0, "Mild": 0, "Moderate": -1, "High": -2, "Extreme": -3,
-  };
-  const b = base[a.priceVerdict?.assessment];
-  if (b === undefined) return null;
-  return Math.max(1, Math.min(10, b + (adj[a.enthusiastTax?.level] ?? 0)));
-}
-
 function computeCharacterScore(a: Analysis): number | null {
   const dc = a.drivingCharacter;
   if (!dc) return null;
@@ -303,26 +280,8 @@ function computeCharacterScore(a: Analysis): number | null {
   return Math.round(scores.reduce((acc, s) => acc + s, 0) / scores.length);
 }
 
-function computeInvestmentScore(a: Analysis): number | null {
-  const pain = a.ownershipPain?.score;
-  const classic = a.classicPotential?.score;
-  if (pain == null && classic == null) return null;
-  const painScore = pain != null ? Math.max(1, Math.min(10, 10 - pain)) : null;
-  const classicScore = classic ?? null;
-  if (painScore != null && classicScore != null) {
-    return Math.max(1, Math.min(10, Math.round(painScore * 0.6 + classicScore * 0.4)));
-  }
-  return painScore ?? classicScore;
-}
-
-function getQuip(section: "value" | "character" | "investment", score: number | null): string {
+function getQuip(section: "character" | "investment", score: number | null): string {
   if (score === null) return "";
-  if (section === "value") {
-    if (score <= 3) return "Mate, just don't.";
-    if (score <= 5) return "Priced with optimism.";
-    if (score <= 7) return "Numbers stack up.";
-    return "Genuine bargain.";
-  }
   if (section === "character") {
     if (score <= 3) return "It tries, we guess.";
     if (score <= 5) return "There's some there.";
@@ -350,7 +309,7 @@ function ScoreChip({ label, score, onClick }: { label: string; score: number | n
         {score !== null ? score : "?"}
         <span className="text-ink-faint text-xs font-normal">/10</span>
       </span>
-      <span className="font-mono text-[9px] font-medium uppercase tracking-[0.2em] text-ink-faint">{label}</span>
+      <span className="font-mono text-[9px] font-medium uppercase tracking-[0.2em] text-ink-faint whitespace-nowrap">{label}</span>
     </button>
   );
 }
@@ -367,7 +326,7 @@ function ModPotentialCard({ data }: { data: NonNullable<Analysis["modPotential"]
           {data.relevance === "medium" && (
             <button
               onClick={() => setExpanded(!expanded)}
-              className="font-mono text-[9px] font-medium uppercase tracking-[0.18em] text-ink-faint hover:text-ink-muted transition-colors flex items-center gap-1"
+              className="font-mono text-[9px] font-medium uppercase tracking-[0.18em] text-ink-faint hover:text-ink-muted transition-colors flex items-center gap-1 py-3 pl-3 -my-3 -ml-3"
             >
               {expanded ? "Less ▲" : "More ▼"}
             </button>
@@ -453,9 +412,9 @@ function HomeContent() {
   const [result, setResult] = useState<Analysis | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
-  const valueTileRef = useRef<HTMLDivElement>(null);
-  const characterTileRef = useRef<HTMLDivElement>(null);
-  const investmentTileRef = useRef<HTMLDivElement>(null);
+  const investmentSectionRef = useRef<HTMLDivElement>(null);
+  const characterSectionRef = useRef<HTMLDivElement>(null);
+  const streetCredSectionRef = useRef<HTMLDivElement>(null);
   const priceVerdictRef = useRef<HTMLDivElement>(null);
   const ownerVibeRef = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState(false);
@@ -521,12 +480,7 @@ function HomeContent() {
       });
       const data = await res.json();
       if (!res.ok) {
-        if (data.error === "BLOCKED") {
-          setMode("images");
-          setError(data.message);
-        } else {
-          setError(data.error || "Something went wrong.");
-        }
+        setError(data.error || "Something went wrong.");
       } else {
         setResult(data as Analysis);
         setInputCollapsed(true);
@@ -572,8 +526,8 @@ function HomeContent() {
               <span className="text-ink">Motor</span>
               <span className="text-ember-400">mind</span>
             </h1>
-            <div className="h-3.5 w-px bg-line-strong" />
-            <span className="font-mono text-[9px] uppercase tracking-[0.28em] text-ink-faint">NZ Car Copilot</span>
+            <div className="hidden sm:block h-3.5 w-px bg-line-strong" />
+            <span className="hidden sm:block font-mono text-[9px] uppercase tracking-[0.28em] text-ink-faint whitespace-nowrap">NZ Car Copilot</span>
           </div>
           <div className="h-1.5 w-1.5 rounded-full bg-ember-400 animate-pulse" />
         </div>
@@ -657,8 +611,9 @@ function HomeContent() {
                           className="w-16 h-16 object-cover rounded-lg border border-line-strong"
                         />
                         <button
+                          aria-label={`Remove screenshot ${i + 1}`}
                           onClick={() => setImages((prev) => prev.filter((_, idx) => idx !== i))}
-                          className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-ember-500 rounded-full text-carbon-950 text-xs font-bold flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity leading-none"
+                          className="absolute -top-2 -right-2 w-6 h-6 bg-ember-500 rounded-full text-carbon-950 text-sm font-bold flex items-center justify-center leading-none sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
                         >
                           ×
                         </button>
@@ -683,7 +638,7 @@ function HomeContent() {
                   onPaste={handlePaste}
                   placeholder="Paste the full listing text here..."
                   rows={7}
-                  className="w-full bg-carbon-900/80 border border-line rounded-lg px-4 py-3.5 text-sm text-ink placeholder:text-ink-faint placeholder:font-mono focus:outline-none focus:border-ember-500/60 transition-all resize-none"
+                  className="w-full bg-carbon-900/80 border border-line rounded-lg px-4 py-3.5 text-base sm:text-sm text-ink placeholder:text-ink-faint placeholder:font-mono focus:outline-none focus:border-ember-500/60 transition-all resize-none"
                 />
                 {urlHint && (
                   <div
@@ -698,9 +653,9 @@ function HomeContent() {
             )}
 
             {error && (
-              <div className="flex gap-3 bg-ember-500/10 border border-ember-600/40 rounded-lg px-4 py-3">
-                <span className="text-ember-400 flex-shrink-0 font-bold">!</span>
-                <p className="text-ember-300/90 text-sm leading-relaxed">{error}</p>
+              <div className="flex gap-3 rounded-lg px-4 py-3" style={{ backgroundColor: V_RED.bg, border: `1px solid ${V_RED.border}` }}>
+                <span className="flex-shrink-0 font-bold" style={{ color: V_RED.text }}>!</span>
+                <p className="text-sm leading-relaxed" style={{ color: V_RED.text }}>{error}</p>
               </div>
             )}
 
@@ -784,8 +739,8 @@ function HomeContent() {
                     <button
                       title="Tap to view details"
                       onClick={() => priceVerdictRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
-                      style={verdictBadgeStyle(result.label)}
-                      className="inline-flex items-center gap-1.5 cursor-pointer hover:brightness-110 active:scale-95 transition-all"
+                      style={{ ...verdictBadgeStyle(result.label), display: "inline-flex", alignItems: "center" }}
+                      className="gap-1.5 min-h-10 cursor-pointer hover:brightness-110 active:scale-95 transition-all"
                     >
                       {result.label}
                       <span className="opacity-70 text-[9px] leading-none">↓</span>
@@ -795,8 +750,8 @@ function HomeContent() {
                     <button
                       title="Tap to view details"
                       onClick={() => ownerVibeRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
-                      style={verdictBadgeStyle(result.ownerVibe.label)}
-                      className="inline-flex items-center gap-1.5 cursor-pointer hover:brightness-110 active:scale-95 transition-all"
+                      style={{ ...verdictBadgeStyle(result.ownerVibe.label), display: "inline-flex", alignItems: "center" }}
+                      className="gap-1.5 min-h-10 cursor-pointer hover:brightness-110 active:scale-95 transition-all"
                     >
                       {result.ownerVibe.label}
                       <span className="opacity-70 text-[9px] leading-none">↓</span>
@@ -872,17 +827,17 @@ function HomeContent() {
                   <ScoreChip
                     label="Investment"
                     score={result.investmentScore ?? null}
-                    onClick={() => valueTileRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                    onClick={() => investmentSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
                   />
                   <ScoreChip
                     label="Character"
                     score={characterScore}
-                    onClick={() => characterTileRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                    onClick={() => characterSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
                   />
                   <ScoreChip
                     label="Street Cred"
                     score={result.vibeScore ?? null}
-                    onClick={() => investmentTileRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                    onClick={() => streetCredSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
                   />
                 </div>
 
@@ -890,14 +845,14 @@ function HomeContent() {
             </Card>
 
             {/* ── SECTION 1: INVESTMENT ───────────────────────── */}
-            <div id="investment" ref={valueTileRef} className="scroll-mt-4 space-y-4">
+            <div id="investment" ref={investmentSectionRef} className="scroll-mt-4 space-y-4">
               <TileHeader index="01" label="Investment" score={result.investmentScore ?? null} quip={getQuip("investment", result.investmentScore ?? null)} />
 
               {/* Price Analysis */}
               {result.priceVerdict && (
                 <div ref={priceVerdictRef} className="scroll-mt-4">
                   <Card className="p-6">
-                    <div className="flex items-center justify-between mb-2">
+                    <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-2">
                       <SectionLabel>Price Analysis</SectionLabel>
                       <VerdictBadge verdict={result.priceVerdict.assessment} />
                     </div>
@@ -909,7 +864,7 @@ function HomeContent() {
               {/* Price Reality Check */}
               {result.enthusiastTax && (
                 <Card className="p-6">
-                  <div className="flex items-center justify-between mb-4">
+                  <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-4">
                     <SectionLabel>Enthusiast Tax</SectionLabel>
                     {result.enthusiastTax.premium && (
                       <span style={themeToStyle(VERDICT_THEME_MAP[result.enthusiastTax.level] ?? V_NEUTRAL)}>
@@ -921,7 +876,7 @@ function HomeContent() {
                     <ul className="space-y-2.5">
                       {result.enthusiastTax.reasons.map((r, i) => (
                         <li key={i} className="flex gap-2.5 text-sm text-ink-muted leading-snug">
-                          <span className={`flex-shrink-0 font-mono font-bold ${TAX_LEVEL_STYLES[result.enthusiastTax.level]?.icon ?? "text-ink-faint"}`}>$</span>
+                          <span className="flex-shrink-0 font-mono font-bold" style={{ color: (TAX_LEVEL_THEMES[result.enthusiastTax.level] ?? V_NEUTRAL).text }}>$</span>
                           {r}
                         </li>
                       ))}
@@ -933,7 +888,7 @@ function HomeContent() {
               {/* Price Outlook */}
               {result.priceOutlook && (
                 <Card className="p-6">
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-2">
                     <SectionLabel>Price Outlook</SectionLabel>
                     <VerdictBadge verdict={result.priceOutlook.trend} />
                   </div>
@@ -942,14 +897,15 @@ function HomeContent() {
                 </Card>
               )}
 
-              {/* Wallet Damage Rating */}
+              {/* Wallet Damage Rating — stripe, arrows, and tint all derive from
+                  the same theme as the verdict badge so they can't disagree */}
               {result.worstFinancialDecision && (() => {
-                const style = FINANCIAL_RATING_STYLES[result.worstFinancialDecision.rating] ?? { color: "text-ink-muted", bg: "", stripe: "bg-carbon-700" };
+                const t = VERDICT_THEME_MAP[result.worstFinancialDecision.rating] ?? V_NEUTRAL;
                 return (
-                  <div className={`rounded-xl border border-line overflow-hidden ${style.bg}`}>
-                    <div className={`h-1 ${style.stripe}`} />
+                  <div className="rounded-xl border border-line overflow-hidden" style={{ backgroundColor: t.bg }}>
+                    <div className="h-1" style={{ backgroundColor: t.border }} />
                     <div className="p-6">
-                      <div className="flex items-center justify-between mb-4">
+                      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-4">
                         <SectionLabel>Wallet Damage Rating</SectionLabel>
                         <VerdictBadge verdict={result.worstFinancialDecision.rating} />
                       </div>
@@ -957,7 +913,7 @@ function HomeContent() {
                         <ul className="space-y-2.5">
                           {result.worstFinancialDecision.reasons.map((r, i) => (
                             <li key={i} className="flex gap-2.5 text-sm text-ink/85 leading-snug">
-                              <span className={`flex-shrink-0 font-mono font-bold ${style.color}`}>→</span>
+                              <span className="flex-shrink-0 font-mono font-bold" style={{ color: t.text }}>→</span>
                               {r}
                             </li>
                           ))}
@@ -968,27 +924,31 @@ function HomeContent() {
                 );
               })()}
 
-              {/* Reliability Risk */}
-              {result.ownershipPain && (
-                <Card className="p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <SectionLabel>Reliability Risk</SectionLabel>
-                    <VerdictBadge verdict={result.ownershipPain.score >= 8 ? "High Pain" : result.ownershipPain.score >= 5 ? "Moderate" : "Low Pain"} />
-                  </div>
-                  {result.ownershipPain.issues?.length > 0 && (
-                    <ul className="space-y-3.5 mt-1">
-                      {result.ownershipPain.issues.map((issue, i) => (
-                        <li key={i} className="pl-3.5 border-l-2 border-ember-500 py-0.5">
-                          <p className="font-bold text-ink text-sm">{issue.title}</p>
-                          {issue.detail && (
-                            <p className="text-ink-faint text-xs mt-1 leading-relaxed">{issue.detail}</p>
-                          )}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </Card>
-              )}
+              {/* Reliability Risk — issue borders carry the severity colour of the
+                  card's verdict badge, not the brand accent */}
+              {result.ownershipPain && (() => {
+                const t = result.ownershipPain.score >= 8 ? V_RED : result.ownershipPain.score >= 5 ? V_AMBER : V_GREEN;
+                return (
+                  <Card className="p-6">
+                    <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-4">
+                      <SectionLabel>Reliability Risk</SectionLabel>
+                      <VerdictBadge verdict={result.ownershipPain.score >= 8 ? "High Pain" : result.ownershipPain.score >= 5 ? "Moderate" : "Low Pain"} />
+                    </div>
+                    {result.ownershipPain.issues?.length > 0 && (
+                      <ul className="space-y-3.5 mt-1">
+                        {result.ownershipPain.issues.map((issue, i) => (
+                          <li key={i} className="pl-3.5 border-l-2 py-0.5" style={{ borderColor: t.border }}>
+                            <p className="font-bold text-ink text-sm">{issue.title}</p>
+                            {issue.detail && (
+                              <p className="text-ink-faint text-xs mt-1 leading-relaxed">{issue.detail}</p>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </Card>
+                );
+              })()}
 
               {/* Red flags */}
               {result.redFlags?.length > 0 && (
@@ -1016,7 +976,7 @@ function HomeContent() {
               {/* Market Trend */}
               {result.marketTrend && (
                 <Card className="p-6">
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-2">
                     <SectionLabel>Market Trend</SectionLabel>
                     <VerdictBadge verdict={result.marketTrend.trend} />
                   </div>
@@ -1027,7 +987,7 @@ function HomeContent() {
               {/* Future Classic Potential */}
               {result.classicPotential && (
                 <Card className="p-6">
-                  <div className="flex items-center justify-between mb-4">
+                  <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-4">
                     <SectionLabel>Future Classic Potential</SectionLabel>
                     <span className="font-mono text-xl font-bold text-ember-400 tabular-nums">
                       {result.classicPotential.score}
@@ -1049,7 +1009,7 @@ function HomeContent() {
             </div>
 
             {/* ── SECTION 2: CHARACTER ────────────────────────── */}
-            <div id="character" ref={characterTileRef} className="scroll-mt-4 space-y-4">
+            <div id="character" ref={characterSectionRef} className="scroll-mt-4 space-y-4">
               <TileHeader index="02" label="Character" score={characterScore} quip={getQuip("character", characterScore)} />
 
               {/* Why Enthusiasts Care */}
@@ -1083,14 +1043,14 @@ function HomeContent() {
             </div>
 
             {/* ── SECTION 3: STREET CRED ──────────────────────── */}
-            <div id="street-cred" ref={investmentTileRef} className="scroll-mt-4 space-y-4">
+            <div id="street-cred" ref={streetCredSectionRef} className="scroll-mt-4 space-y-4">
               <TileHeader index="03" label="Street Cred" score={result.vibeScore ?? null} />
 
               {/* Owner Vibe */}
               {result.ownerVibe?.label && (
                 <div ref={ownerVibeRef} className="scroll-mt-4">
                   <Card className="p-6">
-                    <div className="flex items-center justify-between mb-3">
+                    <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-3">
                       <SectionLabel>Owner Vibe</SectionLabel>
                       <VerdictBadge verdict={result.ownerVibe.label} />
                     </div>
@@ -1106,7 +1066,7 @@ function HomeContent() {
                 <Card className="p-6 space-y-5">
                   {result.carsCoffee && (
                     <div>
-                      <div className="flex items-center justify-between mb-2">
+                      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-2">
                         <SectionLabel>Cars &amp; Coffee</SectionLabel>
                         <RatingBadge rating={result.carsCoffee.rating} />
                       </div>
@@ -1118,7 +1078,7 @@ function HomeContent() {
                   )}
                   {result.communityCredibility && (
                     <div>
-                      <div className="flex items-center justify-between mb-2">
+                      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-2">
                         <SectionLabel>Community Credibility</SectionLabel>
                         <RatingBadge rating={result.communityCredibility.rating} />
                       </div>
@@ -1139,7 +1099,7 @@ function HomeContent() {
               {/* Regret Risk */}
               {result.regretRisk && (
                 <Card className="p-6">
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-2">
                     <SectionLabel>Regret Risk</SectionLabel>
                     <VerdictBadge verdict={result.regretRisk.level} />
                   </div>
@@ -1251,9 +1211,5 @@ function HomeContent() {
 }
 
 export default function Home() {
-  return (
-    <Suspense>
-      <HomeContent />
-    </Suspense>
-  );
+  return <HomeContent />;
 }
