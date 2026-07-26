@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import Masthead from "../_components/Masthead";
 
 export const metadata: Metadata = {
   title: "Privacy Policy — Motormind",
@@ -10,25 +11,13 @@ export default function PrivacyPage() {
   return (
     <div className="min-h-screen bg-carbon-950 text-ink font-sans">
 
-      <header className="sticky top-0 z-40 px-6 pt-4 pb-3.5 border-b border-line bg-carbon-950/80 backdrop-blur-md">
-        <div className="max-w-3xl mx-auto flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3">
-            <span className="font-display text-lg font-extrabold tracking-tight uppercase leading-none">
-              <span className="text-ink">Motor</span>
-              <span className="text-ember-400">mind</span>
-            </span>
-            <div className="h-3.5 w-px bg-line-strong" />
-            <span className="font-mono text-[9px] uppercase tracking-[0.28em] text-ink-faint">NZ Car Copilot</span>
-          </Link>
-          <div className="h-1.5 w-1.5 rounded-full bg-ember-400 animate-pulse" />
-        </div>
-      </header>
+      <Masthead />
 
       <main className="max-w-3xl mx-auto px-5 py-12 space-y-10">
 
         <div>
           <h1 className="font-display text-3xl font-extrabold text-ink tracking-tight">Privacy Policy</h1>
-          <p className="mt-2 font-mono text-ink-faint text-xs">Last updated May 2025</p>
+          <p className="mt-2 font-mono text-ink-faint text-xs">Last updated July 2026</p>
         </div>
 
         <section className="space-y-3">
@@ -37,6 +26,17 @@ export default function PrivacyPage() {
           <p className="text-ink-muted text-sm leading-relaxed">
             Motormind does not collect, store, or retain any personal data. We do not require an account,
             login, or any identifying information to use the service.
+          </p>
+        </section>
+
+        <section className="space-y-3">
+          <h2 className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-ember-400">Your Garage</h2>
+          <div className="h-px bg-line" />
+          <p className="text-ink-muted text-sm leading-relaxed">
+            Completed checks are saved to your device&apos;s local browser storage (your Garage) so you can
+            revisit and compare them. They never leave your device — nothing is uploaded, synced, or visible
+            to us. You can remove individual checks or clear the lot at any time from the Garage page, and
+            clearing your browser data removes them too.
           </p>
         </section>
 
