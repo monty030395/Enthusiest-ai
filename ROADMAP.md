@@ -14,7 +14,7 @@ policy honest (nothing uploaded, no accounts).
 |---|---|---|
 | 0 | **Component refactor** — extract the results view (`AnalysisResults`), badge/theme system, shared UI, and Masthead out of `page.tsx` so saved checks and compare views can reuse the same rendering | 🔨 this branch |
 | 1 | **The Garage** — auto-save every completed check to localStorage (`app/_lib/garage.ts`), Garage page with list/reopen/remove/clear, masthead nav, privacy policy updated for device-only storage | 🔨 this branch |
-| 2 | **Compare: tally table** — select two checks in the Garage → side-by-side rows (Investment / Character / Street Cred, price, enthusiast tax, reliability pain, wallet damage, classic potential) with per-row winner highlighting and a totted-up score. Pure client-side, no API cost. Closes [#6](https://github.com/monty030395/Enthusiest-ai/issues/6) with Phase 3. | ⬜ |
+| 2 | **Compare: tally table** — select two checks in the Garage → side-by-side rows (Investment / Character / Street Cred, price, enthusiast tax, reliability pain, wallet damage, classic potential) with per-row winner highlighting and a totted-up score. Pure client-side, no API cost. Closes [#6](https://github.com/monty030395/Enthusiest-ai/issues/6) with Phase 3. | 🔨 this branch |
 | 3 | **Compare: head-to-head** — new `/api/compare` route takes two saved analysis JSONs, returns a verdict in the app's voice: which one to buy, the deal-breaker each way, the "if it were my money" call. One API call per head-to-head. | ⬜ |
 | 4 | **Export / import / share** — export a check as JSON, import a mate's check into your Garage (cross-device tally), "Share verdict" button using the Web Share API (car, price, scores, one-liner, red-flag count). | ⬜ |
 

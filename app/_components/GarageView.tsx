@@ -8,6 +8,7 @@ import { verdictBadgeStyle } from "./badges";
 import { Card } from "./ui";
 import Masthead from "./Masthead";
 import AnalysisResults from "./AnalysisResults";
+import CompareView from "./CompareView";
 
 function scoreColor(score: number | null): string {
   if (score === null) return "text-ink-faint";
@@ -42,6 +43,9 @@ export default function GarageView() {
   const [loaded, setLoaded] = useState(false);
   const [selected, setSelected] = useState<SavedCheck | null>(null);
   const [confirmClear, setConfirmClear] = useState(false);
+  // Tally Up selection: up to two check ids; picking a third swaps out the oldest pick
+  const [compareIds, setCompareIds] = useState<string[]>([]);
+  const [comparing, setComparing] = useState(false);
 
   useEffect(() => {
     setChecks(loadGarage());
@@ -50,6 +54,7 @@ export default function GarageView() {
 
   function handleDelete(id: string) {
     setChecks(deleteCheck(id));
+    setCompareIds((prev) => prev.filter((c) => c !== id));
     if (selected?.id === id) setSelected(null);
   }
 
@@ -61,8 +66,19 @@ export default function GarageView() {
     }
     clearGarage();
     setChecks([]);
+    setCompareIds([]);
     setConfirmClear(false);
   }
+
+  function toggleCompare(id: string) {
+    setCompareIds((prev) =>
+      prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id].slice(-2)
+    );
+  }
+
+  const comparePair = compareIds
+    .map((id) => checks.find((c) => c.id === id))
+    .filter((c): c is SavedCheck => !!c);
 
   return (
     <div className="min-h-screen bg-carbon-950 text-ink font-sans">
@@ -71,7 +87,9 @@ export default function GarageView() {
 
       <main className="max-w-3xl mx-auto px-5 py-10 space-y-6">
 
-        {selected ? (
+        {comparing && comparePair.length === 2 ? (
+          <CompareView a={comparePair[0]} b={comparePair[1]} onBack={() => setComparing(false)} />
+        ) : selected ? (
           <>
             {/* Detail view: one saved check, re-rendered in full */}
             <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
@@ -149,7 +167,17 @@ export default function GarageView() {
                           </div>
                         )}
                       </button>
-                      <div className="border-t border-line px-5 py-2 flex justify-end">
+                      <div className="border-t border-line px-5 py-2 flex justify-between items-center">
+                        <button
+                          onClick={() => toggleCompare(check.id)}
+                          className={`font-mono text-[9px] font-medium uppercase tracking-[0.18em] transition-colors py-2 px-2 -ml-2 ${
+                            compareIds.includes(check.id)
+                              ? "text-ember-400"
+                              : "text-ink-faint hover:text-ink-muted"
+                          }`}
+                        >
+                          {compareIds.includes(check.id) ? "✓ Picked to tally" : "+ Tally up"}
+                        </button>
                         <button
                           onClick={() => handleDelete(check.id)}
                           className="font-mono text-[9px] font-medium uppercase tracking-[0.18em] text-ink-faint hover:text-red-400 transition-colors py-2 px-2 -mr-2"
@@ -177,9 +205,41 @@ export default function GarageView() {
             <p className="font-mono text-ink-faint text-[10px] leading-relaxed text-center pt-4">
               Checks live in this browser&apos;s storage only — clearing your browser data clears the Garage too.
             </p>
+
+            {/* Spacer so the tally bar doesn't cover the footer */}
+            {compareIds.length > 0 && <div className="h-20" />}
           </>
         )}
       </main>
+
+      {/* Tally Up bar — appears once a check is picked */}
+      {!comparing && !selected && compareIds.length > 0 && (
+        <div className="fixed bottom-0 inset-x-0 z-30 border-t border-line bg-carbon-950/90 backdrop-blur-md px-5 py-3">
+          <div className="max-w-3xl mx-auto flex items-center justify-between gap-3">
+            <p className="font-mono text-[10px] text-ink-muted uppercase tracking-[0.16em] leading-relaxed min-w-0 truncate">
+              {comparePair.length === 2
+                ? `${comparePair[0].analysis.vehicle.model} vs ${comparePair[1].analysis.vehicle.model}`
+                : "Pick one more to tally"}
+            </p>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <button
+                onClick={() => setCompareIds([])}
+                aria-label="Clear picks"
+                className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-faint hover:text-ink-muted transition-colors py-3 px-2"
+              >
+                Clear
+              </button>
+              <button
+                onClick={() => setComparing(true)}
+                disabled={comparePair.length < 2}
+                className="bg-ember-500 hover:bg-ember-400 active:bg-ember-600 disabled:bg-carbon-800 disabled:text-ink-faint disabled:cursor-not-allowed text-carbon-950 font-mono font-bold uppercase tracking-[0.18em] rounded-lg py-3 px-5 transition-all text-[10px]"
+              >
+                Tally Up
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
