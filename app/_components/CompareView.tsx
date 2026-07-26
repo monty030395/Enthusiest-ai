@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { type SavedCheck } from "../_lib/garage";
-import { tallyUp, tallyQuip, fetchHeadToHead, type HeadToHead } from "../_lib/compare";
+import { tallyUp, tallyQuip, fetchHeadToHead, buildTallyShareText, type HeadToHead } from "../_lib/compare";
+import { shareOrCopy } from "../_lib/share";
 import { V_RED, verdictBadgeStyle } from "./badges";
 import { Card, WheelSpinner } from "./ui";
 
@@ -36,6 +37,18 @@ export default function CompareView({ a, b, onBack }: { a: SavedCheck; b: SavedC
   const [h2h, setH2h] = useState<HeadToHead | null>(() => h2hCache.get(cacheKey) ?? null);
   const [h2hLoading, setH2hLoading] = useState(false);
   const [h2hError, setH2hError] = useState("");
+  const [shareNote, setShareNote] = useState("");
+
+  async function shareTally() {
+    const outcome = await shareOrCopy(buildTallyShareText(a.analysis, b.analysis, tally, h2h));
+    if (outcome === "shared" || outcome === "cancelled") return;
+    setShareNote(
+      outcome === "copied"
+        ? "Copied — paste it in the group chat."
+        : "Couldn't share from here — screenshot the tally instead."
+    );
+    setTimeout(() => setShareNote(""), 4000);
+  }
 
   async function settleIt() {
     setH2hError("");
@@ -238,6 +251,19 @@ export default function CompareView({ a, b, onBack }: { a: SavedCheck; b: SavedC
           </div>
         );
       })()}
+
+      {/* Share — carries the head-to-head call too, once it's been run */}
+      <div className="space-y-2">
+        <button
+          onClick={shareTally}
+          className="w-full border border-ember-600/50 hover:border-ember-500 text-ember-400 hover:text-ember-300 rounded-lg py-3.5 font-mono text-[11px] font-medium uppercase tracking-[0.2em] transition-all"
+        >
+          {h2h ? "Share the Head-to-Head" : "Share the Tally"}
+        </button>
+        {shareNote && (
+          <p className="font-mono text-[10px] text-ink-faint text-center">{shareNote}</p>
+        )}
+      </div>
 
       <p className="font-mono text-ink-faint text-[10px] leading-relaxed text-center">
         Row wins only count where both checks have the data. Asking price is shown but never scored — cheaper isn&apos;t better, it&apos;s just cheaper.

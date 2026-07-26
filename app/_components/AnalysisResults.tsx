@@ -9,6 +9,7 @@ import {
   getQuip,
   buildShareText,
 } from "../_lib/analysis";
+import { shareOrCopy } from "../_lib/share";
 import {
   V_RED, V_AMBER, V_GREEN, V_NEUTRAL,
   VERDICT_THEME_MAP, TAX_LEVEL_THEMES,
@@ -157,22 +158,13 @@ export default function AnalysisResults({ analysis: result }: { analysis: Analys
   const [shareNote, setShareNote] = useState("");
 
   async function shareVerdict() {
-    const text = buildShareText(result);
-    // Web Share sheet on phones; clipboard everywhere else
-    if (typeof navigator !== "undefined" && navigator.share) {
-      try {
-        await navigator.share({ text });
-        return;
-      } catch (err) {
-        if ((err as DOMException)?.name === "AbortError") return;
-      }
-    }
-    try {
-      await navigator.clipboard.writeText(text);
-      setShareNote("Copied — paste it in the group chat.");
-    } catch {
-      setShareNote("Couldn't share from here — screenshot the verdict instead.");
-    }
+    const outcome = await shareOrCopy(buildShareText(result));
+    if (outcome === "shared" || outcome === "cancelled") return;
+    setShareNote(
+      outcome === "copied"
+        ? "Copied — paste it in the group chat."
+        : "Couldn't share from here — screenshot the verdict instead."
+    );
     setTimeout(() => setShareNote(""), 4000);
   }
 
