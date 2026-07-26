@@ -134,3 +134,32 @@ export function tallyQuip(aWins: number, bWins: number): string {
   if (diff <= 2) return "Close one — comes down to what you value most.";
   return "Not even close.";
 }
+
+// ── Head-to-head (/api/compare) ──────────────────────────────
+
+export type HeadToHead = {
+  winner: "a" | "b";
+  tagline: string;
+  caseFor: { a: string[]; b: string[] };
+  dealBreaker: { a: string; b: string };
+  myMoney: string;
+  curveball?: string;
+};
+
+export async function fetchHeadToHead(a: Analysis, b: Analysis): Promise<HeadToHead> {
+  const res = await fetch("/api/compare", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ a, b }),
+  });
+  let data: (HeadToHead & { error?: string }) | null = null;
+  try {
+    data = await res.json();
+  } catch {
+    data = null;
+  }
+  if (!res.ok || !data || (data.winner !== "a" && data.winner !== "b")) {
+    throw new Error(data?.error || `The head-to-head fell over (HTTP ${res.status}) — give it another go.`);
+  }
+  return data;
+}
