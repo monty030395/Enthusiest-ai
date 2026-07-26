@@ -27,6 +27,18 @@ Phase 1 also closes out the core of [#7 (virtual garage / saved analyses)](https
 - ⬜ **Brand fonts in the OG card** — the card currently renders in the default sans because Satori needs font files loaded explicitly; embedding Syne/JetBrains Mono would make previews fully on-brand.
 - ⬜ **Rate limiting on `/api/share`** — it's an unauthenticated write endpoint. Fine at current traffic, not fine if the app gets posted somewhere busy.
 
+## OpenAI rate limit (measured 2026-07-26)
+
+The org is capped at **30,000 tokens/minute on GPT-4o**, and one analysis costs
+**~7,200 tokens** (the system prompt alone is ~27,500 characters). That is roughly
+**four analyses per minute across all users** before requests start 429ing — which
+surfaces to the user as "The server choked on that one". Invisible at today's
+traffic; a burst would expose it.
+
+- ⬜ **Retry with backoff on `/api/analyze`** (and `/api/compare`) so a 429 waits and succeeds instead of failing the user. Highest value of the three.
+- ⬜ **Request a higher tier limit** on the OpenAI account — usually granted as spend history builds.
+- ⬜ **Trim the system prompt** — 27,500 characters is a lot of the budget; cutting it lowers cost per call and rate-limit pressure together.
+
 ## Usability backlog
 
 From the post-redesign review (July 2026), roughly in priority order:

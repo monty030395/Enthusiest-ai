@@ -108,13 +108,22 @@ export type Tally = {
   bWins: number;
 };
 
+// A row only awards a point when the two cars are more than one step apart.
+// Re-analysing an identical listing moves scores by exactly one step —
+// measured over repeated runs, every drift was 1 and none was ever 2 — so a
+// single step is noise, not a finding. Scoring it made a car beat itself 0-5
+// on its own re-run; this threshold takes that to 0-0.
+// Note this deliberately mutes 3-level scales: Regret Risk now only scores
+// on Low v High, never Low v Medium.
+const WIN_MARGIN = 2;
+
 export function tallyUp(a: Analysis, b: Analysis): Tally {
   const rows: TallyRow[] = ROW_DEFS.map((def) => {
     let winner: 0 | 1 | 2 = 0;
     if (def.comparable && def.direction) {
       const av = def.comparable(a);
       const bv = def.comparable(b);
-      if (av != null && bv != null && av !== bv) {
+      if (av != null && bv != null && Math.abs(av - bv) >= WIN_MARGIN) {
         const aBetter = def.direction === "higher" ? av > bv : av < bv;
         winner = aBetter ? 1 : 2;
       }
