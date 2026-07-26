@@ -7,6 +7,7 @@ import {
   isSpecified,
   computeCharacterScore,
   getQuip,
+  buildShareText,
 } from "../_lib/analysis";
 import {
   V_RED, V_AMBER, V_GREEN, V_NEUTRAL,
@@ -153,6 +154,27 @@ export default function AnalysisResults({ analysis: result }: { analysis: Analys
   const ownerVibeRef = useRef<HTMLDivElement>(null);
 
   const characterScore = computeCharacterScore(result);
+  const [shareNote, setShareNote] = useState("");
+
+  async function shareVerdict() {
+    const text = buildShareText(result);
+    // Web Share sheet on phones; clipboard everywhere else
+    if (typeof navigator !== "undefined" && navigator.share) {
+      try {
+        await navigator.share({ text });
+        return;
+      } catch (err) {
+        if ((err as DOMException)?.name === "AbortError") return;
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(text);
+      setShareNote("Copied — paste it in the group chat.");
+    } catch {
+      setShareNote("Couldn't share from here — screenshot the verdict instead.");
+    }
+    setTimeout(() => setShareNote(""), 4000);
+  }
 
   return (
     <div className="space-y-4">
@@ -651,6 +673,19 @@ export default function AnalysisResults({ analysis: result }: { analysis: Analys
           </div>
         </div>
       )}
+
+      {/* Share */}
+      <div className="space-y-2">
+        <button
+          onClick={shareVerdict}
+          className="w-full border border-ember-600/50 hover:border-ember-500 text-ember-400 hover:text-ember-300 rounded-lg py-3.5 font-mono text-[11px] font-medium uppercase tracking-[0.2em] transition-all"
+        >
+          Share the Verdict
+        </button>
+        {shareNote && (
+          <p className="font-mono text-[10px] text-ink-faint text-center">{shareNote}</p>
+        )}
+      </div>
 
     </div>
   );
