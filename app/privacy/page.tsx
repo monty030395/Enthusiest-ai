@@ -60,8 +60,9 @@ export default function PrivacyPage() {
           </p>
           <p className="text-ink-muted text-sm leading-relaxed">
             Treat a shared link as public: anyone who has it can open it, and search engines could index it if
-            it gets posted somewhere public. Shared links are deleted automatically 90 days after they are
-            created. If you want one removed sooner, email the address below with the link.
+            it gets posted somewhere public. The stored file itself is private — it can only be read by
+            Motormind to build that page, never fetched directly. Shared links are deleted automatically 90
+            days after they are created. If you want one removed sooner, email the address below with the link.
           </p>
         </section>
 

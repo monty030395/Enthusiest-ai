@@ -1,6 +1,6 @@
 // Server-side only — imports the Blob SDK and reads BLOB_READ_WRITE_TOKEN.
 // Never import this from a "use client" module.
-import { put, head, list, del } from "@vercel/blob";
+import { put, get, list, del } from "@vercel/blob";
 import { parseSharedPayload, type SharedPayload } from "./shared";
 
 const PREFIX = "c/";
@@ -46,8 +46,10 @@ export async function putShared(payload: SharedPayload): Promise<string> {
     return id;
   }
 
+  // Private: only this server can read the raw JSON. The /c/<id> page is
+  // server-rendered, so sharing a link never means exposing the blob itself.
   await put(`${PREFIX}${id}.json`, body, {
-    access: "public",
+    access: "private",
     addRandomSuffix: false,
     contentType: "application/json",
   });
@@ -69,10 +71,9 @@ export async function getShared(id: string): Promise<SharedPayload | null> {
   }
 
   try {
-    const blob = await head(`${PREFIX}${id}.json`);
-    const res = await fetch(blob.url, { cache: "no-store" });
-    if (!res.ok) return null;
-    return parseSharedPayload(await res.json());
+    const result = await get(`${PREFIX}${id}.json`, { access: "private" });
+    if (!result || result.statusCode !== 200) return null;
+    return parseSharedPayload(await new Response(result.stream).json());
   } catch {
     return null;
   }
