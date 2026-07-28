@@ -351,9 +351,7 @@ export async function POST(req: NextRequest) {
         { role: "user", content },
       ],
       response_format: { type: "json_object" },
-      // Greedy sampling: re-checking the same listing should give the same
-      // read. At 0.3 the scores wandered a point between identical runs.
-      temperature: 0,
+      temperature: 0.3,
       max_tokens: 8000,
     });
 
