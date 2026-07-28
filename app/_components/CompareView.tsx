@@ -124,7 +124,7 @@ export default function CompareView({ a, b, onBack }: { a: SavedCheck; b: SavedC
       </div>
 
       <p className="font-mono text-ink-faint text-[10px] leading-relaxed text-center">
-        Row wins only count where both checks have the data. Asking price is shown but never scored — cheaper isn&apos;t better, it&apos;s just cheaper.
+        A row only counts when the two cars are more than one step apart — a single point either way is noise, not a finding. Asking price is shown but never scored: cheaper isn&apos;t better, it&apos;s just cheaper.
       </p>
     </div>
   );
