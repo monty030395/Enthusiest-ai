@@ -27,6 +27,22 @@ Phase 1 also closes out the core of [#7 (virtual garage / saved analyses)](https
 - ⬜ **Brand fonts in the OG card** — the card currently renders in the default sans because Satori needs font files loaded explicitly; embedding Syne/JetBrains Mono would make previews fully on-brand.
 - ⬜ **Rate limiting on `/api/share`** — it's an unauthenticated write endpoint. Fine at current traffic, not fine if the app gets posted somewhere busy.
 
+## Chassis generation attribution (attempted 2026-07-26, parked)
+
+Sellers name the wrong generation and the analysis inherits it. A real
+listing for a 1993 Silvia asserts "the S14 generation"; a 1993 car straddles
+the S13/S14 changeover (S14 launched October 1993), and the analysis repeated
+the claim, then attributed rust behaviour to the S14 specifically.
+
+An instruction to pin the generation from the build year and flag straddles
+was tried in the engine-ID step and had **no measurable effect across two
+runs** — reverted rather than carry dead prompt text. Lower impact than the
+engine fix (the engine was SR20DET either way), so parked rather than chased.
+
+- ⬜ If revisited: probably needs its own explicit output field (like the
+  `confidence` field that did work) rather than a prose instruction, since a
+  field forces the model to answer the question rather than skip it.
+
 ## OpenAI rate limit (measured 2026-07-26)
 
 The org is capped at **30,000 tokens/minute on GPT-4o**, and one analysis costs
