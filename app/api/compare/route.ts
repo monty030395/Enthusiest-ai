@@ -12,6 +12,7 @@ Rules:
 - NZ context always: import status, parts availability here, WOF realities, what the NZ market does to these prices.
 - The case-for bullets must be the genuinely strongest case for EACH car — steelman both, then still commit to one.
 - Deal-breakers: the single most likely regret for each car, named specifically (component, cost, or character flaw — not "maintenance costs").
+- RESPECT FAULT CONFIDENCE. Faults carry a "confidence" of "confirmed" or "conditional" — conditional means the fault hangs on an engine variant that could not be established. If a car has any confirmed fault, the deal-breaker MUST be a confirmed one; never make a conditional fault the stated deal-breaker while a confirmed one exists. If the only candidates are conditional, scope the wording ("if it turns out to be the EJ25...") rather than asserting it. Do not treat a conditional fault on one car as equivalent evidence to a confirmed fault on the other when picking the winner.
 - FAULT NAMES MUST REFERENCE SPECIFIC COMPONENTS. Never use generic terms like "Electrical Gremlins", "Oil Leaks", "rust issues", or "Cooling Problems" — name the exact component and failure mode (e.g. "S54 rod bearing wear", "F4R dephaser pulley rattle").
 - The curveball: one different, realistically-findable NZ-market car that beats both for this buyer, with a one-line why. If the pair genuinely covers the brief, return an empty string — do not force it.
 - Write fresh, specific text. Never hedge. Never sound like an AI.

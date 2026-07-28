@@ -8,6 +8,7 @@ import {
   computeCharacterScore,
   getQuip,
   buildShareText,
+  isConditional,
 } from "../_lib/analysis";
 import { shareOrCopy, createShareLink } from "../_lib/share";
 import {
@@ -115,6 +116,18 @@ function ModPotentialCard({ data }: { data: NonNullable<Analysis["modPotential"]
         )}
       </div>
     </Card>
+  );
+}
+
+// Marks a fault the analysis couldn't pin to a confirmed engine code
+function ConditionalTag() {
+  return (
+    <span
+      className="ml-2 align-middle font-mono text-[8px] font-bold uppercase tracking-[0.16em] rounded px-1.5 py-0.5 whitespace-nowrap"
+      style={{ color: V_AMBER.text, backgroundColor: V_AMBER.bg, border: `1px solid ${V_AMBER.border}` }}
+    >
+      If confirmed
+    </span>
   );
 }
 
@@ -421,42 +434,81 @@ export default function AnalysisResults({
               </div>
               {result.ownershipPain.issues?.length > 0 && (
                 <ul className="space-y-3.5 mt-1">
-                  {result.ownershipPain.issues.map((issue, i) => (
-                    <li key={i} className="pl-3.5 border-l-2 py-0.5" style={{ borderColor: t.border }}>
-                      <p className="font-bold text-ink text-sm">{issue.title}</p>
-                      {issue.detail && (
-                        <p className="text-ink-faint text-xs mt-1 leading-relaxed">{issue.detail}</p>
-                      )}
-                    </li>
-                  ))}
+                  {result.ownershipPain.issues.map((issue, i) => {
+                    // A fault that hinges on an unconfirmed engine variant never
+                    // renders at the card's full severity
+                    const cond = isConditional(issue);
+                    const it = cond ? V_AMBER : t;
+                    return (
+                      <li key={i} className="pl-3.5 border-l-2 py-0.5" style={{ borderColor: it.border }}>
+                        <p className="font-bold text-ink text-sm">
+                          {issue.title}
+                          {cond && <ConditionalTag />}
+                        </p>
+                        {issue.detail && (
+                          <p className="text-ink-faint text-xs mt-1 leading-relaxed">{issue.detail}</p>
+                        )}
+                      </li>
+                    );
+                  })}
                 </ul>
               )}
             </Card>
           );
         })()}
 
-        {/* Red flags */}
-        {result.redFlags?.length > 0 && (
-          <div className="rounded-xl border border-red-500/50 overflow-hidden bg-red-950/25">
-            <div className="bg-red-600 px-5 py-3 flex items-center gap-2.5">
-              <span className="text-white text-sm">⚠️</span>
-              <span className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-white">
-                Red Flags — Read Before Buying
-              </span>
+        {/* Red flags — chrome follows the strongest flag present, so an
+            all-conditional set doesn't shout in danger red */}
+        {result.redFlags?.length > 0 && (() => {
+          const anyConfirmed = result.redFlags.some((f) => !isConditional(f));
+          return (
+            <div
+              className="rounded-xl overflow-hidden"
+              style={
+                anyConfirmed
+                  ? { border: "1px solid rgb(239 68 68 / 0.5)", backgroundColor: "rgb(69 10 10 / 0.25)" }
+                  : { border: `1px solid ${V_AMBER.border}`, backgroundColor: V_AMBER.bg }
+              }
+            >
+              <div
+                className="px-5 py-3 flex items-center gap-2.5"
+                style={{ backgroundColor: anyConfirmed ? "#dc2626" : V_AMBER.border }}
+              >
+                <span className="text-white text-sm">⚠️</span>
+                <span className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-white">
+                  {anyConfirmed ? "Red Flags — Read Before Buying" : "Worth Checking — Depends on the Variant"}
+                </span>
+              </div>
+              <ul className="divide-y" style={{ borderColor: anyConfirmed ? "rgb(127 29 29 / 0.4)" : V_AMBER.border }}>
+                {result.redFlags.map((f, i) => {
+                  const cond = isConditional(f);
+                  return (
+                    <li key={i} className="px-5 py-4 flex gap-3">
+                      <span
+                        className="flex-shrink-0 text-base leading-tight mt-0.5"
+                        style={{ color: cond ? V_AMBER.text : "#f87171" }}
+                      >
+                        ⚠
+                      </span>
+                      <div>
+                        <p className="font-bold text-sm" style={{ color: cond ? V_AMBER.text : "#fecaca" }}>
+                          {f.flag}
+                          {cond && <ConditionalTag />}
+                        </p>
+                        <p
+                          className="text-xs mt-1 leading-relaxed"
+                          style={{ color: cond ? `${V_AMBER.text}cc` : "rgb(252 165 165 / 0.8)" }}
+                        >
+                          {f.explanation}
+                        </p>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
             </div>
-            <ul className="divide-y divide-red-900/40">
-              {result.redFlags.map((f, i) => (
-                <li key={i} className="px-5 py-4 flex gap-3">
-                  <span className="text-red-400 flex-shrink-0 text-base leading-tight mt-0.5">⚠</span>
-                  <div>
-                    <p className="font-bold text-red-200 text-sm">{f.flag}</p>
-                    <p className="text-red-300/80 text-xs mt-1 leading-relaxed">{f.explanation}</p>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
+          );
+        })()}
 
         {/* Market Trend */}
         {result.marketTrend && (

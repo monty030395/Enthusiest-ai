@@ -2,6 +2,17 @@
 
 export type DriveMetric = { score: number; description: string };
 
+// A fault is "conditional" when it hangs on an engine variant the analysis
+// couldn't establish — e.g. a head gasket warning that only applies if the
+// car turns out to be the US-market EJ25. Optional because every check saved
+// before this existed has no such field; absent reads as confirmed, which
+// keeps old Garage entries and shared links rendering exactly as they did.
+export type FaultConfidence = "confirmed" | "conditional";
+
+export function isConditional(fault: { confidence?: FaultConfidence } | undefined): boolean {
+  return fault?.confidence === "conditional";
+}
+
 export type Analysis = {
   vehicle: {
     make: string;
@@ -23,7 +34,7 @@ export type Analysis = {
   specSignificance: { item: string; note: string }[];
   priceVerdict: { assessment: string; reason: string };
   enthusiastTax: { level: string; premium?: string; reasons: string[] };
-  ownershipPain: { score: number; issues: { title: string; detail: string }[] };
+  ownershipPain: { score: number; issues: { title: string; detail: string; confidence?: FaultConfidence }[] };
   drivingCharacter: {
     steeringFeel: DriveMetric;
     engineCharacter: DriveMetric;
@@ -33,7 +44,7 @@ export type Analysis = {
   };
   classicPotential: { score: number; reasons: string[] };
   worstFinancialDecision: { rating: string; reasons: string[] };
-  redFlags: { flag: string; explanation: string }[];
+  redFlags: { flag: string; explanation: string; confidence?: FaultConfidence }[];
   priceOutlook?: { trend: string; reason: string };
   carsCoffee?: { rating: string; description: string };
   communityCredibility?: { rating: string; description: string };

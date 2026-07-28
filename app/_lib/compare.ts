@@ -2,7 +2,11 @@
 // Winner-per-row semantics: colour tracks sentiment, so "lower" wins on
 // cost/pain rows and "higher" wins on score rows. Rows where either side
 // has no data score no points for anyone.
-import { type Analysis, computeCharacterScore, isSpecified } from "./analysis";
+import { type Analysis, computeCharacterScore, isSpecified, isConditional } from "./analysis";
+
+function confirmedFlagCount(a: Analysis): number {
+  return (a.redFlags ?? []).filter((f) => !isConditional(f)).length;
+}
 
 const TAX_RANK: Record<string, number> = {
   "None": 0, "Mild": 1, "Moderate": 2, "High": 3, "Extreme": 4,
@@ -88,9 +92,17 @@ const ROW_DEFS: CompareRowDef[] = [
     direction: "lower",
   },
   {
+    // Scores on confirmed flags only — a warning that hangs on an unconfirmed
+    // engine variant shouldn't cost a car a row the way a real one does.
+    // The count still shows in full so a 3-v-1 row awarding nothing reads as
+    // deliberate rather than broken.
     label: "Red Flags",
-    display: (a) => String(a.redFlags?.length ?? 0),
-    comparable: (a) => a.redFlags?.length ?? 0,
+    display: (a) => {
+      const total = a.redFlags?.length ?? 0;
+      const confirmed = confirmedFlagCount(a);
+      return total === confirmed ? String(total) : `${total} (${confirmed} confirmed)`;
+    },
+    comparable: (a) => confirmedFlagCount(a),
     direction: "lower",
   },
 ];
