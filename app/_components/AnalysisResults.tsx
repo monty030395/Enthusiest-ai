@@ -711,7 +711,7 @@ export default function AnalysisResults({
                 <p className="text-ink-faint text-xs leading-relaxed mt-1.5">{alt.howDiffers}</p>
                 {/* New tab, so the app is still here when they come back */}
                 <a
-                  href={trademeSearchUrl(alt.name, alt.priceRange)}
+                  href={trademeSearchUrl(alt.searchTerm || alt.name, alt.priceRange)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="mt-2.5 inline-flex items-center gap-1.5 min-h-10 font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-ember-400 hover:text-ember-300 transition-colors"

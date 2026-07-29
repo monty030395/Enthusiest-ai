@@ -163,6 +163,7 @@ Return ONLY valid JSON in this exact structure, no markdown, no extra text:
   "alternatives": [
     {
       "name": "",
+      "searchTerm": "",
       "whySuited": "",
       "howDiffers": "",
       "priceRange": ""
@@ -315,6 +316,8 @@ vibeScore — a single number 1–10 representing social desirability and commun
 
 alternatives — exactly 3 entries. Realistic alternatives at a similar budget that a buyer of this car should know about. Derive these from your own market knowledge — IGNORE any SEO/keyword list the seller pasted into the listing (e.g. a string of unrelated model names); do not simply echo it back.
 alternatives[].name — specific make, model, generation (e.g. "Honda Integra DC5 Type R", "BMW E46 330i", "Subaru Liberty GT BP").
+alternatives[].searchTerm — the same car written the way a Trade Me listing title would actually name it, because this becomes a keyword search. Sellers write the make and model; they rarely write enthusiast shorthand. "Volkswagen Golf R32" finds cars, "Volkswagen Golf R32 Mk4" finds nothing. Keep a chassis code ONLY where NZ sellers genuinely put it in titles (E46, S15, BP Legacy). Drop trailing generation qualifiers otherwise. Fewer words find more cars — a search returning near-misses beats a search returning nothing.
+Use the name the car is SOLD UNDER IN NEW ZEALAND, which is not always the name you know it by. NZ listings say Subaru Legacy, never Subaru Liberty — Liberty is the Australian name and returns nothing here. Same trap for any model badged differently across markets: search the NZ badge.
 alternatives[].whySuited — one sentence on why this suits someone considering the analysed car.
 alternatives[].howDiffers — one sentence on how it differs in character or ownership experience.
 alternatives[].priceRange — approximate NZD price range for a good example (e.g. "$8,000–$14,000").`;

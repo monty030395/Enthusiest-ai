@@ -36,7 +36,7 @@ export default function Home() {
       setPastedText(shared.text);
     } else if (shared.listingUrl) {
       // Trade Me shares a link, not the description, and we can't fetch it
-      setUrlHint("Got the listing. Trade Me only shares the link, so open it, copy the description text and paste it here — we'll keep the link attached to your check.");
+      setUrlHint("Got the link. Now copy the listing description and paste it below — that's the part we actually read. The link stays attached to your check.");
       setUrlHintVisible(true);
     }
   }, []);
