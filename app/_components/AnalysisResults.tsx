@@ -711,7 +711,7 @@ export default function AnalysisResults({
                 <p className="text-ink-faint text-xs leading-relaxed mt-1.5">{alt.howDiffers}</p>
                 {/* New tab, so the app is still here when they come back */}
                 <a
-                  href={trademeSearchUrl(alt.searchTerm || alt.name, alt.priceRange)}
+                  href={trademeSearchUrl(alt.searchTerm || alt.name)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="mt-2.5 inline-flex items-center gap-1.5 min-h-10 font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-ember-400 hover:text-ember-300 transition-colors"
@@ -721,7 +721,7 @@ export default function AnalysisResults({
               </div>
             ))}
             <p className="font-mono text-ink-faint text-[10px] leading-relaxed pt-3 border-t border-line">
-              These are AI suggestions from general market knowledge, not listings we&apos;ve seen — each link runs a Trade Me search for that car, so what comes back is whatever&apos;s for sale today.
+              These are AI suggestions from general market knowledge, not listings we&apos;ve seen. The prices are rough estimates and appreciating cars can run well past them — each link searches Trade Me for that car, so trust what comes back over what we guessed.
             </p>
           </Card>
         </div>
