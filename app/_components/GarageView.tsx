@@ -125,6 +125,16 @@ export default function GarageView() {
               </button>
               <div className="flex items-center gap-3">
                 <p className="font-mono text-[10px] text-ink-faint">Checked {checkedOn(selected.savedAt)}</p>
+                {selected.listingUrl && (
+                  <a
+                    href={selected.listingUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-ink-muted hover:text-ink transition-colors py-2"
+                  >
+                    Listing ↗
+                  </a>
+                )}
                 <button
                   onClick={() => handleExport(selected)}
                   className="font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-ember-400 hover:text-ember-300 transition-colors py-2"

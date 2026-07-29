@@ -74,6 +74,9 @@ export type Analysis = {
   };
   alternatives?: {
     name: string;
+    // How a Trade Me title would name it — absent on checks saved before
+    // this existed, in which case the display name is used for the search
+    searchTerm?: string;
     whySuited: string;
     howDiffers: string;
     priceRange: string;

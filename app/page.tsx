@@ -5,6 +5,7 @@ import Link from "next/link";
 import { type Analysis } from "./_lib/analysis";
 import { compressImage } from "./_lib/images";
 import { saveCheck } from "./_lib/garage";
+import { takeSharedListing } from "./_lib/sharedListing";
 import { V_RED } from "./_components/badges";
 import { Card, RotatingMessage, WheelSpinner } from "./_components/ui";
 import Masthead from "./_components/Masthead";
@@ -23,6 +24,22 @@ export default function Home() {
   const [inputCollapsed, setInputCollapsed] = useState(false);
   const [urlHint, setUrlHint] = useState("");
   const [urlHintVisible, setUrlHintVisible] = useState(false);
+  // Set when the user arrived via the Android share sheet — remembered so the
+  // saved check can link back to the listing it came from
+  const [listingUrl, setListingUrl] = useState<string | undefined>();
+
+  useEffect(() => {
+    const shared = takeSharedListing();
+    if (!shared) return;
+    setListingUrl(shared.listingUrl);
+    if (shared.text) {
+      setPastedText(shared.text);
+    } else if (shared.listingUrl) {
+      // Trade Me shares a link, not the description, and we can't fetch it
+      setUrlHint("Got the link. Now copy the listing description and paste it below — that's the part we actually read. The link stays attached to your check.");
+      setUrlHintVisible(true);
+    }
+  }, []);
 
   useEffect(() => {
     if (!result) return;
@@ -40,6 +57,7 @@ export default function Home() {
     setError("");
     setUrlHint("");
     setUrlHintVisible(false);
+    setListingUrl(undefined);
     if (fileInputRef.current) fileInputRef.current.value = "";
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
@@ -94,7 +112,7 @@ export default function Home() {
       } else {
         setResult(data as Analysis);
         setInputCollapsed(true);
-        saveCheck(data as Analysis);
+        saveCheck(data as Analysis, listingUrl);
       }
     } catch {
       setError("Network error — check your connection and try again.");
