@@ -11,6 +11,7 @@ import {
   isConditional,
 } from "../_lib/analysis";
 import { shareOrCopy, createShareLink } from "../_lib/share";
+import { trademeSearchUrl } from "../_lib/trademe";
 import {
   V_RED, V_AMBER, V_GREEN, V_NEUTRAL,
   VERDICT_THEME_MAP, TAX_LEVEL_THEMES,
@@ -708,10 +709,19 @@ export default function AnalysisResults({
                 </div>
                 <p className="text-ink-muted text-sm leading-relaxed">{alt.whySuited}</p>
                 <p className="text-ink-faint text-xs leading-relaxed mt-1.5">{alt.howDiffers}</p>
+                {/* New tab, so the app is still here when they come back */}
+                <a
+                  href={trademeSearchUrl(alt.name, alt.priceRange)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-2.5 inline-flex items-center gap-1.5 min-h-10 font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-ember-400 hover:text-ember-300 transition-colors"
+                >
+                  Find on Trade Me <span aria-hidden="true">↗</span>
+                </a>
               </div>
             ))}
             <p className="font-mono text-ink-faint text-[10px] leading-relaxed pt-3 border-t border-line">
-              These are AI suggestions based on general market knowledge — not live Trade Me listings. Availability and pricing may vary.
+              These are AI suggestions from general market knowledge, not listings we&apos;ve seen — each link runs a Trade Me search for that car, so what comes back is whatever&apos;s for sale today.
             </p>
           </Card>
         </div>

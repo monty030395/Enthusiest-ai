@@ -32,11 +32,12 @@ function persist(checks: SavedCheck[]) {
   }
 }
 
-export function saveCheck(analysis: Analysis): SavedCheck | null {
+export function saveCheck(analysis: Analysis, listingUrl?: string): SavedCheck | null {
   if (typeof window === "undefined") return null;
   const check: SavedCheck = {
     id: newId(),
     savedAt: Date.now(),
+    listingUrl,
     analysis,
   };
   persist([check, ...loadGarage()].slice(0, MAX_CHECKS));
