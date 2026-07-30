@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
+import OpenAI, { RateLimitError } from "openai";
+
+// Smaller than analyze (max_tokens 1500 vs 8000) so this rarely hits the
+// shared 30k-tokens/minute ceiling on its own, but it shares the budget with
+// analyze — see app/api/analyze/route.ts for the measured numbers.
+export const maxDuration = 30;
 
 const SYSTEM_PROMPT = `You are an experienced NZ car enthusiast with 20+ years of hands-on knowledge buying, owning, and selling JDM, Euro, and performance cars in the New Zealand market. You've owned dozens of cars and made expensive mistakes, so you know exactly what matters. You speak like a knowledgeable mate settling an argument at a barbecue — direct, opinionated, specific, never generic.
 
@@ -68,7 +73,7 @@ export async function POST(req: NextRequest) {
     return rest;
   };
 
-  const client = new OpenAI({ apiKey });
+  const client = new OpenAI({ apiKey, maxRetries: 3 });
 
   try {
     const response = await client.chat.completions.create({
@@ -95,6 +100,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(result);
   } catch (err) {
     console.error("OpenAI compare error:", err);
+    if (err instanceof RateLimitError) {
+      return NextResponse.json(
+        { error: "Motormind's busy right now — give it about 10 seconds and try again." },
+        { status: 429 }
+      );
+    }
     return NextResponse.json(
       { error: "The head-to-head fell over. Give it another go." },
       { status: 500 }

@@ -1,5 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
+import OpenAI, { RateLimitError } from "openai";
+
+// A single call measures ~20s at max_tokens 8000 (prompt has grown past the
+// original ~7.2k-token estimate — see ROADMAP.md). The org is capped at
+// 30k tokens/minute, so a 429 here means someone else's request(s) just used
+// the budget, not that anything is broken. maxRetries below lets the SDK's
+// built-in retry (it already retries 429s, honouring OpenAI's own
+// Retry-After header) actually get a second attempt in — 60s covers one
+// full call plus at least one retry-and-reattempt with margin.
+export const maxDuration = 60;
 
 const SYSTEM_PROMPT = `You are an experienced NZ car enthusiast with 20+ years of hands-on knowledge buying, owning, and selling JDM, Euro, and performance cars in the New Zealand market. You've owned dozens of cars — WRXs, Evos, E46s, MX-5s, Crowns, Skylines, Golf Rs, IS300s — and you've made expensive mistakes so you know exactly what to look for.
 
@@ -342,7 +351,11 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const client = new OpenAI({ apiKey });
+  // Explicit rather than the SDK's default (2) — each retry is typically
+  // short because the API tells the SDK exactly how long to wait via
+  // Retry-After, so a third attempt costs little and buys real headroom
+  // against the shared 30k-tokens/minute ceiling.
+  const client = new OpenAI({ apiKey, maxRetries: 3 });
   const body = await req.json();
   const { images, pastedText } = body as { images?: string[]; pastedText?: string };
 
@@ -399,6 +412,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(result);
   } catch (err) {
     console.error("OpenAI error:", err);
+    // The SDK already retried this on our behalf — if we're still here, the
+    // shared rate limit was genuinely exhausted, not a config problem. Say
+    // that plainly instead of sending someone to check an API key that's
+    // perfectly fine.
+    if (err instanceof RateLimitError) {
+      return NextResponse.json(
+        { error: "Motormind's busy right now — give it about 10 seconds and try again." },
+        { status: 429 }
+      );
+    }
     return NextResponse.json(
       { error: "Analysis failed. Check your API key and try again." },
       { status: 500 }
