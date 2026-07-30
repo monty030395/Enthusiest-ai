@@ -72,6 +72,26 @@ export default function Home() {
       });
   }, []);
 
+  // Win+Shift+S -> Ctrl+V only ever puts an image on the clipboard, never
+  // text, so this never fights the textarea's own onPaste (handlePaste
+  // below) — that one only ever sees text-only pastes.
+  useEffect(() => {
+    function handleGlobalPaste(e: ClipboardEvent) {
+      const items = e.clipboardData?.items;
+      if (!items) return;
+      const imageFiles = Array.from(items)
+        .filter((item) => item.kind === "file" && item.type.startsWith("image/"))
+        .map((item) => item.getAsFile())
+        .filter((f): f is File => f !== null);
+      if (imageFiles.length === 0) return;
+      e.preventDefault();
+      setMode("images");
+      addImages(imageFiles);
+    }
+    window.addEventListener("paste", handleGlobalPaste);
+    return () => window.removeEventListener("paste", handleGlobalPaste);
+  }, [addImages]);
+
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
       e.preventDefault();

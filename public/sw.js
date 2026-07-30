@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'ms74dn89';
+const CACHE_VERSION = 'ms75ut2c';
 const CACHE_NAME = `enthusiast-ai-${CACHE_VERSION}`;
 
 // Install: activate immediately without waiting for old SW to be unloaded

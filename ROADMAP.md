@@ -73,7 +73,7 @@ real even if today's headroom is bigger than first thought:
 - ✅ `maxRetries: 3` set explicitly on both OpenAI clients (analyze, compare) — the SDK already retries 429s automatically, honouring OpenAI's own `Retry-After` header, this just gives it one more attempt
 - ✅ `maxDuration` set explicitly on both routes (60s analyze, 30s compare) so those retries have real, documented headroom instead of relying on an unverified platform default
 - ✅ A rate-limited request now returns a specific, honest message — *"Motormind's busy right now — give it about 10 seconds and try again"* — instead of being told to check an API key that's perfectly fine
-- ⬜ **Trim the system prompt** — now comfortably over 27,500 characters; cutting it lowers cost per call and rate-limit pressure together. Still worth doing.
+- ✅ **Trim the system prompt** — read the whole thing before cutting anything: almost all of it is hard-won calibration text (engine-ID, price ranges, confidence semantics) validated by real testing this session, so aggressive cuts would re-risk fixed bugs for a saving that matters less now the ceiling turned out higher. Consolidated the one genuinely redundant bit — 7 "be specific, not generic" bullets repeating the same instruction — into one. Saved ~280 characters, re-verified against the Legacy engine-ID and Silvia price-calibration test cases (both still correct). Modest, not dramatic — that's an honest reflection of how little fat is actually in there now.
 - ⬜ Re-measure the real ceiling again in a few months the same way this was found — it will keep moving as usage grows.
 
 ## Chassis generation attribution (attempted 2026-07-26, parked)
@@ -88,10 +88,10 @@ changeover). A prose instruction had no measurable effect and was reverted.
 
 From the post-redesign review (July 2026), roughly in priority order:
 
-- ⬜ **Masthead scroll-to-top** — results run 6+ screens; score chips jump down but nothing brings you back. Tapping the sticky masthead should scroll to top. Related: [#8](https://github.com/monty030395/Enthusiest-ai/issues/8).
-- ⬜ **Desktop image paste** — Win+Shift+S → Ctrl+V should add a screenshot on the Screenshots tab; paste handling currently only exists on the textarea.
-- ⬜ **`prefers-reduced-motion`** — pulse dot, spinner, and film grain should respect it.
-- ⬜ **Contrast pass on `ink-faint`** — 9–10px mono labels at #6e6a63 on carbon are borderline where they carry real information (disclaimers).
+- ✅ **Masthead scroll-to-top** — [PR #30](https://github.com/monty030395/Enthusiest-ai/pull/30). Tapping the wordmark or a nav link that targets the page you're already on scrolls to top instead of doing nothing (a same-route `<Link>` click is otherwise a no-op); a link to a different page still navigates as before. Closes [#8](https://github.com/monty030395/Enthusiest-ai/issues/8).
+- ✅ **Desktop image paste** — [PR #30](https://github.com/monty030395/Enthusiest-ai/pull/30). Global paste listener detects an image on the clipboard (Win+Shift+S → Ctrl+V) from anywhere on the page, auto-switches to the Screenshots tab, and adds it — verified it doesn't interfere with the existing textarea text-paste/URL-hint flow.
+- ✅ **`prefers-reduced-motion`** — [PR #30](https://github.com/monty030395/Enthusiest-ai/pull/30). Standard universal snippet kills animation/transition duration and disables the film grain overlay. Note: doesn't touch the JS-driven `behavior: "smooth"` scrollIntoView/scrollTo calls elsewhere in the app (including the scroll-to-top above) — those would need their own check against the same media query for full coverage.
+- ✅ **Contrast pass on `ink-faint`** — [PR #30](https://github.com/monty030395/Enthusiest-ai/pull/30). Measured: 3.66:1 on carbon-950, fails WCAG AA (4.5:1) for the small text it's used on. `#6e6a63` → `#827e76`, now 4.87:1, still clearly darker than `ink-muted` (7.45:1).
 - ⬜ **Film grain / backdrop-blur perf gate on mobile** — test on mid-range Android before investing further.
 
 ## Open issues

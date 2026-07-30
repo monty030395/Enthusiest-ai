@@ -12,10 +12,14 @@
   --color-carbon-700: #28282e;
   --color-carbon-600: #36363e;
 
-  /* Ink — warm off-whites, editorial paper feel */
+  /* Ink — warm off-whites, editorial paper feel.
+     ink-faint was #6e6a63 (3.66:1 on carbon-950 — fails WCAG AA for the
+     9-10px mono labels it's used on, some of which carry real information
+     like disclaimers). #827e76 clears 4.5:1 (4.87:1 measured) while staying
+     clearly darker than ink-muted (7.45:1). */
   --color-ink: #f4f2ed;
   --color-ink-muted: #a39f96;
-  --color-ink-faint: #6e6a63;
+  --color-ink-faint: #827e76;
 
   /* Brand accent — ember */
   --color-ember-300: #ffce7a;
@@ -59,4 +63,23 @@ body::after {
 :focus-visible {
   outline: 2px solid var(--color-ember-500);
   outline-offset: 2px;
+}
+
+/* Standard universal reduced-motion snippet — kills the masthead pulse dot
+   and the loading spinner's rotation (the loading TEXT still communicates
+   progress), and treats the film grain as decorative visual noise bundled
+   in with motion preferences. Doesn't touch the JS-driven `behavior: "smooth"`
+   scrollIntoView/scrollTo calls elsewhere in the app — those would need
+   their own check against this same media query if full compliance is
+   wanted later. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  body::after {
+    display: none;
+  }
 }
