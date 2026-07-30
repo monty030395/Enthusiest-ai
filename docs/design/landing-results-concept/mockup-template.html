@@ -1,0 +1,696 @@
+<title>Motormind — Landing → Results, one scroll</title>
+<style>
+  @font-face {
+    font-family: "Syne";
+    font-style: normal;
+    font-weight: 400 800;
+    font-display: swap;
+    src: url(data:font/woff2;base64,__SYNE_B64__) format("woff2");
+  }
+  @font-face {
+    font-family: "JetBrains Mono";
+    font-style: normal;
+    font-weight: 100 800;
+    font-display: swap;
+    src: url(data:font/woff2;base64,__JBMONO_B64__) format("woff2");
+  }
+  @font-face {
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+    src: url(data:font/woff2;base64,__INTER_B64__) format("woff2");
+  }
+
+  :root {
+    --carbon-950: #0b0b0c;
+    --carbon-900: #121214;
+    --carbon-850: #17171a;
+    --carbon-800: #1d1d21;
+    --carbon-700: #28282e;
+    --carbon-600: #36363e;
+
+    --ink: #f4f2ed;
+    --ink-muted: #a39f96;
+    --ink-faint: #827e76;
+
+    --ember-300: #ffce7a;
+    --ember-400: #f5b04c;
+    --ember-500: #e89a2b;
+    --ember-600: #c77f1b;
+
+    --line: rgba(255, 255, 255, 0.08);
+    --line-strong: rgba(255, 255, 255, 0.15);
+
+    --red-bg: #2a100b; --red-border: #803023; --red-text: #ff9d8a;
+    --amber-bg: #271b06; --amber-border: #7a5a1e; --amber-text: #ffc96b;
+    --green-bg: #0e2316; --green-border: #2f5e40; --green-text: #93dbad;
+    --blue-bg: #101b29; --blue-border: #31506f; --blue-text: #a3bedf;
+
+    --font-display: "Syne", "Arial Black", sans-serif;
+    --font-sans: "Inter", system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html { background: var(--carbon-950); }
+  body {
+    margin: 0;
+    background: var(--carbon-950);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none;
+    opacity: 0.05;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  ::selection { background: var(--ember-500); color: var(--carbon-950); }
+  :focus-visible { outline: 2px solid var(--ember-500); outline-offset: 2px; }
+  a { color: inherit; }
+  img, svg { max-width: 100%; display: block; }
+  ul, ol { margin: 0; padding: 0; list-style: none; }
+  button { font: inherit; }
+
+  /* ── Masthead — one, shared by the whole scroll ──────────── */
+  .masthead {
+    position: sticky; top: 0; z-index: 40;
+    padding: 8px 24px;
+    border-bottom: 1px solid var(--line);
+    background: rgba(11, 11, 12, 0.82);
+    backdrop-filter: blur(10px);
+  }
+  .masthead-row {
+    max-width: 720px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  }
+  .masthead-brand { display: flex; align-items: center; gap: 12px; }
+  .wordmark {
+    font-family: var(--font-display); font-size: 1.0625rem; font-weight: 800;
+    text-transform: uppercase; letter-spacing: -0.01em; line-height: 1;
+    text-decoration: none;
+  }
+  .wordmark span:first-child { color: var(--ink); }
+  .wordmark span:last-child { color: var(--ember-400); }
+  .masthead-divider { width: 1px; height: 14px; background: var(--line-strong); }
+  .masthead-tag {
+    font-family: var(--font-mono); font-size: 9px; text-transform: uppercase;
+    letter-spacing: 0.28em; color: var(--ink-faint); white-space: nowrap;
+  }
+  .masthead-nav { display: flex; align-items: center; gap: 20px; }
+  .nav-link {
+    font-family: var(--font-mono); font-size: 10px; text-transform: uppercase;
+    letter-spacing: 0.2em; text-decoration: none; color: var(--ink-faint);
+    padding: 8px 0; transition: color 0.15s ease;
+  }
+  .nav-link:hover { color: var(--ink-muted); }
+  .nav-link.active { color: var(--ember-400); }
+  .pulse-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ember-400); animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+  /* ── Frame — mirrors the app's real column width, on purpose:
+     this is meant to be the same page, not a wider marketing shell ── */
+  .frame { max-width: 720px; margin: 0 auto; padding: 40px 20px 80px; }
+
+  .eyebrow {
+    font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.3em; color: var(--ember-400);
+    margin: 0 0 16px;
+  }
+
+  /* ── Hero (lean) ──────────────────────────────────────────── */
+  .hero { padding-top: 8px; }
+  h1 {
+    font-family: var(--font-display); font-weight: 800;
+    font-size: clamp(1.9rem, 5.6vw, 2.75rem);
+    line-height: 1.08; letter-spacing: -0.015em; margin: 0;
+    text-wrap: balance; max-width: 15ch;
+  }
+  h1 .accent { color: var(--ember-400); }
+  .hero-sub {
+    margin: 14px 0 0; max-width: 46ch; font-size: 0.95rem;
+    line-height: 1.6; color: var(--ink-muted);
+  }
+
+  .exhibit-label {
+    font-family: var(--font-mono); font-size: 10px; text-transform: uppercase;
+    letter-spacing: 0.2em; color: var(--ink-faint); margin: 28px 0 10px;
+  }
+  .listing-card { background: var(--carbon-900); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  .listing-chrome {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 11px 16px; border-bottom: 1px solid var(--line);
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ink-faint);
+  }
+  .listing-body { padding: 20px 20px 22px; }
+  .listing-title {
+    font-family: var(--font-display); font-weight: 700; font-size: 1rem;
+    color: var(--ink); margin: 0 0 16px; letter-spacing: -0.005em;
+  }
+  .line-block { margin-bottom: 16px; }
+  .line-block:last-child { margin-bottom: 0; }
+  .quote { margin: 0; font-size: 0.9rem; line-height: 1.55; color: var(--ink-muted); }
+  .quote::before { content: "\201C"; color: var(--ink-faint); }
+  .quote::after { content: "\201D"; color: var(--ink-faint); }
+
+  .note {
+    position: relative; margin-top: 8px; margin-left: 18px;
+    padding: 9px 14px 9px 16px; border-radius: 0 6px 6px 0; border-left: 2px solid;
+    opacity: 0; transform: translateY(-4px); animation: noteIn 0.5s ease forwards;
+  }
+  .note::before {
+    content: ""; position: absolute; left: -19px; top: -6px; width: 1px; height: 0;
+    background: currentColor; animation: drawIn 0.35s ease forwards;
+  }
+  @keyframes noteIn { to { opacity: 1; transform: translateY(0); } }
+  @keyframes drawIn { to { height: 14px; } }
+  .note--red   { background: var(--red-bg);   border-color: var(--red-border);   color: var(--red-text); }
+  .note--ember { background: rgba(232, 154, 43, 0.08); border-color: var(--ember-600); color: var(--ember-300); }
+  .line-block:nth-child(1) .note { animation-delay: 0.4s; }
+  .line-block:nth-child(1) .note::before { animation-delay: 0.4s; }
+  .line-block:nth-child(2) .note { animation-delay: 0.9s; }
+  .line-block:nth-child(2) .note::before { animation-delay: 0.9s; }
+  .note-tag { display: block; font-family: var(--font-mono); font-size: 9.5px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 4px; }
+  .note p { margin: 0; font-size: 0.85rem; line-height: 1.5; color: var(--ink); }
+
+  /* Third beat — the annotations resolve into a verdict, same as the real
+     app resolves a loading state into a result. Caps the card. */
+  .verdict-reveal { position: relative; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); min-height: 30px; }
+  .thinking-beat, .verdict-stamp { position: absolute; inset: 16px 0 0; display: flex; align-items: center; justify-content: center; margin: 0; }
+  .thinking-beat {
+    font-family: var(--font-mono); font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.2em;
+    color: var(--ink-faint); opacity: 0; animation: thinkFade 0.9s ease forwards; animation-delay: 1.5s;
+  }
+  .verdict-stamp {
+    font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+    padding: 6px 14px; border-radius: 3px; border: 1px solid var(--red-border); background: var(--red-bg); color: var(--red-text);
+    opacity: 0; transform: scale(0.7); animation: stampIn 0.4s cubic-bezier(.34,1.56,.64,1) forwards; animation-delay: 2.3s;
+  }
+  @keyframes thinkFade { 0% { opacity: 0; } 25% { opacity: 1; } 70% { opacity: 1; } 100% { opacity: 0; } }
+  @keyframes stampIn { to { opacity: 1; transform: scale(1); } }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--font-mono); font-weight: 700; font-size: 12px;
+    text-transform: uppercase; letter-spacing: 0.2em; text-decoration: none;
+    border-radius: 8px; padding: 15px 24px; background: var(--ember-500);
+    color: var(--carbon-950); border: none; cursor: pointer;
+    transition: background-color 0.15s ease;
+  }
+  .btn:hover { background: var(--ember-400); }
+  .btn:active { background: var(--ember-600); }
+
+  /* ── Real input card — same component the live app already has
+     (tabs, textarea, submit). Shown here in its true first-open state:
+     empty, nothing pasted yet, submit disabled. Not a mockup of a mockup —
+     this is the actual functional surface, themed to match. ── */
+  .input-label { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.2em; color: var(--ink-faint); margin: 36px 0 10px; }
+  .input-card { background: var(--carbon-900); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  .input-tabs { display: flex; border-bottom: 1px solid var(--line); }
+  .input-tab {
+    flex: 1; padding: 14px; background: none; border: none; cursor: pointer;
+    font-family: var(--font-mono); font-size: 11px; font-weight: 500; text-transform: uppercase;
+    letter-spacing: 0.18em; color: var(--ink-faint); transition: color 0.15s ease;
+  }
+  .input-tab.active { color: var(--ink); border-bottom: 2px solid var(--ember-400); background: rgba(255,255,255,0.03); margin-bottom: -1px; }
+  .input-body { padding: 20px; }
+  .input-hint { font-family: var(--font-mono); font-size: 11px; color: var(--ink-faint); line-height: 1.6; margin: 0 0 10px; }
+  .input-textarea {
+    width: 100%; min-height: 140px; background: rgba(18,18,20,0.8); border: 1px solid var(--line);
+    border-radius: 8px; padding: 14px 16px; color: var(--ink); font-family: var(--font-sans); font-size: 0.9rem;
+    resize: none;
+  }
+  .input-textarea::placeholder { color: var(--ink-faint); font-family: var(--font-mono); font-size: 0.85rem; }
+  .input-submit {
+    width: 100%; margin-top: 14px; border: none; border-radius: 8px; padding: 15px;
+    font-family: var(--font-mono); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.2em;
+    background: var(--carbon-800); color: var(--ink-faint); cursor: not-allowed;
+  }
+
+  .verdict-badge {
+    font-family: var(--font-mono); font-size: 10px; font-weight: 700;
+    letter-spacing: 0.14em; text-transform: uppercase; padding: 4px 10px;
+    border-radius: 3px; border: 1px solid; white-space: nowrap; display: inline-block;
+  }
+
+  /* ── Seam: makes explicit this is one continuous page ────── */
+  .seam { display: flex; align-items: center; gap: 14px; margin: 56px 0 40px; }
+  .seam-line { flex: 1; height: 1px; background: var(--line); }
+  .seam-label {
+    font-family: var(--font-mono); font-size: 9.5px; text-transform: uppercase;
+    letter-spacing: 0.16em; color: var(--ink-faint); white-space: nowrap;
+  }
+
+  /* ── Results (excerpt) ────────────────────────────────────── */
+  .results-tag { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.2em; color: var(--ink-faint); margin: 0 0 20px; }
+
+  .card { border-radius: 12px; border: 1px solid var(--line); background: rgba(255,255,255,0.02); }
+  .card + .card, .card + .tile-header, .tile-header + .card { margin-top: 16px; }
+  .section-label { font-family: var(--font-mono); font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.2em; color: var(--ink-faint); margin: 0 0 12px; }
+  .pill { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 5px; border: 1px solid var(--line); background: rgba(255,255,255,0.04); color: var(--ink-muted); font-family: var(--font-mono); font-size: 11px; }
+
+  .hero-tile { overflow: hidden; margin-top: 8px; }
+  .hero-tile-accent { height: 1px; background: linear-gradient(to right, var(--ember-500), rgba(232,154,43,0.4), transparent); }
+  .hero-tile-body { padding: 24px; display: flex; flex-direction: column; gap: 18px; }
+  .vehicle-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .vehicle-meta { font-family: var(--font-mono); font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.24em; color: var(--ink-faint); padding-top: 6px; }
+  .price-tag { background: var(--ember-500); border-radius: 8px; padding: 8px 16px; text-align: right; flex-shrink: 0; }
+  .price-tag-label { font-family: var(--font-mono); font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em; color: rgba(11,11,12,0.6); margin: 0; }
+  .price-tag-value { font-family: var(--font-mono); font-size: 1.2rem; font-weight: 700; color: var(--carbon-950); margin: 0; font-variant-numeric: tabular-nums; }
+  .make-model { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.6rem, 4vw, 2.1rem); color: var(--ink); letter-spacing: -0.01em; line-height: 1.1; margin: 0; }
+  .variant { color: var(--ink-muted); font-weight: 500; margin: 6px 0 0; }
+  .spec-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .pull-quote { padding-left: 16px; border-left: 2px solid var(--ember-400); }
+  .pull-quote p { margin: 0; color: var(--ink); font-size: 1.05rem; font-weight: 500; font-style: italic; line-height: 1.4; }
+  .verdict-line { padding-left: 16px; border-left: 1px solid var(--line-strong); }
+  .verdict-line p { margin: 0; color: var(--ink-muted); font-size: 0.9rem; font-style: italic; line-height: 1.6; }
+
+  .perf-card { background: rgba(18,18,20,0.6); border: 1px solid var(--line); border-radius: 10px; padding: 20px; }
+  .perf-engine { font-family: var(--font-mono); color: var(--ink); font-weight: 700; font-size: 0.9rem; margin: 0 0 20px; }
+  .perf-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .perf-label { font-family: var(--font-mono); font-size: 9px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.2em; color: var(--ink-faint); margin: 0 0 4px; }
+  .perf-value { font-family: var(--font-mono); color: var(--ink); font-weight: 700; font-size: 0.9rem; margin: 0; font-variant-numeric: tabular-nums; }
+  .perf-value .sub { color: var(--ink-faint); font-weight: 400; }
+  .perf-note { color: var(--ember-300); opacity: 0.85; font-size: 0.8rem; margin: 20px 0 0; padding-top: 16px; border-top: 1px solid var(--line); line-height: 1.5; }
+
+  .score-row { display: flex; gap: 10px; }
+  .score-chip { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 14px 8px; border-radius: 8px; background: rgba(255,255,255,0.03); border: 1px solid var(--line); }
+  .score-num { font-family: var(--font-mono); font-size: 1.5rem; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+  .score-num .of10 { color: var(--ink-faint); font-size: 0.75rem; font-weight: 400; }
+  .score-label { font-family: var(--font-mono); font-size: 9px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.2em; color: var(--ink-faint); white-space: nowrap; }
+  .score-red { color: var(--red-text); } .score-amber { color: var(--amber-text); } .score-green { color: var(--green-text); }
+
+  .tile-header { display: flex; align-items: baseline; gap: 12px; padding-top: 32px; margin-bottom: 4px; }
+  .tile-index { font-family: var(--font-display); font-size: 1.9rem; font-weight: 800; line-height: 1; color: rgba(244,242,237,0.15); }
+  .tile-label { font-family: var(--font-display); font-size: 1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--ink); }
+  .tile-rule { flex: 1; height: 1px; background: var(--line); align-self: center; }
+
+  .flag-card { border-radius: 12px; overflow: hidden; border: 1px solid rgba(239,68,68,0.5); background: rgba(69,10,10,0.25); }
+  .flag-head { background: #dc2626; padding: 11px 20px; display: flex; align-items: center; gap: 10px; }
+  .flag-head span { font-family: var(--font-mono); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.22em; color: #fff; }
+  .flag-list li { padding: 16px 20px; display: flex; gap: 12px; border-top: 1px solid rgba(127,29,29,0.4); }
+  .flag-list li:first-child { border-top: none; }
+  .flag-mark { color: #f87171; font-size: 1rem; line-height: 1.3; flex-shrink: 0; }
+  .flag-title { color: #fecaca; font-weight: 700; font-size: 0.875rem; margin: 0; }
+  .flag-detail { color: rgba(252,165,165,0.8); font-size: 0.8rem; margin: 4px 0 0; line-height: 1.5; }
+
+  .price-card-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 12px; margin-bottom: 10px; }
+  .price-reason { color: var(--ink-muted); font-size: 0.875rem; line-height: 1.6; margin: 0; }
+
+  .take-card { border-radius: 12px; overflow: hidden; background: var(--carbon-900); border: 1px solid var(--line-strong); margin-top: 16px; }
+  .take-head { background: var(--ember-500); padding: 11px 20px; display: flex; align-items: center; gap: 10px; }
+  .take-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(11,11,12,0.5); }
+  .take-head span { font-family: var(--font-mono); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.24em; color: var(--carbon-950); }
+  .take-body { padding: 20px 22px; }
+  .take-body p { margin: 0; color: var(--ink); font-size: 0.9375rem; line-height: 1.6; }
+
+  .ghost-btn {
+    width: 100%; margin-top: 16px; border: 1px solid rgba(199,127,27,0.5); background: none;
+    border-radius: 8px; padding: 13px; font-family: var(--font-mono); font-size: 11px;
+    font-weight: 500; text-transform: uppercase; letter-spacing: 0.2em; color: var(--ember-400);
+    cursor: pointer; transition: all 0.15s ease;
+  }
+  .ghost-btn:hover { border-color: var(--ember-500); color: var(--ember-300); }
+
+  .results-continues { font-family: var(--font-mono); font-size: 10px; color: var(--ink-faint); text-align: center; margin-top: 20px; line-height: 1.6; }
+
+  .tax-list li, .future-list li, .spec-list li { display: flex; gap: 10px; font-size: 0.8125rem; color: var(--ink-muted); line-height: 1.55; padding: 4px 0; }
+  .tax-bullet { font-family: var(--font-mono); font-weight: 700; color: var(--amber-text); flex-shrink: 0; }
+  .future-bullet { color: var(--ember-600); flex-shrink: 0; }
+
+  .wallet-card { border-radius: 12px; border: 1px solid var(--line); overflow: hidden; }
+  .wallet-stripe { height: 4px; }
+  .wallet-body { padding: 22px; }
+  .wallet-list li { display: flex; gap: 10px; font-size: 0.875rem; color: rgba(244,242,237,0.85); line-height: 1.55; padding: 4px 0; }
+  .wallet-arrow { font-family: var(--font-mono); font-weight: 700; flex-shrink: 0; }
+
+  .drive-row { display: flex; align-items: flex-start; gap: 16px; padding: 13px 0; border-bottom: 1px solid var(--line); }
+  .drive-row:last-child { border-bottom: none; }
+  .drive-score { font-family: var(--font-mono); font-size: 1.2rem; font-weight: 700; min-width: 26px; line-height: 1; padding-top: 2px; font-variant-numeric: tabular-nums; }
+  .drive-label { font-family: var(--font-mono); font-size: 9px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.22em; color: var(--ink-faint); margin: 0 0 6px; }
+  .drive-desc { color: var(--ink-muted); font-size: 0.8125rem; line-height: 1.55; margin: 0; }
+  .drive-summary { color: var(--ink-muted); font-size: 0.8rem; font-style: italic; line-height: 1.6; border-top: 1px solid var(--line); padding-top: 14px; margin-top: 4px; }
+
+  .ask-list li { display: flex; gap: 14px; font-size: 0.875rem; padding-bottom: 14px; margin-bottom: 14px; border-bottom: 1px solid var(--line); }
+  .ask-list li:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .ask-num { font-family: var(--font-mono); color: var(--ember-500); font-weight: 700; width: 20px; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+  .ask-text { color: rgba(244,242,237,0.85); line-height: 1.5; }
+
+  .future-score { font-family: var(--font-mono); font-size: 1.3rem; font-weight: 700; color: var(--ember-400); font-variant-numeric: tabular-nums; }
+  .future-score .of10 { color: var(--ink-faint); font-size: 0.75rem; font-weight: 400; }
+
+  .spec-plus { color: var(--ember-400); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+  .spec-item-title { font-weight: 700; color: var(--ink); font-size: 0.875rem; }
+  .spec-item-note { color: var(--ink-faint); font-size: 0.75rem; margin-top: 3px; line-height: 1.5; }
+  .list-label { display: flex; align-items: center; gap: 12px; padding-top: 8px; margin-bottom: 4px; }
+  .list-label span { font-family: var(--font-mono); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.22em; color: var(--ember-400); }
+  .list-label .tile-rule { margin: 0; }
+
+  footer { padding: 40px 24px 48px; border-top: 1px solid var(--line); margin-top: 24px; }
+  .footer-row {
+    max-width: 720px; margin: 0 auto; display: flex; align-items: center;
+    justify-content: space-between; flex-wrap: wrap; gap: 10px;
+    font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--ink-faint);
+  }
+  .footer-row a { text-decoration: none; }
+  .footer-row a:hover { color: var(--ink-muted); }
+
+  @media (max-width: 520px) {
+    .perf-grid { grid-template-columns: 1fr 1fr; }
+    .masthead-tag { display: none; }
+    .frame { padding: 32px 16px 64px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+    .note { opacity: 1; transform: none; }
+    .note::before { height: 14px; }
+    .thinking-beat { display: none; }
+    .verdict-stamp { opacity: 1; transform: scale(1); }
+  }
+</style>
+
+<header class="masthead">
+  <div class="masthead-row">
+    <div class="masthead-brand">
+      <a href="#" class="wordmark"><span>Motor</span><span>mind</span></a>
+      <div class="masthead-divider"></div>
+      <span class="masthead-tag">NZ Car Copilot</span>
+    </div>
+    <nav class="masthead-nav">
+      <a href="#" class="nav-link active">Analyse</a>
+      <a href="#" class="nav-link">Garage</a>
+      <div class="pulse-dot"></div>
+    </nav>
+  </div>
+</header>
+
+<div class="frame">
+
+  <!-- ══════════════════ LANDING (lean) ══════════════════ -->
+  <section class="hero">
+    <p class="eyebrow">Pre-purchase intelligence</p>
+    <h1>Every listing has a story it's <span class="accent">not</span> telling you.</h1>
+    <p class="hero-sub">Paste the link, the text, or a screenshot — we read it the way an enthusiast would, out loud.</p>
+
+    <p class="exhibit-label">A listing, marked up</p>
+    <div class="listing-card">
+      <div class="listing-chrome">
+        <span>Trade Me · Motors</span>
+        <span>Wellington</span>
+      </div>
+      <div class="listing-body">
+        <p class="listing-title">1998 Nissan Silvia S15 Spec R — Turbo, 6 Speed</p>
+
+        <div class="line-block">
+          <p class="quote">Reluctant sale due to relocation overseas — will consider swaps.</p>
+          <div class="note note--ember">
+            <span class="note-tag">Translation</span>
+            <p>Motivated seller. There's room to move on price.</p>
+          </div>
+        </div>
+
+        <div class="line-block">
+          <p class="quote">Clutch and flywheel replaced recently by a mate who's handy with cars.</p>
+          <div class="note note--red">
+            <span class="note-tag">Red flag</span>
+            <p>"A mate" isn't a receipt. Ask for the invoice before you ask for the keys.</p>
+          </div>
+        </div>
+
+        <div class="verdict-reveal">
+          <p class="thinking-beat">Weighing it up...</p>
+          <span class="verdict-stamp">Money Pit</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="input-label">Paste your own</p>
+    <div class="input-card">
+      <div class="input-tabs">
+        <button class="input-tab active">Paste Text</button>
+        <button class="input-tab">Screenshots</button>
+      </div>
+      <div class="input-body">
+        <p class="input-hint">Copy the listing description from Trade Me and paste it here — the more detail the better.</p>
+        <textarea class="input-textarea" placeholder="Paste the full listing text here..."></textarea>
+        <button class="input-submit" disabled>Analyse Listing</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════ SEAM ══════════════════ -->
+  <div class="seam">
+    <div class="seam-line"></div>
+    <span class="seam-label">Analysed — results below, same scroll</span>
+    <div class="seam-line"></div>
+  </div>
+
+  <!-- ══════════════════ RESULTS (excerpt) ══════════════════ -->
+  <section class="results">
+    <p class="results-tag">This is the listing above, after analysis</p>
+
+    <div class="card hero-tile">
+      <div class="hero-tile-accent"></div>
+      <div class="hero-tile-body">
+
+        <div class="vehicle-row">
+          <p class="vehicle-meta">1998 · JDM Import · Wellington</p>
+          <div class="price-tag">
+            <p class="price-tag-label">Asking</p>
+            <p class="price-tag-value">$28,500</p>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="make-model">Nissan Silvia</h3>
+          <p class="variant">S15 Spec R</p>
+        </div>
+
+        <div class="spec-row">
+          <span class="pill">142,000 km</span>
+          <span class="pill">6-Speed Manual</span>
+          <span class="pill">Black</span>
+          <span class="verdict-badge" style="background:var(--red-bg);border-color:var(--red-border);color:var(--red-text)">Money Pit</span>
+          <span class="verdict-badge" style="background:var(--amber-bg);border-color:var(--amber-border);color:var(--amber-text)">Motivated Seller</span>
+        </div>
+
+        <div class="pull-quote">
+          <p>The last Silvia before Nissan pulled it from the lineup — and the SR20DET everyone still swears by.</p>
+        </div>
+
+        <div class="verdict-line">
+          <p>Right chassis, wrong paperwork. The car's honest; the listing isn't.</p>
+        </div>
+
+        <div class="perf-card">
+          <p class="section-label" style="margin-bottom:16px;">Performance Specs</p>
+          <p class="perf-engine">SR20DET 2.0L Turbo I4</p>
+          <div class="perf-grid">
+            <div><p class="perf-label">Power</p><p class="perf-value">184kW <span class="sub">/ 247hp</span></p></div>
+            <div><p class="perf-label">Torque</p><p class="perf-value">274Nm <span class="sub">@ 3200rpm</span></p></div>
+            <div><p class="perf-label">0–100 km/h</p><p class="perf-value">6.2s</p></div>
+            <div><p class="perf-label">Drivetrain</p><p class="perf-value">RWD</p></div>
+          </div>
+          <p class="perf-note">Factory Spec R figures. This one's had aftermarket turbo work — treat these as a starting point, not a promise.</p>
+        </div>
+
+        <div class="score-row">
+          <div class="score-chip"><span class="score-num score-red">4<span class="of10">/10</span></span><span class="score-label">Investment</span></div>
+          <div class="score-chip"><span class="score-num score-green">8<span class="of10">/10</span></span><span class="score-label">Character</span></div>
+          <div class="score-chip"><span class="score-num score-green">7<span class="of10">/10</span></span><span class="score-label">Street Cred</span></div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="tile-header">
+      <span class="tile-index">01</span>
+      <span class="tile-label">Investment</span>
+      <div class="tile-rule"></div>
+    </div>
+
+    <div class="card" style="padding:22px;">
+      <div class="price-card-head">
+        <p class="section-label" style="margin:0;">Price Analysis</p>
+        <span class="verdict-badge" style="background:var(--red-bg);border-color:var(--red-border);color:var(--red-text)">Overpriced</span>
+      </div>
+      <p class="price-reason">$28,500 is Spec R money for a car with an unverified engine bay. Clean, documented examples are trading $4–6k below this.</p>
+    </div>
+
+    <div class="card" style="padding:22px;">
+      <div class="price-card-head">
+        <p class="section-label" style="margin:0;">Enthusiast Tax</p>
+        <span class="verdict-badge" style="background:var(--red-bg);border-color:var(--red-border);color:var(--red-text)">+$6,500 over market</span>
+      </div>
+      <ul class="tax-list">
+        <li><span class="tax-bullet">$</span>Genuine JDM Spec R badge alone adds roughly 15% over a base S15.</li>
+        <li><span class="tax-bullet">$</span>SR20DET and the drift-culture premium it carries in NZ specifically.</li>
+        <li><span class="tax-bullet">$</span>Six-speed manual survivors are scarce — most got swapped to auto or blown.</li>
+      </ul>
+    </div>
+
+    <div class="flag-card">
+      <div class="flag-head">
+        <span style="color:#fff;">⚠️</span>
+        <span>Red Flags — Read Before Buying</span>
+      </div>
+      <ul class="flag-list">
+        <li>
+          <span class="flag-mark">⚠</span>
+          <div>
+            <p class="flag-title">Clutch replaced by an unlicensed mechanic</p>
+            <p class="flag-detail">No invoice, no warranty, no way to verify the work. Budget for it again.</p>
+          </div>
+        </li>
+        <li>
+          <span class="flag-mark">⚠</span>
+          <div>
+            <p class="flag-title">Undocumented turbo upgrade</p>
+            <p class="flag-detail">Ask which shop, and ask for the tune log — a bad tune on this platform means a tired SR20, fast.</p>
+          </div>
+        </li>
+        <li>
+          <span class="flag-mark">⚠</span>
+          <div>
+            <p class="flag-title">Surface rust noted, underside not shown</p>
+            <p class="flag-detail">Get it on a hoist before you commit. Cosmetic and structural rust look identical in a photo.</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="wallet-card">
+      <div class="wallet-stripe" style="background:var(--red-border);"></div>
+      <div class="wallet-body" style="background:var(--red-bg);">
+        <div class="price-card-head">
+          <p class="section-label" style="margin:0;">Wallet Damage Rating</p>
+          <span class="verdict-badge" style="background:var(--red-bg);border-color:var(--red-border);color:var(--red-text)">Dangerous</span>
+        </div>
+        <ul class="wallet-list">
+          <li><span class="wallet-arrow" style="color:var(--red-text);">→</span>Unverified turbo work could mean a rebuild within 20,000km.</li>
+          <li><span class="wallet-arrow" style="color:var(--red-text);">→</span>No documented clutch invoice — budget $2,500 to redo it properly.</li>
+          <li><span class="wallet-arrow" style="color:var(--red-text);">→</span>Any undocumented mod needs re-compliance before you can sell it on.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card" style="padding:22px;">
+      <div class="price-card-head">
+        <p class="section-label" style="margin:0;">Future Classic Potential</p>
+        <span class="future-score">8<span class="of10">/10</span></span>
+      </div>
+      <ul class="future-list">
+        <li><span class="future-bullet">▸</span>S15 values have roughly doubled in five years, with no sign of slowing.</li>
+        <li><span class="future-bullet">▸</span>Manual Spec Rs are disappearing from the market faster than automatics.</li>
+        <li><span class="future-bullet">▸</span>This exact generation is the one collectors will be chasing in a decade.</li>
+      </ul>
+    </div>
+
+    <div class="tile-header">
+      <span class="tile-index">02</span>
+      <span class="tile-label">Character</span>
+      <div class="tile-rule"></div>
+    </div>
+
+    <div class="card" style="padding:22px;">
+      <p class="section-label">Why Enthusiasts Care</p>
+      <p class="price-reason">The SR20DET is one of the most tunable four-cylinders Nissan ever built, and the S15 chassis is still the one every drift and grip crowd measures newer cars against.</p>
+    </div>
+
+    <div class="card" style="padding:22px;">
+      <p class="section-label">Driving Character</p>
+      <div class="drive-row">
+        <span class="drive-score score-green">8</span>
+        <div><p class="drive-label">Steering</p><p class="drive-desc">Quick, direct, unassisted feel most modern EPS setups still can't fake.</p></div>
+      </div>
+      <div class="drive-row">
+        <span class="drive-score score-amber">7</span>
+        <div><p class="drive-label">Engine</p><p class="drive-desc">Turbo lag until 3,500rpm, then it properly comes alive — assuming this one's tune is actually sorted.</p></div>
+      </div>
+      <div class="drive-row">
+        <span class="drive-score score-red">4</span>
+        <div><p class="drive-label">Daily</p><p class="drive-desc">Firm ride, loud cabin, and a clutch you'll fight in traffic. Not a daily for the faint-hearted.</p></div>
+      </div>
+      <div class="drive-row">
+        <span class="drive-score score-green">9</span>
+        <div><p class="drive-label">Fun</p><p class="drive-desc">RWD, six-speed, low weight. This is what the fun score exists to measure.</p></div>
+      </div>
+      <p class="drive-summary">A driver's car first and a commuter never. Exactly what it should be.</p>
+    </div>
+
+    <div class="tile-header">
+      <span class="tile-index">03</span>
+      <span class="tile-label">Street Cred</span>
+      <div class="tile-rule"></div>
+    </div>
+
+    <div class="card" style="padding:22px;">
+      <div class="price-card-head">
+        <p class="section-label" style="margin:0;">Owner Vibe</p>
+        <span class="verdict-badge" style="background:var(--amber-bg);border-color:var(--amber-border);color:var(--amber-text)">Motivated Seller</span>
+      </div>
+      <p class="price-reason">Says relocating, open to swaps, and vague on service history — reads like someone who wants this gone before settlement day, not someone who's babied it.</p>
+    </div>
+
+    <div class="card" style="padding:22px;">
+      <div class="price-card-head">
+        <p class="section-label" style="margin:0;">Regret Risk</p>
+        <span class="verdict-badge" style="background:var(--red-bg);border-color:var(--red-border);color:var(--red-text)">High</span>
+      </div>
+      <p class="price-reason">Between the unverified turbo and the mate-fitted clutch, this is the kind of buy people regret at the six-month mark, not the six-week one.</p>
+    </div>
+
+    <div class="list-label"><span>Spec Significance</span><div class="tile-rule"></div></div>
+    <div class="card" style="padding:22px;">
+      <ul class="spec-list">
+        <li><span class="spec-plus">+</span><div><span class="spec-item-title">SR20DET</span><p class="spec-item-note">Nissan's benchmark turbo four — still the reference point for tuners two decades on.</p></div></li>
+        <li><span class="spec-plus">+</span><div><span class="spec-item-title">Six-speed manual</span><p class="spec-item-note">The harder-to-find gearbox. Most survivors are now automatics or converted.</p></div></li>
+      </ul>
+    </div>
+
+    <div class="list-label"><span>Ask the Seller</span><div class="tile-rule"></div></div>
+    <div class="card" style="padding:22px;">
+      <ol class="ask-list">
+        <li><span class="ask-num">01</span><span class="ask-text">Can I see the invoice for the clutch and flywheel work?</span></li>
+        <li><span class="ask-num">02</span><span class="ask-text">Which shop tuned the turbo upgrade, and is there a dyno sheet?</span></li>
+        <li><span class="ask-num">03</span><span class="ask-text">Has the underside ever been on a hoist for a rust check — can I see photos?</span></li>
+      </ol>
+    </div>
+
+    <div class="take-card">
+      <div class="take-head">
+        <div class="take-dot"></div>
+        <span>The Enthusiast Take</span>
+      </div>
+      <div class="take-body">
+        <p>This is the platform everyone wants — SR20, RWD, six-speed, genuine Spec R. But "genuine" stops being genuine the moment nobody can prove what's been done to it. Walk in with a pre-purchase inspection booked, or walk away.</p>
+      </div>
+    </div>
+
+    <button class="ghost-btn">Share the Verdict</button>
+
+    <p class="results-continues">Also included, not shown here: Mod Potential, Community Credibility, and cars you might consider instead.</p>
+
+  </section>
+
+</div>
+
+<footer>
+  <div class="footer-row">
+    <span>Motormind — NZ Car Copilot</span>
+    <a href="#">Privacy</a>
+  </div>
+</footer>
