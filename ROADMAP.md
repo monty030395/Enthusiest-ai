@@ -94,6 +94,10 @@ From the post-redesign review (July 2026), roughly in priority order:
 - ⬜ **Contrast pass on `ink-faint`** — 9–10px mono labels at #6e6a63 on carbon are borderline where they carry real information (disclaimers).
 - ⬜ **Film grain / backdrop-blur perf gate on mobile** — test on mid-range Android before investing further.
 
+## Future ideas (not yet scoped)
+
+- ⬜ **Roast Mode** — Monty wants to come back to this. No scope/details captured yet; flesh out when picked up.
+
 ## Open issues
 
 - [#10](https://github.com/monty030395/Enthusiest-ai/issues/10) — alternatives V3, blocked on Trade Me API approval (see above)
