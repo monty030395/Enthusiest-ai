@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { extractTradeMeUrl } from "../_lib/trademe";
-import { stashSharedListing } from "../_lib/sharedListing";
+import { stashSharedListing, extractRealListingText } from "../_lib/sharedListing";
 import Masthead from "./Masthead";
 import { Card, WheelSpinner } from "./ui";
 
@@ -24,9 +24,9 @@ export default function ShareTargetHandoff({
   useEffect(() => {
     stashSharedListing({
       listingUrl: extractTradeMeUrl(url, text, title),
-      // Trade Me shares a title plus a link, not the description — only the
-      // long-form case is worth pre-filling the textarea with
-      text: text && text.trim().length > 120 ? text.trim() : undefined,
+      // Trade Me's share never contains the seller's description — see
+      // extractRealListingText for why a plain length check gets this wrong
+      text: extractRealListingText(text, title, url),
       title: title?.trim() || undefined,
     });
     router.replace("/");
