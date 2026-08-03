@@ -33,7 +33,20 @@ type CompareRowDef = {
   // cheaper isn't better, it's just cheaper)
   comparable?: (a: Analysis) => number | null;
   direction?: "higher" | "lower";
+  // How many steps apart the two values must be to award the row. Defaults
+  // to 1 (any real difference wins) — counts and ordinal tiers have no
+  // measurement noise to filter. Only the noisy 1-10 AI scores override this
+  // with SCORE_ROW_MARGIN.
+  margin?: number;
 };
+
+// AI 1-10 scores drift by exactly one point on re-analysis of an identical
+// listing (measured over repeated runs, every drift was 1 and none was ever
+// 2), so a single step there is noise, not a finding. This margin applies
+// only to that row type — applying it to every row previously muted real
+// differences in counts (Red Flags) and ordinal tiers (Enthusiast Tax,
+// Wallet Damage, Regret Risk).
+const SCORE_ROW_MARGIN = 2;
 
 const ROW_DEFS: CompareRowDef[] = [
   {
@@ -41,6 +54,7 @@ const ROW_DEFS: CompareRowDef[] = [
     display: (a) => (a.investmentScore != null ? `${a.investmentScore}/10` : DASH),
     comparable: (a) => a.investmentScore ?? null,
     direction: "higher",
+    margin: SCORE_ROW_MARGIN,
   },
   {
     label: "Character",
@@ -50,12 +64,14 @@ const ROW_DEFS: CompareRowDef[] = [
     },
     comparable: (a) => computeCharacterScore(a),
     direction: "higher",
+    margin: SCORE_ROW_MARGIN,
   },
   {
     label: "Street Cred",
     display: (a) => (a.vibeScore != null ? `${a.vibeScore}/10` : DASH),
     comparable: (a) => a.vibeScore ?? null,
     direction: "higher",
+    margin: SCORE_ROW_MARGIN,
   },
   {
     label: "Asking",
@@ -72,6 +88,7 @@ const ROW_DEFS: CompareRowDef[] = [
     display: (a) => (a.ownershipPain?.score != null ? `${a.ownershipPain.score}/10` : DASH),
     comparable: (a) => a.ownershipPain?.score ?? null,
     direction: "lower",
+    margin: SCORE_ROW_MARGIN,
   },
   {
     label: "Wallet Damage",
@@ -84,6 +101,7 @@ const ROW_DEFS: CompareRowDef[] = [
     display: (a) => (a.classicPotential?.score != null ? `${a.classicPotential.score}/10` : DASH),
     comparable: (a) => a.classicPotential?.score ?? null,
     direction: "higher",
+    margin: SCORE_ROW_MARGIN,
   },
   {
     label: "Regret Risk",
@@ -112,6 +130,10 @@ export type TallyRow = {
   aDisplay: string;
   bDisplay: string;
   winner: 0 | 1 | 2; // 0 = no points either way
+  // Only meaningful when winner is 0: true means the values were genuinely
+  // equal, false means they differed but fell short of the row's margin.
+  // A threshold-suppressed near-miss should not read the same as a real tie.
+  exact: boolean;
 };
 
 export type Tally = {
@@ -120,27 +142,23 @@ export type Tally = {
   bWins: number;
 };
 
-// A row only awards a point when the two cars are more than one step apart.
-// Re-analysing an identical listing moves scores by exactly one step —
-// measured over repeated runs, every drift was 1 and none was ever 2 — so a
-// single step is noise, not a finding. Scoring it made a car beat itself 0-5
-// on its own re-run; this threshold takes that to 0-0.
-// Note this deliberately mutes 3-level scales: Regret Risk now only scores
-// on Low v High, never Low v Medium.
-const WIN_MARGIN = 2;
-
 export function tallyUp(a: Analysis, b: Analysis): Tally {
   const rows: TallyRow[] = ROW_DEFS.map((def) => {
     let winner: 0 | 1 | 2 = 0;
+    let exact = true;
     if (def.comparable && def.direction) {
       const av = def.comparable(a);
       const bv = def.comparable(b);
-      if (av != null && bv != null && Math.abs(av - bv) >= WIN_MARGIN) {
-        const aBetter = def.direction === "higher" ? av > bv : av < bv;
-        winner = aBetter ? 1 : 2;
+      if (av != null && bv != null) {
+        exact = av === bv;
+        const margin = def.margin ?? 1;
+        if (Math.abs(av - bv) >= margin) {
+          const aBetter = def.direction === "higher" ? av > bv : av < bv;
+          winner = aBetter ? 1 : 2;
+        }
       }
     }
-    return { label: def.label, aDisplay: def.display(a), bDisplay: def.display(b), winner };
+    return { label: def.label, aDisplay: def.display(a), bDisplay: def.display(b), winner, exact };
   });
   return {
     rows,

@@ -55,8 +55,11 @@ export function TallyBoard({ a, b, tally }: { a: Analysis; b: Analysis; tally: T
         <ul className="divide-y divide-line">
           {tally.rows.map((row) => (
             <li key={row.label} className="px-5 py-3">
-              <p className="font-mono text-[9px] font-medium uppercase tracking-[0.22em] text-ink-faint mb-1.5">
+              <p className="font-mono text-[9px] font-medium uppercase tracking-[0.22em] text-ink-faint mb-1.5 flex items-center gap-1.5">
                 {row.label}
+                {row.winner === 0 && !row.exact && (
+                  <span className="normal-case tracking-normal text-ink-faint/60">· too close to call</span>
+                )}
               </p>
               <div className="grid grid-cols-2 gap-4">
                 <p className={cell(row.winner === 1, row.winner === 2)}>
