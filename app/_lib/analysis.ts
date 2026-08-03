@@ -83,6 +83,10 @@ export type Analysis = {
   }[];
   investmentScore?: number;
   vibeScore?: number;
+  // Set client-side when the analysis was requested with Roast Mode on —
+  // absent reads as serious, same backward-compatible pattern as
+  // FaultConfidence above.
+  mode?: "roast";
 };
 
 export function isSpecified(value: string | undefined): boolean {
