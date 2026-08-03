@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { computeCharacterScore } from "../_lib/analysis";
 import { type SavedCheck, loadGarage, deleteCheck, clearGarage, exportCheck, importCheck } from "../_lib/garage";
-import { verdictBadgeStyle } from "./badges";
+import { verdictBadgeStyle, RoastBadge } from "./badges";
 import { Card } from "./ui";
 import Masthead from "./Masthead";
 import AnalysisResults from "./AnalysisResults";
@@ -213,8 +213,9 @@ export default function GarageView() {
                           </div>
                         </div>
                         {a.label && (
-                          <div className="mt-3">
+                          <div className="mt-3 flex flex-wrap items-center gap-2">
                             <span style={verdictBadgeStyle(a.label)}>{a.label}</span>
+                            {a.mode === "roast" && <RoastBadge />}
                           </div>
                         )}
                       </button>
