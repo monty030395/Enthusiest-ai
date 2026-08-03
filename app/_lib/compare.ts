@@ -196,7 +196,8 @@ export function buildTallyShareText(
   const name = (x: Analysis) => `${x.vehicle.make} ${x.vehicle.model}`;
   const titled = (x: Analysis) => {
     const withYear = [isSpecified(x.vehicle.year) ? x.vehicle.year : "", name(x)].filter(Boolean).join(" ");
-    return x.vehicle.price ? `${withYear} (${x.vehicle.price})` : withYear;
+    const priced = x.vehicle.price ? `${withYear} (${x.vehicle.price})` : withYear;
+    return x.mode === "roast" ? `${priced} (Roasted)` : priced;
   };
 
   const scoreLine = (["Investment", "Character", "Street Cred"] as const)

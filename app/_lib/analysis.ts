@@ -123,7 +123,7 @@ export function buildShareText(a: Analysis): string {
     ? `${a.redFlags.length} red flag${a.redFlags.length === 1 ? "" : "s"}.`
     : "No red flags.";
   return [
-    `Motormind check: ${title}${price}`,
+    `Motormind check: ${title}${price}${a.mode === "roast" ? " (Roasted)" : ""}`,
     [a.label, scores].filter(Boolean).join(" · "),
     a.verdict ? `"${a.verdict}"` : "",
     `${flags} Full read: www.motormind.nz`,
