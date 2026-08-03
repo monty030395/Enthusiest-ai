@@ -7,7 +7,7 @@ import { compressImage } from "./_lib/images";
 import { saveCheck } from "./_lib/garage";
 import { takeSharedListing } from "./_lib/sharedListing";
 import { V_RED } from "./_components/badges";
-import { Card, RotatingMessage, WheelSpinner } from "./_components/ui";
+import { Card, RotatingMessage, WheelSpinner, Switch } from "./_components/ui";
 import Masthead from "./_components/Masthead";
 import AnalysisResults from "./_components/AnalysisResults";
 
@@ -27,6 +27,10 @@ export default function Home() {
   // Set when the user arrived via the Android share sheet — remembered so the
   // saved check can link back to the listing it came from
   const [listingUrl, setListingUrl] = useState<string | undefined>();
+  // Sticky across "Analyse Another Listing" — deliberately not reset in
+  // handleReset(), matching how the Paste Text/Screenshots tab selection
+  // already persists across resets.
+  const [roastMode, setRoastMode] = useState(false);
 
   useEffect(() => {
     const shared = takeSharedListing();
@@ -107,8 +111,8 @@ export default function Home() {
     setLoading(true);
     try {
       const body = mode === "text"
-        ? { pastedText: textOverride ?? pastedText }
-        : { images: images.map((i) => i.dataUrl) };
+        ? { pastedText: textOverride ?? pastedText, roast: roastMode }
+        : { images: images.map((i) => i.dataUrl), roast: roastMode };
 
       const res = await fetch("/api/analyze", {
         method: "POST",
@@ -130,9 +134,11 @@ export default function Home() {
       if (!res.ok || !data) {
         setError((data as { error?: string } | null)?.error || `The server choked on that one (HTTP ${res.status}) — give it another go.`);
       } else {
-        setResult(data as Analysis);
+        const analysis = data as Analysis;
+        analysis.mode = roastMode ? "roast" : undefined;
+        setResult(analysis);
         setInputCollapsed(true);
-        saveCheck(data as Analysis, listingUrl);
+        saveCheck(analysis, listingUrl);
       }
     } catch {
       setError("Network error — check your connection and try again.");
@@ -293,6 +299,13 @@ export default function Home() {
                 <p className="text-sm leading-relaxed" style={{ color: V_RED.text }}>{error}</p>
               </div>
             )}
+
+            <div className="space-y-1.5 pt-1">
+              <Switch checked={roastMode} onChange={setRoastMode} label="Roast Mode" />
+              <p className="font-mono text-[10px] text-ink-faint leading-relaxed">
+                Same verdict, savage delivery.
+              </p>
+            </div>
 
             <button
               onClick={() => analyse()}

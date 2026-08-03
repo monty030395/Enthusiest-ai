@@ -24,6 +24,25 @@ export function Pill({ children }: { children: React.ReactNode }) {
   );
 }
 
+export function Switch({ checked, onChange, label }: { checked: boolean; onChange: (v: boolean) => void; label: string }) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      onClick={() => onChange(!checked)}
+      className="inline-flex items-center gap-2.5 group"
+    >
+      <span className={`relative w-9 h-5 rounded-full transition-colors ${checked ? "bg-ember-500" : "bg-carbon-800 border border-line-strong"}`}>
+        <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-carbon-950 transition-transform ${checked ? "translate-x-4" : "translate-x-0"}`} />
+      </span>
+      <span className="font-mono text-[11px] font-medium uppercase tracking-[0.18em] text-ink-muted group-hover:text-ink transition-colors">
+        {label}
+      </span>
+    </button>
+  );
+}
+
 const LOADING_MESSAGES = [
   "Consulting the oracle...",
   "Asking someone who actually knows their stuff...",
