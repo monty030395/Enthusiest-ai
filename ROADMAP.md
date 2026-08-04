@@ -94,6 +94,10 @@ From the post-redesign review (July 2026), roughly in priority order:
 - ✅ **Contrast pass on `ink-faint`** — [PR #30](https://github.com/monty030395/Enthusiest-ai/pull/30). Measured: 3.66:1 on carbon-950, fails WCAG AA (4.5:1) for the small text it's used on. `#6e6a63` → `#827e76`, now 4.87:1, still clearly darker than `ink-muted` (7.45:1).
 - ⬜ **Film grain / backdrop-blur perf gate on mobile** — test on mid-range Android before investing further.
 
+## Future ideas (not yet scoped)
+
+- ⬜ **Roast Mode** — Monty wants to come back to this. No scope/details captured yet; flesh out when picked up.
+
 ## Open issues
 
 - [#10](https://github.com/monty030395/Enthusiest-ai/issues/10) — alternatives V3, blocked on Trade Me API approval (see above)
