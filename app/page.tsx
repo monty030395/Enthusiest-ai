@@ -12,7 +12,7 @@ import Masthead from "./_components/Masthead";
 import AnalysisResults from "./_components/AnalysisResults";
 
 export default function Home() {
-  const [mode, setMode] = useState<"text" | "images">("text");
+  const [inputMode, setInputMode] = useState<"text" | "images">("text");
   const [images, setImages] = useState<{ file: File; dataUrl: string }[]>([]);
   const [pastedText, setPastedText] = useState("");
   const [loading, setLoading] = useState(false);
@@ -89,7 +89,7 @@ export default function Home() {
         .filter((f): f is File => f !== null);
       if (imageFiles.length === 0) return;
       e.preventDefault();
-      setMode("images");
+      setInputMode("images");
       addImages(imageFiles);
     }
     window.addEventListener("paste", handleGlobalPaste);
@@ -110,7 +110,7 @@ export default function Home() {
     setResult(null);
     setLoading(true);
     try {
-      const body = mode === "text"
+      const body = inputMode === "text"
         ? { pastedText: textOverride ?? pastedText, roast: roastMode }
         : { images: images.map((i) => i.dataUrl), roast: roastMode };
 
@@ -135,7 +135,7 @@ export default function Home() {
         setError((data as { error?: string } | null)?.error || `The server choked on that one (HTTP ${res.status}) — give it another go.`);
       } else {
         const analysis = data as Analysis;
-        analysis.mode = roastMode ? "roast" : undefined;
+        if (roastMode) analysis.mode = "roast";
         setResult(analysis);
         setInputCollapsed(true);
         saveCheck(analysis, listingUrl);
@@ -165,9 +165,9 @@ export default function Home() {
     }
   }
 
-  const canAnalyse = mode === "text" ? pastedText.trim().length > 0 : images.length > 0;
+  const canAnalyse = inputMode === "text" ? pastedText.trim().length > 0 : images.length > 0;
 
-  const modeLabels: Record<"text" | "images", string> = { text: "Paste Text", images: "Screenshots" };
+  const inputModeLabels: Record<"text" | "images", string> = { text: "Paste Text", images: "Screenshots" };
 
   return (
     <div className="min-h-screen bg-carbon-950 text-ink font-sans">
@@ -194,26 +194,34 @@ export default function Home() {
           </p>
         </div>
 
+        {/* Roast Mode toggle — above the input so it's visible before any paste/type/upload triggers analysis */}
+        <div className="space-y-1.5">
+          <Switch checked={roastMode} onChange={setRoastMode} label="Roast Mode" />
+          <p className="font-mono text-[10px] text-ink-faint leading-relaxed">
+            Same verdict, savage delivery.
+          </p>
+        </div>
+
         {/* Input card */}
         <div className="rounded-xl border border-line bg-white/[0.02] overflow-hidden">
           <div className="flex border-b border-line">
             {(["text", "images"] as const).map((m) => (
               <button
                 key={m}
-                onClick={() => { setMode(m); setError(""); }}
+                onClick={() => { setInputMode(m); setError(""); }}
                 className={`flex-1 py-3.5 font-mono text-[11px] font-medium uppercase tracking-[0.18em] transition-colors ${
-                  mode === m
+                  inputMode === m
                     ? "text-ink border-b-2 border-ember-400 bg-white/[0.03]"
                     : "text-ink-faint hover:text-ink-muted"
                 }`}
               >
-                {modeLabels[m]}
+                {inputModeLabels[m]}
               </button>
             ))}
           </div>
 
           <div className="p-5 space-y-4">
-            {mode === "images" && (
+            {inputMode === "images" && (
               <div>
                 <div
                   onClick={() => fileInputRef.current?.click()}
@@ -265,7 +273,7 @@ export default function Home() {
               </div>
             )}
 
-            {mode === "text" && (
+            {inputMode === "text" && (
               <div className="space-y-2.5">
                 <p className="font-mono text-[11px] text-ink-faint leading-relaxed">
                   Copy the listing description from Trade Me and paste it here — the more detail the better.
@@ -299,13 +307,6 @@ export default function Home() {
                 <p className="text-sm leading-relaxed" style={{ color: V_RED.text }}>{error}</p>
               </div>
             )}
-
-            <div className="space-y-1.5 pt-1">
-              <Switch checked={roastMode} onChange={setRoastMode} label="Roast Mode" />
-              <p className="font-mono text-[10px] text-ink-faint leading-relaxed">
-                Same verdict, savage delivery.
-              </p>
-            </div>
 
             <button
               onClick={() => analyse()}
