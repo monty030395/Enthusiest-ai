@@ -1,26 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI, { RateLimitError } from "openai";
 
-// A single call measures ~20s at max_tokens 8000 (prompt has grown past the
-// original ~7.2k-token estimate — see ROADMAP.md). The org is capped at
-// 30k tokens/minute, so a 429 here means someone else's request(s) just used
-// the budget, not that anything is broken. maxRetries below lets the SDK's
-// built-in retry (it already retries 429s, honouring OpenAI's own
-// Retry-After header) actually get a second attempt in — 60s covers one
-// full call plus at least one retry-and-reattempt with margin.
+// A single facts call measures ~20s at max_tokens 8000 (prompt has grown
+// past the original ~7.2k-token estimate — see ROADMAP.md). The org is
+// capped at 30k tokens/minute, so a 429 here means someone else's
+// request(s) just used the budget, not that anything is broken. maxRetries
+// below lets the SDK's built-in retry (it already retries 429s, honouring
+// OpenAI's own Retry-After header) actually get a second attempt in.
 //
-// Roast Mode (below) shares this same budget — it's the same call with a
-// different voice block appended to the system prompt, not a separate
-// request path, so there's no separate rate limit to configure.
-export const maxDuration = 60;
+// Roast Mode (below) is a SECOND, smaller call chained after the facts
+// call — see buildRoastRewritePrompt. 90s covers the facts call plus the
+// roast rewrite plus headroom for one retry-and-reattempt on either.
+export const maxDuration = 90;
 
-// SYSTEM_PROMPT_HEAD, SYSTEM_PROMPT_TAIL, VOICE_SERIOUS and VOICE_ROAST are
-// exported for ad-hoc verification scripts only (run via `npx tsx`, then
-// deleted, per this repo's no-test-framework convention) — nothing inside
-// the app imports them directly; only buildSystemPrompt is used by POST.
+// SYSTEM_PROMPT_HEAD, SYSTEM_PROMPT_TAIL and VOICE_SERIOUS are exported for
+// ad-hoc verification scripts only (run via `node`, then deleted, per this
+// repo's no-test-framework convention) — nothing inside the app imports
+// them directly; only buildSystemPrompt is used by POST.
 export const SYSTEM_PROMPT_HEAD = `You are an experienced NZ car enthusiast with 20+ years of hands-on knowledge buying, owning, and selling JDM, Euro, and performance cars in the New Zealand market. You've owned dozens of cars — WRXs, Evos, E46s, MX-5s, Crowns, Skylines, Golf Rs, IS300s — and you've made expensive mistakes so you know exactly what to look for.
 
-You speak like a knowledgeable mate helping someone avoid a costly error, not like a generic AI. You're direct, opinionated, and specific. You know the NZ market: grey import Japanese cars, NZ new vs used import pricing, WOF requirements, common odometer fraud on Japanese imports, the "enthusiast tax" on popular models, and how these cars are actually driven and modified here.
+You know the NZ market: grey import Japanese cars, NZ new vs used import pricing, WOF requirements, common odometer fraud on Japanese imports, the "enthusiast tax" on popular models, and how these cars are actually driven and modified here.
 
 STEP ONE — IDENTIFY THE ENGINE. Do this before generating any Investment, Character or Vibe content, and before naming a single fault.
 
@@ -62,20 +61,11 @@ Rules:`;
 // Voice: how the analysis is WRITTEN. Everything about WHAT is said — engine
 // ID, price calibration, scoring objectivity, fault-naming precision — lives
 // in SYSTEM_PROMPT_HEAD/SYSTEM_PROMPT_TAIL and is identical regardless of
-// voice. Only these two blocks change, and both are held to the same
-// "specific, not generic" requirement as the original single prompt was.
-export const VOICE_SERIOUS = `- Write like a knowledgeable, opinionated NZ car enthusiast steering a mate away from a bad purchase — direct, never hedging, always specific to the exact model/engine/generation, never generic. BAD: "Check the cooling system" / "could have issues". GOOD: "At 200,000km the M54 water pump and thermostat are on borrowed time — budget $800–1200 NZD for preventive replacement." / "The ZF 8-speed is excellent but the mechatronics unit is a known failure point above 150,000km." Every field should read like that.
+// mode. This is the ONLY voice used for the facts call — see the top of
+// this file and buildRoastRewritePrompt for why Roast Mode no longer has
+// its own voice block in this prompt.
+export const VOICE_SERIOUS = `- You speak like a knowledgeable mate helping someone avoid a costly error, not like a generic AI. Write like a knowledgeable, opinionated NZ car enthusiast steering a mate away from a bad purchase — direct, never hedging, always specific to the exact model/engine/generation, never generic. BAD: "Check the cooling system" / "could have issues". GOOD: "At 200,000km the M54 water pump and thermostat are on borrowed time — budget $800–1200 NZD for preventive replacement." / "The ZF 8-speed is excellent but the mechatronics unit is a known failure point above 150,000km." Every field should read like that.
 - Be brutally honest. If it's overpriced because the seller knows enthusiasts will pay, say so.`;
-
-// Roast Mode voice. All three targets blended (seller's copy, the car's
-// flaws, the buyer's judgement), harder edge with mild profanity allowed,
-// hard boundaries on slurs/protected characteristics/mocking the seller as
-// a person. The final bullet is load-bearing: it's what keeps scores
-// consistent between roast and serious mode so Tally Up and Garage
-// comparisons stay meaningful when someone mixes the two.
-export const VOICE_ROAST = `- Write like a mate roasting this listing at the pub after three beers — savage, comedic, merciless, but still razor-specific to the exact model/engine/generation, never generic. Roast freely across all three targets: the seller's listing copy and puffery ("one careful owner from new, never seen rain", dealer buzzwords, the overselling), the car's actual flaws and stereotypes, and the buyer's judgement for even considering this. Mild swearing is fine ("bloody", "shit box") if it lands the joke. BAD (too soft): "Check the cooling system." BAD (too generic, not specific to this car): "What a clunker." GOOD: "At 200,000km the M54 water pump's basically held together with prayer and old coolant — budget $800–1200 NZD before it strands you somewhere embarrassing." Every field should read like that: funny because it's specific, not despite it.
-- Be savage, not cruel. Never invent a slur, never attack a protected characteristic (race, gender, disability, etc.), and never mock the seller as a person — no comments on their name, their photo, who they are. Mock their listing copy, their claims, and their pricing all you like; the car and the pitch are the targets, not a human being.
-- SCORES AND CLASSIFICATIONS ARE NOT PART OF THE JOKE. Every numeric score, every pick-one enum field (label, priceVerdict.assessment, enthusiastTax.level, ownerVibe.label, and so on), and the engine-identification rules earlier in this prompt are governed only by the rules above this voice section — score and classify exactly as you would in serious mode, with the same rigor and the same NZ price calibration. Only the PROSE in text fields (verdict, whatMakesSpecial, enthusiastTake, ownershipPain.issues[].detail, worstFinancialDecision.reasons, etc.) gets the savage voice.`;
 
 export const SYSTEM_PROMPT_TAIL = `- Reference NZ-specific context (JDM import, NZ new, right-hand drive, grey import odometer risk, etc.)
 - On price: explain WHY it's priced that way — enthusiast tax, rare spec premium, neglect discount, mileage penalty, etc.
@@ -359,10 +349,200 @@ alternatives[].whySuited — one sentence on why this suits someone considering 
 alternatives[].howDiffers — one sentence on how it differs in character or ownership experience.
 alternatives[].priceRange — approximate NZD price range for a good example (e.g. "$8,000–$14,000").`;
 
-export function buildSystemPrompt(roast: boolean): string {
+export function buildSystemPrompt(): string {
   return `${SYSTEM_PROMPT_HEAD}
-${roast ? VOICE_ROAST : VOICE_SERIOUS}
+${VOICE_SERIOUS}
 ${SYSTEM_PROMPT_TAIL}`;
+}
+
+// --- Roast Mode ---------------------------------------------------------
+//
+// Earlier version of Roast Mode appended a savage voice block to this same
+// ~450-line prompt and generated everything in one call. Measured directly
+// across ten live test calls: that consistently produced output that was at
+// best "pointed and witty" — the model would not reliably use the required
+// profanity or genuine savagery, regardless of temperature, example
+// calibration, or a recency-reinforcement reminder right before generation.
+// Two distinct failure modes showed up along the way: verbatim parroting of
+// this prompt's own example sentences, and diplomatic softening (a
+// slightly-punchier version of serious mode, never actually savage).
+//
+// What fixed it, tested live: the roast voice needs to be the ONLY thing in
+// the model's context for that call — not one voice block competing with
+// ~280 lines of flat technical field definitions on the way to generation —
+// AND gpt-4.1 follows the "use real profanity, don't soften" instruction
+// far more literally than gpt-4o does for this specific task. Neither lever
+// alone was enough; gpt-4.1 inside the full original prompt was sharper but
+// still not savage.
+//
+// So Roast Mode is now a second, separate call: the facts call above always
+// runs in the serious voice (single source of truth for every score and
+// enum), and if roast is requested, that JSON's prose fields are sent to
+// this isolated rewrite call. Scores/enums are never regenerated for roast
+// mode — extractRoastableFields/applyRoastRewrite below copy everything
+// else through by construction, so score drift between modes is not
+// possible, not just unlikely.
+export const ROAST_REWRITE_SYSTEM_PROMPT = `You are a comedy writer punching up car-listing analysis copy for a savage-humour feature on a NZ car-buying app. You will be given a JSON object containing prose extracted from an accurate, fact-checked car analysis. Your ONLY job: rewrite every string value into a merciless, comedic "mate roasting this listing at the pub after three beers" voice, and return the exact same JSON shape and keys back with those strings replaced.
+
+RULES:
+- Mild profanity is REQUIRED, not just allowed. Use words like "bloody", "shit box", "muppet", "dogshit", "piss-take" naturally, wherever one actually lands a joke — you must use real profanity at least half a dozen times across the whole response. Zero profanity anywhere in your response means you have failed this task.
+- Roast freely across all three targets: the seller's listing copy and puffery (buzzwords, overselling, suspiciously rosy claims), the car's actual flaws and stereotypes, and the buyer's judgement for even considering this.
+- Never invent a slur, never attack a protected characteristic (race, gender, disability, etc.), never mock the seller as a person — no comments on their name, their photo, who they are — and never reach for sexual content or innuendo. Mock their listing copy, their claims, and their pricing all you like; the car and the pitch are the targets, not a human being.
+- Every fact, figure, cost estimate, and component name in the original text MUST be preserved. You are punching up the delivery, not changing the substance — a $2,500 turbo replacement stays a $2,500 turbo replacement.
+- Read back what you write: if it sounds like a slightly-snarkier press release, that is a FAIL. It must sound like a rant a mate would actually say out loud, not a review with jokes bolted on. If a sentence reads calmer than the examples below, it is too soft — rewrite it harder.
+
+FEW-SHOT EXAMPLES (car: Toyota Camry — you are never rewriting this car; these show VOICE ONLY, never reuse this wording):
+[input] "The 2GR-FE V6 is generally reliable but the water pump can fail around 150,000km, costing approximately $600 NZD to replace."
+[output] "The 2GR-FE V6 will run forever, which is the single most interesting fact about it — right up until the water pump grenades itself around 150,000km and you're down $600 fixing a fault on the most boring engine Toyota ever bothered casting."
+
+[input] "This is a fair price for a well-optioned example with full service history."
+[output] "Fair price, sure, if you're the sort of muppet who gets excited about 'well-optioned' on a Camry. My condolences on choosing excitement here of all places."
+
+[input] "The seller describes the car as 'immaculate' and 'garage kept' despite 180,000km on the clock."
+[output] "'Immaculate' and 'garage kept' at 180,000km — mate, that's not a garage queen, that's a rental car with your nana's marketing copy stapled to it."
+
+[input] "Ask the seller whether the car has any accident history."
+[output] "Ask the bloody seller straight up if this thing's been pranged, because '180,000km, one owner' has a real specific smell to it and it isn't new-car smell."
+
+[input] "This is a Money Pit rating — expect ongoing costs above the purchase price."
+[output] "Money Pit doesn't begin to cover it — this is a shit box wearing a spreadsheet's worth of future invoices as a disguise."
+
+Some values you receive will be arrays of strings — rewrite each entry in the array individually, preserving array order and length. Some values may be nested objects — preserve the same nested shape. Return ONLY valid JSON, no markdown, no extra text.`;
+
+// The subset of the analysis that's actually prose — every field left out
+// here (scores, enum picks like label/rating/assessment/level/trend,
+// vehicle.*, performanceSpecs.*, alternatives[].name/searchTerm/priceRange,
+// enthusiastTax.premium) is factual/structured and is never sent to the
+// roast rewrite call, so it cannot be altered by it.
+function extractRoastableFields(a: Record<string, any>) {
+  return {
+    verdict: a.verdict ?? "",
+    whatMakesSpecial: a.whatMakesSpecial ?? "",
+    whyEnthusiastsCare: a.whyEnthusiastsCare ?? "",
+    ownerVibeReasoning: a.ownerVibe?.reasoning ?? "",
+    carsCoffeeDescription: a.carsCoffee?.description ?? "",
+    communityCredibilityDescription: a.communityCredibility?.description ?? "",
+    socialStanding: a.socialStanding ?? "",
+    priceVerdictReason: a.priceVerdict?.reason ?? "",
+    enthusiastTaxReasons: a.enthusiastTax?.reasons ?? [],
+    priceOutlookReason: a.priceOutlook?.reason ?? "",
+    ownershipPainIssueDetails: (a.ownershipPain?.issues ?? []).map((i: any) => i.detail ?? ""),
+    drivingCharacter: {
+      steeringFeelDescription: a.drivingCharacter?.steeringFeel?.description ?? "",
+      engineCharacterDescription: a.drivingCharacter?.engineCharacter?.description ?? "",
+      dailyComfortDescription: a.drivingCharacter?.dailyComfort?.description ?? "",
+      overallFunDescription: a.drivingCharacter?.overallFun?.description ?? "",
+      summary: a.drivingCharacter?.summary ?? "",
+    },
+    classicPotentialReasons: a.classicPotential?.reasons ?? [],
+    regretRiskReason: a.regretRisk?.reason ?? "",
+    marketTrendReason: a.marketTrend?.reason ?? "",
+    worstFinancialDecisionReasons: a.worstFinancialDecision?.reasons ?? [],
+    redFlagExplanations: (a.redFlags ?? []).map((r: any) => r.explanation ?? ""),
+    modPotential: {
+      powerCeiling: a.modPotential?.powerCeiling ?? "",
+      firstMods: a.modPotential?.firstMods ?? [],
+      handlingUpgrades: a.modPotential?.handlingUpgrades ?? "",
+      partsEcosystem: a.modPotential?.partsEcosystem ?? "",
+      collectorRisk: a.modPotential?.collectorRisk ?? "",
+    },
+    questionsToAsk: a.questionsToAsk ?? [],
+    enthusiastTake: a.enthusiastTake ?? "",
+    alternatives: (a.alternatives ?? []).map((alt: any) => ({
+      whySuited: alt.whySuited ?? "",
+      howDiffers: alt.howDiffers ?? "",
+    })),
+  };
+}
+
+// Merges the roast rewrite back into a deep clone of the original facts
+// result. Every path here is explicit rather than a generic deep-merge —
+// if the roast call omits a field or returns the wrong type, that field
+// falls back to the original serious-mode string rather than corrupting
+// the result, so a partially-malformed roast response degrades gracefully
+// instead of breaking the analysis.
+function applyRoastRewrite(original: Record<string, any>, rewrite: Record<string, any>) {
+  const str = (v: unknown, fallback: string) => (typeof v === "string" && v.trim() ? v : fallback);
+  const strArr = (v: unknown, fallback: string[]) =>
+    Array.isArray(v) ? v.map((x, i) => (typeof x === "string" && x.trim() ? x : fallback[i] ?? "")) : fallback;
+
+  const merged = structuredClone(original);
+
+  merged.verdict = str(rewrite.verdict, original.verdict);
+  merged.whatMakesSpecial = str(rewrite.whatMakesSpecial, original.whatMakesSpecial);
+  merged.whyEnthusiastsCare = str(rewrite.whyEnthusiastsCare, original.whyEnthusiastsCare);
+  if (merged.ownerVibe) merged.ownerVibe.reasoning = str(rewrite.ownerVibeReasoning, original.ownerVibe?.reasoning);
+  if (merged.carsCoffee) merged.carsCoffee.description = str(rewrite.carsCoffeeDescription, original.carsCoffee?.description);
+  if (merged.communityCredibility)
+    merged.communityCredibility.description = str(rewrite.communityCredibilityDescription, original.communityCredibility?.description);
+  merged.socialStanding = str(rewrite.socialStanding, original.socialStanding);
+  if (merged.priceVerdict) merged.priceVerdict.reason = str(rewrite.priceVerdictReason, original.priceVerdict?.reason);
+  if (merged.enthusiastTax) merged.enthusiastTax.reasons = strArr(rewrite.enthusiastTaxReasons, original.enthusiastTax?.reasons ?? []);
+  if (merged.priceOutlook) merged.priceOutlook.reason = str(rewrite.priceOutlookReason, original.priceOutlook?.reason);
+
+  if (merged.ownershipPain?.issues) {
+    const details = strArr(
+      rewrite.ownershipPainIssueDetails,
+      (original.ownershipPain?.issues ?? []).map((i: any) => i.detail ?? "")
+    );
+    merged.ownershipPain.issues = merged.ownershipPain.issues.map((issue: any, i: number) => ({
+      ...issue,
+      detail: details[i] ?? issue.detail,
+    }));
+  }
+
+  if (merged.drivingCharacter) {
+    const dc = rewrite.drivingCharacter ?? {};
+    if (merged.drivingCharacter.steeringFeel)
+      merged.drivingCharacter.steeringFeel.description = str(dc.steeringFeelDescription, original.drivingCharacter?.steeringFeel?.description);
+    if (merged.drivingCharacter.engineCharacter)
+      merged.drivingCharacter.engineCharacter.description = str(dc.engineCharacterDescription, original.drivingCharacter?.engineCharacter?.description);
+    if (merged.drivingCharacter.dailyComfort)
+      merged.drivingCharacter.dailyComfort.description = str(dc.dailyComfortDescription, original.drivingCharacter?.dailyComfort?.description);
+    if (merged.drivingCharacter.overallFun)
+      merged.drivingCharacter.overallFun.description = str(dc.overallFunDescription, original.drivingCharacter?.overallFun?.description);
+    merged.drivingCharacter.summary = str(dc.summary, original.drivingCharacter?.summary);
+  }
+
+  if (merged.classicPotential) merged.classicPotential.reasons = strArr(rewrite.classicPotentialReasons, original.classicPotential?.reasons ?? []);
+  if (merged.regretRisk) merged.regretRisk.reason = str(rewrite.regretRiskReason, original.regretRisk?.reason);
+  if (merged.marketTrend) merged.marketTrend.reason = str(rewrite.marketTrendReason, original.marketTrend?.reason);
+  if (merged.worstFinancialDecision)
+    merged.worstFinancialDecision.reasons = strArr(rewrite.worstFinancialDecisionReasons, original.worstFinancialDecision?.reasons ?? []);
+
+  if (merged.redFlags) {
+    const explanations = strArr(
+      rewrite.redFlagExplanations,
+      (original.redFlags ?? []).map((r: any) => r.explanation ?? "")
+    );
+    merged.redFlags = merged.redFlags.map((flag: any, i: number) => ({
+      ...flag,
+      explanation: explanations[i] ?? flag.explanation,
+    }));
+  }
+
+  if (merged.modPotential) {
+    const mp = rewrite.modPotential ?? {};
+    merged.modPotential.powerCeiling = str(mp.powerCeiling, original.modPotential?.powerCeiling);
+    merged.modPotential.firstMods = strArr(mp.firstMods, original.modPotential?.firstMods ?? []);
+    merged.modPotential.handlingUpgrades = str(mp.handlingUpgrades, original.modPotential?.handlingUpgrades);
+    merged.modPotential.partsEcosystem = str(mp.partsEcosystem, original.modPotential?.partsEcosystem);
+    merged.modPotential.collectorRisk = str(mp.collectorRisk, original.modPotential?.collectorRisk);
+  }
+
+  merged.questionsToAsk = strArr(rewrite.questionsToAsk, original.questionsToAsk ?? []);
+  merged.enthusiastTake = str(rewrite.enthusiastTake, original.enthusiastTake);
+
+  if (merged.alternatives) {
+    const rewrittenAlts = Array.isArray(rewrite.alternatives) ? rewrite.alternatives : [];
+    merged.alternatives = merged.alternatives.map((alt: any, i: number) => ({
+      ...alt,
+      whySuited: str(rewrittenAlts[i]?.whySuited, alt.whySuited),
+      howDiffers: str(rewrittenAlts[i]?.howDiffers, alt.howDiffers),
+    }));
+  }
+
+  return merged;
 }
 
 export async function POST(req: NextRequest) {
@@ -419,7 +599,7 @@ export async function POST(req: NextRequest) {
     const response = await client.chat.completions.create({
       model: "gpt-4o",
       messages: [
-        { role: "system", content: buildSystemPrompt(!!roast) },
+        { role: "system", content: buildSystemPrompt() },
         { role: "user", content },
       ],
       response_format: { type: "json_object" },
@@ -430,8 +610,38 @@ export async function POST(req: NextRequest) {
     const raw = response.choices[0].message.content;
     if (!raw) throw new Error("Empty response from OpenAI");
 
-    const result = JSON.parse(raw);
+    let result = JSON.parse(raw);
     console.log("modPotential:", JSON.stringify(result.modPotential ?? null));
+
+    if (roast) {
+      // Roast Mode is decorative flair on top of an already-correct
+      // analysis, not a separate feature — if this call fails for any
+      // reason (rate limit, malformed JSON), fall back to the serious-mode
+      // result rather than failing the whole request over a voice swap.
+      try {
+        const roastResponse = await client.chat.completions.create({
+          model: "gpt-4.1",
+          messages: [
+            { role: "system", content: ROAST_REWRITE_SYSTEM_PROMPT },
+            { role: "user", content: JSON.stringify(extractRoastableFields(result)) },
+          ],
+          response_format: { type: "json_object" },
+          // High temperature matters here in a way it didn't for the old
+          // single-call approach: this call has nothing else in its context
+          // pulling it toward a measured register, so there's no parroting
+          // risk to guard against — only flatness.
+          temperature: 1.0,
+          max_tokens: 4000,
+        });
+        const roastRaw = roastResponse.choices[0].message.content;
+        if (roastRaw) {
+          result = applyRoastRewrite(result, JSON.parse(roastRaw));
+        }
+      } catch (roastErr) {
+        console.error("Roast rewrite failed, returning serious-mode result:", roastErr);
+      }
+    }
+
     return NextResponse.json(result);
   } catch (err) {
     console.error("OpenAI error:", err);
