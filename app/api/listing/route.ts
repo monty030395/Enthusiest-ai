@@ -84,7 +84,9 @@ export async function POST(req: NextRequest) {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({
-          startUrls: [{ url: `https://www.trademe.co.nz/a/listing/${id}` }],
+          // A stringList in the actor's input schema — plain strings, not
+          // the { url } objects most Apify actors take
+          startUrls: [`https://www.trademe.co.nz/a/listing/${id}`],
           includeDetails: true,
           descriptionFormat: "all",
           descriptionMaxLength: 0,
