@@ -6,15 +6,14 @@ import { type Analysis } from "./_lib/analysis";
 import { compressImage } from "./_lib/images";
 import { saveCheck } from "./_lib/garage";
 import { takeSharedListing } from "./_lib/sharedListing";
+import { isRoastMode } from "./_lib/roastMode";
 import { extractTradeMeUrl } from "./_lib/trademe";
 import { extractFacebookUrl, FACEBOOK_HINT } from "./_lib/facebook";
 import { V_RED } from "./_components/badges";
-import { Card, RotatingMessage, WheelSpinner, Switch } from "./_components/ui";
+import { Card, RotatingMessage, WheelSpinner } from "./_components/ui";
 import Masthead from "./_components/Masthead";
 import ListingHowTo from "./_components/ListingHowTo";
 import AnalysisResults from "./_components/AnalysisResults";
-
-const ROAST_MODE_KEY = "motormind.roastMode";
 
 export default function Home() {
   const [inputMode, setInputMode] = useState<"text" | "images">("text");
@@ -32,25 +31,6 @@ export default function Home() {
   // Set when the user arrived via the Android share sheet — remembered so the
   // saved check can link back to the listing it came from
   const [listingUrl, setListingUrl] = useState<string | undefined>();
-  // Sticky across "Analyse Another Listing" — deliberately not reset in
-  // handleReset(), matching how the Paste Text/Screenshots tab selection
-  // already persists across resets.
-  const [roastMode, setRoastMode] = useState(false);
-  // Also remembered across visits on this device, because a Trade Me share
-  // opens the app fresh — without this a shared listing could never be
-  // roasted. The ref is what analyse() reads: a share kicks it off from the
-  // mount effect, before the restored state has re-rendered.
-  const roastModeRef = useRef(false);
-
-  function changeRoastMode(on: boolean) {
-    roastModeRef.current = on;
-    setRoastMode(on);
-    try {
-      window.localStorage.setItem(ROAST_MODE_KEY, on ? "1" : "0");
-    } catch {
-      // private browsing — the toggle just won't be remembered
-    }
-  }
   const [fetchingListing, setFetchingListing] = useState(false);
 
   // Fetches the listing behind a Trade Me link and analyses it straight
@@ -89,15 +69,6 @@ export default function Home() {
   }
 
   useEffect(() => {
-    try {
-      if (window.localStorage.getItem(ROAST_MODE_KEY) === "1") {
-        roastModeRef.current = true;
-        setRoastMode(true);
-      }
-    } catch {
-      // private browsing — start with Roast Mode off
-    }
-
     const shared = takeSharedListing();
     if (!shared) return;
     setListingUrl(shared.listingUrl);
@@ -184,8 +155,8 @@ export default function Home() {
     setLoading(true);
     try {
       const body = inputMode === "text"
-        ? { pastedText: textOverride ?? pastedText, roast: roastModeRef.current }
-        : { images: images.map((i) => i.dataUrl), roast: roastModeRef.current };
+        ? { pastedText: textOverride ?? pastedText, roast: isRoastMode() }
+        : { images: images.map((i) => i.dataUrl), roast: isRoastMode() };
 
       const res = await fetch("/api/analyze", {
         method: "POST",
@@ -282,13 +253,6 @@ export default function Home() {
 
         <ListingHowTo />
 
-        {/* Roast Mode toggle — above the input so it's visible before any paste/type/upload triggers analysis */}
-        <div className="space-y-1.5">
-          <Switch checked={roastMode} onChange={changeRoastMode} label="Roast Mode" />
-          <p className="font-mono text-[10px] text-ink-faint leading-relaxed">
-            Same verdict, savage delivery.
-          </p>
-        </div>
 
         {/* Input card */}
         <div className="rounded-xl border border-line bg-white/[0.02] overflow-hidden">
