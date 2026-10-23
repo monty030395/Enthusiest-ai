@@ -36,10 +36,35 @@ shipped **listing provenance** — `SavedCheck.listingUrl` is now actually
 populated, and the Garage detail view shows a "Listing ↗" link back to it.
 
 **#10 status:** V1 (AI suggestions) and V2 (Trade Me search links) are both
-done. **V3 (live Trade Me listings via their API) is blocked on Trade Me API
-production approval** — a business/access step, not a coding task. Worth
-deciding whether it's still wanted now that V2's search links cover most of
-the value without needing that approval at all.
+done. **V3 (live Trade Me listings via their API) is effectively dead, not
+just waiting:** since 10 April 2026 Trade Me only registers Marketplace API
+apps for in-trade sellers, and its developer terms exclude buyer-side tools,
+price monitoring, data aggregation and scraping. Motormind won't get
+approved. V2's search links already deliver most of the value, so the
+realistic move is to close #10 as won't-do.
+
+## Shared-listing fetch via Apify — ✅ shipped ([PR #32](https://github.com/monty030395/Enthusiest-ai/pull/32), [#33](https://github.com/monty030395/Enthusiest-ai/pull/33), [#34](https://github.com/monty030395/Enthusiest-ai/pull/34))
+
+The Trade Me Android app won't let you copy a listing's description, so the
+share target above still left you taking 4–5 screenshots. Now a shared (or
+pasted) listing link goes to `/api/listing`, which fetches that one listing
+through the Apify actor
+[`blackfalcondata~trademe-scraper`](https://apify.com/blackfalcondata/trademe-scraper)
+(~$0.0065/listing) and runs the analysis straight away. It passes along the
+description, price (with listing type, auction reserve state, Buy Now and Was
+prices), year, make, model and odometer. If the fetch fails for any reason,
+or `APIFY_TOKEN` isn't set, it drops back to the old "copy the description"
+hint. Verified end to end on 2026-10-23 by sharing from the Trade Me app.
+
+Kept deliberately narrow: one listing, only when the user shares it. It's
+still the same automated-fetch risk the price-calibration section warns
+about. Trade Me's terms don't allow it, and the actor is a third-party
+community build that can break or be blocked without warning. Don't widen it
+into search or bulk price data without weighing that first.
+
+- ⬜ **Rate limiting on `/api/listing`** — unauthenticated, and unlike `/api/share` every call costs Apify credit. Only canonical listing URLs reach the actor, but nothing stops one person hammering it.
+- ⬜ **Apify spend cap** — set a monthly usage limit in the Apify console so a runaway loop or abuse can't run up a bill.
+- ⬜ **If the actor breaks** — `APIFY_TRADEME_ACTOR` swaps in another actor without a code change, but its input and output field names will almost certainly differ (this one wants `startUrls` as plain strings and returns `priceText`), so check its schema first.
 
 ## Price calibration on appreciating JDM/enthusiast imports — ✅ shipped ([PR #27](https://github.com/monty030395/Enthusiest-ai/pull/27))
 
@@ -100,10 +125,10 @@ From the post-redesign review (July 2026), roughly in priority order:
 
 ## Open issues
 
-- [#10](https://github.com/monty030395/Enthusiest-ai/issues/10) — alternatives V3, blocked on Trade Me API approval (see above)
+- [#10](https://github.com/monty030395/Enthusiest-ai/issues/10) — alternatives V3; Trade Me's API is now closed to buyer-side tools, so this should be closed as won't-do (see above)
 
 ## Closed this cycle
 
 [#6](https://github.com/monty030395/Enthusiest-ai/issues/6) compare · [#7](https://github.com/monty030395/Enthusiest-ai/issues/7) garage · [#8](https://github.com/monty030395/Enthusiest-ai/issues/8) auto-scroll · [#9](https://github.com/monty030395/Enthusiest-ai/issues/9) score drift (tally margin rule, [PR #22](https://github.com/monty030395/Enthusiest-ai/pull/22)) · [#14](https://github.com/monty030395/Enthusiest-ai/issues/14) loading messages · [#17](https://github.com/monty030395/Enthusiest-ai/pull/17) red-flag precision · [#24](https://github.com/monty030395/Enthusiest-ai/issues/24) price calibration
 
-Also shipped outside any issue: editorial redesign ([#18](https://github.com/monty030395/Enthusiest-ai/pull/18)), engine-variant attribution ([#23](https://github.com/monty030395/Enthusiest-ai/pull/23)), share-target boilerplate fix ([#26](https://github.com/monty030395/Enthusiest-ai/pull/26)).
+Also shipped outside any issue: editorial redesign ([#18](https://github.com/monty030395/Enthusiest-ai/pull/18)), engine-variant attribution ([#23](https://github.com/monty030395/Enthusiest-ai/pull/23)), share-target boilerplate fix ([#26](https://github.com/monty030395/Enthusiest-ai/pull/26)), shared-listing fetch via Apify ([#32](https://github.com/monty030395/Enthusiest-ai/pull/32), [#33](https://github.com/monty030395/Enthusiest-ai/pull/33), [#34](https://github.com/monty030395/Enthusiest-ai/pull/34)).
