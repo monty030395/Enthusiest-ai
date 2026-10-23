@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import { computeCharacterScore } from "../_lib/analysis";
-import { type SavedCheck, loadGarage, deleteCheck, clearGarage, exportCheck, importCheck } from "../_lib/garage";
+import { type SavedCheck, useGarage, deleteCheck, clearGarage, exportCheck, importCheck } from "../_lib/garage";
 import { verdictBadgeStyle, RoastBadge } from "./badges";
 import { Card } from "./ui";
 import Masthead from "./Masthead";
@@ -37,10 +37,11 @@ function checkedOn(savedAt: number): string {
 }
 
 export default function GarageView() {
-  // localStorage is browser-only — load after mount so SSR and first client
-  // render agree (empty), then hydrate the real list
-  const [checks, setChecks] = useState<SavedCheck[]>([]);
-  const [loaded, setLoaded] = useState(false);
+  // Null until hydrated — see useGarage. Writes below (delete, clear,
+  // import) update it on their own.
+  const stored = useGarage();
+  const checks = stored ?? [];
+  const loaded = stored !== null;
   const [selected, setSelected] = useState<SavedCheck | null>(null);
   const [confirmClear, setConfirmClear] = useState(false);
   // Tally Up selection: up to two check ids; picking a third swaps out the oldest pick
@@ -49,13 +50,8 @@ export default function GarageView() {
   const [importError, setImportError] = useState("");
   const importInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    setChecks(loadGarage());
-    setLoaded(true);
-  }, []);
-
   function handleDelete(id: string) {
-    setChecks(deleteCheck(id));
+    deleteCheck(id);
     setCompareIds((prev) => prev.filter((c) => c !== id));
     if (selected?.id === id) setSelected(null);
   }
@@ -67,7 +63,6 @@ export default function GarageView() {
       return;
     }
     clearGarage();
-    setChecks([]);
     setCompareIds([]);
     setConfirmClear(false);
   }
@@ -92,7 +87,6 @@ export default function GarageView() {
   async function handleImportFile(file: File) {
     const updated = importCheck(await file.text());
     if (updated) {
-      setChecks(updated);
       setImportError("");
     } else {
       setImportError("That file isn't a Motormind check — export one from a Garage on another device and try again.");

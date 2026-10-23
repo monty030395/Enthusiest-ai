@@ -66,6 +66,12 @@ export default function Home() {
     }
   }
 
+  // A share lands in sessionStorage, which doesn't exist during SSR, so it
+  // can only be picked up after mount. It's read once and consumed, so it
+  // can't be a useSyncExternalStore snapshot, and lazy useState would make
+  // the server and first client render disagree. One extra render on
+  // arrival from the share sheet is the cost.
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     const shared = takeSharedListing();
     if (!shared) return;
@@ -81,6 +87,7 @@ export default function Home() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- runs once, on arrival from the share sheet
   }, []);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   useEffect(() => {
     if (!result) return;

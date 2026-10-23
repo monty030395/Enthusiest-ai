@@ -1,6 +1,7 @@
 // The Garage: completed checks saved to localStorage, device-only.
 // Nothing here ever leaves the browser — keep it that way, the privacy
 // policy promises it.
+import { useMemo, useSyncExternalStore } from "react";
 import type { Analysis } from "./analysis";
 
 export type SavedCheck = {
@@ -11,17 +12,36 @@ export type SavedCheck = {
 };
 
 const KEY = "motormind.garage.v1";
+// Fired after every write so useGarage() re-reads without anyone having to
+// hand the new list back to it
+const CHANGE_EVENT = "motormind:garage";
 // ~5-8 KB per check; 50 stays far clear of the 5 MB localStorage quota
 const MAX_CHECKS = 50;
 
-export function loadGarage(): SavedCheck[] {
-  if (typeof window === "undefined") return [];
+function readRaw(): string {
   try {
-    const parsed = JSON.parse(window.localStorage.getItem(KEY) ?? "[]");
+    return window.localStorage.getItem(KEY) ?? "[]";
+  } catch {
+    return "[]";
+  }
+}
+
+function parseGarage(raw: string): SavedCheck[] {
+  try {
+    const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed : [];
   } catch {
     return [];
   }
+}
+
+export function loadGarage(): SavedCheck[] {
+  if (typeof window === "undefined") return [];
+  return parseGarage(readRaw());
+}
+
+function notify() {
+  window.dispatchEvent(new Event(CHANGE_EVENT));
 }
 
 function persist(checks: SavedCheck[]) {
@@ -30,6 +50,24 @@ function persist(checks: SavedCheck[]) {
   } catch {
     // quota exceeded / private browsing — saving is best-effort
   }
+  notify();
+}
+
+function subscribe(onChange: () => void) {
+  window.addEventListener(CHANGE_EVENT, onChange);
+  window.addEventListener("storage", onChange);
+  return () => {
+    window.removeEventListener(CHANGE_EVENT, onChange);
+    window.removeEventListener("storage", onChange);
+  };
+}
+
+// The saved checks, live. Null during SSR and the first client render, so
+// those agree (localStorage is browser-only); the raw string is the
+// snapshot because it's stable between reads where a parsed array isn't.
+export function useGarage(): SavedCheck[] | null {
+  const raw = useSyncExternalStore(subscribe, readRaw, () => null);
+  return useMemo(() => (raw === null ? null : parseGarage(raw)), [raw]);
 }
 
 export function saveCheck(analysis: Analysis, listingUrl?: string): SavedCheck | null {
@@ -54,6 +92,7 @@ export function clearGarage() {
   try {
     window.localStorage.removeItem(KEY);
   } catch {}
+  notify();
 }
 
 // ── Export / import — swap checks between devices or mates ──
