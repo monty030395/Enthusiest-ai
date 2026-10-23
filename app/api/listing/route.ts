@@ -28,12 +28,29 @@ function pickString(record: ListingRecord, ...keys: string[]): string | undefine
   return undefined;
 }
 
+function nzd(record: ListingRecord, key: string): string | undefined {
+  const value = record[key];
+  return typeof value === "number" && value > 0 ? `$${value.toLocaleString("en-NZ")}` : undefined;
+}
+
+// An auction's priceText is the current bid, not what the seller wants, so
+// the analysis needs the listing type, reserve and Buy Now alongside it
+function listingType(record: ListingRecord): string | undefined {
+  const type = pickString(record, "listingType");
+  const reserve = pickString(record, "reserveState");
+  if (!type) return undefined;
+  return reserve && type === "auction" ? `auction (reserve ${reserve})` : type;
+}
+
 function listingToText(record: ListingRecord): string | undefined {
   const description = pickString(record, "descriptionText", "description", "descriptionMarkdown");
   if (!description) return undefined;
 
   const facts: [string, string | undefined][] = [
-    ["Price", pickString(record, "priceDisplay", "price")],
+    ["Price", pickString(record, "priceText") ?? nzd(record, "priceValue")],
+    ["Listing type", listingType(record)],
+    ["Buy Now", nzd(record, "buyNowPrice")],
+    ["Was", nzd(record, "wasPrice")],
     ["Year", pickString(record, "year")],
     ["Make", pickString(record, "make")],
     ["Model", pickString(record, "model")],
