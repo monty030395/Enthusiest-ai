@@ -16,7 +16,7 @@ import {
   V_RED, V_AMBER, V_GREEN, V_NEUTRAL,
   VERDICT_THEME_MAP, TAX_LEVEL_THEMES,
   themeToStyle, verdictBadgeStyle,
-  VerdictBadge, RatingBadge,
+  VerdictBadge, RatingBadge, RoastBadge,
 } from "./badges";
 import { Card, Pill, SectionLabel } from "./ui";
 
@@ -245,6 +245,7 @@ export default function AnalysisResults({
                 <span className="opacity-70 text-[9px] leading-none">↓</span>
               </button>
             )}
+            {result.mode === "roast" && <RoastBadge />}
             {result.ownerVibe?.label && (
               <button
                 title="Tap to view details"

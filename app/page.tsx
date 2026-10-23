@@ -6,6 +6,7 @@ import { type Analysis } from "./_lib/analysis";
 import { compressImage } from "./_lib/images";
 import { saveCheck } from "./_lib/garage";
 import { takeSharedListing } from "./_lib/sharedListing";
+import { isRoastMode } from "./_lib/roastMode";
 import { extractTradeMeUrl } from "./_lib/trademe";
 import { V_RED } from "./_components/badges";
 import { Card, RotatingMessage, WheelSpinner } from "./_components/ui";
@@ -13,7 +14,7 @@ import Masthead from "./_components/Masthead";
 import AnalysisResults from "./_components/AnalysisResults";
 
 export default function Home() {
-  const [mode, setMode] = useState<"text" | "images">("text");
+  const [inputMode, setInputMode] = useState<"text" | "images">("text");
   const [images, setImages] = useState<{ file: File; dataUrl: string }[]>([]);
   const [pastedText, setPastedText] = useState("");
   const [loading, setLoading] = useState(false);
@@ -125,7 +126,7 @@ export default function Home() {
         .filter((f): f is File => f !== null);
       if (imageFiles.length === 0) return;
       e.preventDefault();
-      setMode("images");
+      setInputMode("images");
       addImages(imageFiles);
     }
     window.addEventListener("paste", handleGlobalPaste);
@@ -147,9 +148,9 @@ export default function Home() {
     setResult(null);
     setLoading(true);
     try {
-      const body = mode === "text"
-        ? { pastedText: textOverride ?? pastedText }
-        : { images: images.map((i) => i.dataUrl) };
+      const body = inputMode === "text"
+        ? { pastedText: textOverride ?? pastedText, roast: isRoastMode() }
+        : { images: images.map((i) => i.dataUrl), roast: isRoastMode() };
 
       const res = await fetch("/api/analyze", {
         method: "POST",
@@ -171,9 +172,10 @@ export default function Home() {
       if (!res.ok || !data) {
         setError((data as { error?: string } | null)?.error || `The server choked on that one (HTTP ${res.status}) — give it another go.`);
       } else {
-        setResult(data as Analysis);
+        const analysis = data as Analysis;
+        setResult(analysis);
         setInputCollapsed(true);
-        saveCheck(data as Analysis, urlOverride ?? listingUrl);
+        saveCheck(analysis, urlOverride ?? listingUrl);
       }
     } catch {
       setError("Network error — check your connection and try again.");
@@ -206,9 +208,9 @@ export default function Home() {
     }
   }
 
-  const canAnalyse = mode === "text" ? pastedText.trim().length > 0 : images.length > 0;
+  const canAnalyse = inputMode === "text" ? pastedText.trim().length > 0 : images.length > 0;
 
-  const modeLabels: Record<"text" | "images", string> = { text: "Paste Text", images: "Screenshots" };
+  const inputModeLabels: Record<"text" | "images", string> = { text: "Paste Text", images: "Screenshots" };
 
   return (
     <div className="min-h-screen bg-carbon-950 text-ink font-sans">
@@ -235,26 +237,27 @@ export default function Home() {
           </p>
         </div>
 
+
         {/* Input card */}
         <div className="rounded-xl border border-line bg-white/[0.02] overflow-hidden">
           <div className="flex border-b border-line">
             {(["text", "images"] as const).map((m) => (
               <button
                 key={m}
-                onClick={() => { setMode(m); setError(""); }}
+                onClick={() => { setInputMode(m); setError(""); }}
                 className={`flex-1 py-3.5 font-mono text-[11px] font-medium uppercase tracking-[0.18em] transition-colors ${
-                  mode === m
+                  inputMode === m
                     ? "text-ink border-b-2 border-ember-400 bg-white/[0.03]"
                     : "text-ink-faint hover:text-ink-muted"
                 }`}
               >
-                {modeLabels[m]}
+                {inputModeLabels[m]}
               </button>
             ))}
           </div>
 
           <div className="p-5 space-y-4">
-            {mode === "images" && (
+            {inputMode === "images" && (
               <div>
                 <div
                   onClick={() => fileInputRef.current?.click()}
@@ -306,7 +309,7 @@ export default function Home() {
               </div>
             )}
 
-            {mode === "text" && (
+            {inputMode === "text" && (
               <div className="space-y-2.5">
                 <p className="font-mono text-[11px] text-ink-faint leading-relaxed">
                   Copy the listing description from Trade Me and paste it here — the more detail the better.

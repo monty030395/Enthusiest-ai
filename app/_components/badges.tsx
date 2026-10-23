@@ -11,6 +11,10 @@ export const V_AMBER:   VerdictTheme = { bg: "#271b06", border: "#7a5a1e", text:
 export const V_GREEN:   VerdictTheme = { bg: "#0e2316", border: "#2f5e40", text: "#93dbad" };
 export const V_BLUE:    VerdictTheme = { bg: "#101b29", border: "#31506f", text: "#a3bedf" };
 export const V_NEUTRAL: VerdictTheme = { bg: "#1c1c20", border: "#3a3a42", text: "#a6a29a" };
+// Roast Mode's own theme — ember-hued, deliberately distinct from V_AMBER so
+// it never reads as a severity signal. It's a modifier on a check, not part
+// of the verdict system above.
+export const V_EMBER: VerdictTheme = { bg: "#2a1708", border: "#8a5a1e", text: "#f5b04c" };
 
 export const VERDICT_THEME_MAP: Record<string, VerdictTheme> = {
   // Hero labels
@@ -83,4 +87,8 @@ const RATING_THEME_MAP: Record<string, VerdictTheme> = {
 
 export function RatingBadge({ rating }: { rating: string }) {
   return <span style={themeToStyle(RATING_THEME_MAP[rating] ?? V_NEUTRAL)}>{rating}</span>;
+}
+
+export function RoastBadge() {
+  return <span style={themeToStyle(V_EMBER)}>🔥 Roasted</span>;
 }

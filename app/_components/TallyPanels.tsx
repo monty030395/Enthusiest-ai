@@ -3,7 +3,7 @@
 // renders these decides where the data came from.
 import { type Analysis } from "../_lib/analysis";
 import { type Tally, type HeadToHead, tallyQuip } from "../_lib/compare";
-import { V_RED, verdictBadgeStyle } from "./badges";
+import { V_RED, verdictBadgeStyle, RoastBadge } from "./badges";
 import { Card } from "./ui";
 
 function CarHeader({ analysis }: { analysis: Analysis }) {
@@ -18,8 +18,9 @@ function CarHeader({ analysis }: { analysis: Analysis }) {
         <p className="font-mono text-ember-400 text-sm font-bold tabular-nums">{v.price}</p>
       )}
       {analysis.label && (
-        <div className="pt-0.5">
+        <div className="pt-0.5 flex flex-wrap items-center gap-1.5">
           <span style={{ ...verdictBadgeStyle(analysis.label), whiteSpace: "normal" as const }}>{analysis.label}</span>
+          {analysis.mode === "roast" && <RoastBadge />}
         </div>
       )}
     </div>

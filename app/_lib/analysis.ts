@@ -83,6 +83,10 @@ export type Analysis = {
   }[];
   investmentScore?: number;
   vibeScore?: number;
+  // Set client-side when the analysis was requested with Roast Mode on —
+  // absent reads as serious, same backward-compatible pattern as
+  // FaultConfidence above.
+  mode?: "roast";
 };
 
 export function isSpecified(value: string | undefined): boolean {
@@ -119,7 +123,7 @@ export function buildShareText(a: Analysis): string {
     ? `${a.redFlags.length} red flag${a.redFlags.length === 1 ? "" : "s"}.`
     : "No red flags.";
   return [
-    `Motormind check: ${title}${price}`,
+    `Motormind check: ${title}${price}${a.mode === "roast" ? " (Roasted)" : ""}`,
     [a.label, scores].filter(Boolean).join(" · "),
     a.verdict ? `"${a.verdict}"` : "",
     `${flags} Full read: www.motormind.nz`,
