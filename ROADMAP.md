@@ -63,7 +63,7 @@ member terms weren't checked), and the actor is a third-party
 community build that can break or be blocked without warning. Don't widen it
 into search or bulk price data without weighing that first.
 
-- ✅ **Rate limiting on `/api/listing`** — Vercel WAF rate-limit rule (dashboard → Firewall, not code): `POST /api/listing`, 10 requests / 60s per IP, 429. Blocked requests never reach the function or Apify and aren't billed. Counters are per region, and Hobby allows one rate-limit rule per project. The app shows a specific "give it a minute" hint on a 429.
+- ✅ **Rate limiting on `/api/listing`** — Vercel WAF rate-limit rule on the `enthusiest-ai-zy6l` project (dashboard → Firewall, not code): request path equals `/api/listing`, 10 requests / 60s per IP, 429 — verified 2026-10-23 (11th request 429s). Blocked requests never reach the function or Apify and aren't billed. Counters are per region, and Hobby allows one rate-limit rule per project. The app shows a specific "give it a minute" hint on a 429.
 - ⬜ **Apify spend cap** — set a monthly usage limit in the Apify console so a runaway loop or abuse can't run up a bill.
 - ⬜ **If the actor breaks** — `APIFY_TRADEME_ACTOR` swaps in another actor without a code change, but its input and output field names will almost certainly differ (this one wants `startUrls` as plain strings and returns `priceText`), so check its schema first.
 
