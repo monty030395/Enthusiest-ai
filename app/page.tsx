@@ -6,6 +6,7 @@ import { type Analysis } from "./_lib/analysis";
 import { compressImage } from "./_lib/images";
 import { saveCheck } from "./_lib/garage";
 import { takeSharedListing } from "./_lib/sharedListing";
+import { extractTradeMeUrl } from "./_lib/trademe";
 import { V_RED } from "./_components/badges";
 import { Card, RotatingMessage, WheelSpinner } from "./_components/ui";
 import Masthead from "./_components/Masthead";
@@ -27,6 +28,38 @@ export default function Home() {
   // Set when the user arrived via the Android share sheet — remembered so the
   // saved check can link back to the listing it came from
   const [listingUrl, setListingUrl] = useState<string | undefined>();
+  const [fetchingListing, setFetchingListing] = useState(false);
+
+  // Fetches the listing behind a Trade Me link and analyses it straight
+  // away. Any failure (not configured, actor down, Trade Me blocking it)
+  // drops back to asking for the description, which is where we were before.
+  async function pullListing(url: string, fallbackHint: string) {
+    setListingUrl(url);
+    setError("");
+    setUrlHint("");
+    setUrlHintVisible(false);
+    setFetchingListing(true);
+    let text: string | undefined;
+    try {
+      const res = await fetch("/api/listing", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url }),
+      });
+      if (res.ok) text = ((await res.json()) as { text?: string }).text;
+    } catch {
+      text = undefined;
+    } finally {
+      setFetchingListing(false);
+    }
+    if (text) {
+      setPastedText(text);
+      analyse(text, url);
+    } else {
+      setUrlHint(fallbackHint);
+      setTimeout(() => setUrlHintVisible(true), 10);
+    }
+  }
 
   useEffect(() => {
     const shared = takeSharedListing();
@@ -35,10 +68,13 @@ export default function Home() {
     if (shared.text) {
       setPastedText(shared.text);
     } else if (shared.listingUrl) {
-      // Trade Me shares a link, not the description, and we can't fetch it
-      setUrlHint("Got the link. Now copy the listing description and paste it below — that's the part we actually read. The link stays attached to your check.");
-      setUrlHintVisible(true);
+      // Trade Me shares a link, not the description — go and get it
+      pullListing(
+        shared.listingUrl,
+        "Got the link, but couldn't pull the listing itself. Copy the listing description and paste it below — that's the part we actually read. The link stays attached to your check."
+      );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- runs once, on arrival from the share sheet
   }, []);
 
   useEffect(() => {
@@ -101,7 +137,8 @@ export default function Home() {
     [addImages]
   );
 
-  async function analyse(textOverride?: string) {
+  // urlOverride covers calls made before a setListingUrl has re-rendered
+  async function analyse(textOverride?: string, urlOverride?: string) {
     setError("");
     setResult(null);
     setLoading(true);
@@ -132,7 +169,7 @@ export default function Home() {
       } else {
         setResult(data as Analysis);
         setInputCollapsed(true);
-        saveCheck(data as Analysis, listingUrl);
+        saveCheck(data as Analysis, urlOverride ?? listingUrl);
       }
     } catch {
       setError("Network error — check your connection and try again.");
@@ -146,9 +183,15 @@ export default function Home() {
     if (content.includes("trademe.co.nz")) {
       e.preventDefault();
       setPastedText("");
-      setUrlHint("Open that listing in Trade Me, copy the full description text and paste it here — we'll handle the rest.");
-      setUrlHintVisible(false);
-      setTimeout(() => setUrlHintVisible(true), 10);
+      const url = extractTradeMeUrl(content);
+      const fallbackHint = "Open that listing in Trade Me, copy the full description text and paste it here — we'll handle the rest.";
+      if (url) {
+        pullListing(url, fallbackHint);
+      } else {
+        setUrlHint(fallbackHint);
+        setUrlHintVisible(false);
+        setTimeout(() => setUrlHintVisible(true), 10);
+      }
     } else if (content.length > 50 && !content.startsWith("http")) {
       setUrlHint("");
       setUrlHintVisible(false);
@@ -296,7 +339,7 @@ export default function Home() {
 
             <button
               onClick={() => analyse()}
-              disabled={!canAnalyse || loading}
+              disabled={!canAnalyse || loading || fetchingListing}
               className="w-full bg-ember-500 hover:bg-ember-400 active:bg-ember-600 disabled:bg-carbon-800 disabled:text-ink-faint disabled:cursor-not-allowed text-carbon-950 font-mono font-bold uppercase tracking-[0.22em] rounded-lg py-4 transition-all text-xs"
             >
               {loading ? "Getting Under the Hood..." : "Analyse Listing"}
@@ -319,6 +362,14 @@ export default function Home() {
 
         {/* Results anchor */}
         <div ref={resultsRef} />
+
+        {/* Pulling a shared/pasted listing from Trade Me */}
+        {fetchingListing && (
+          <Card className="p-12 flex flex-col items-center gap-6">
+            <WheelSpinner />
+            <p className="font-display text-ink font-bold text-sm uppercase tracking-[0.12em]">Pulling the listing from Trade Me</p>
+          </Card>
+        )}
 
         {/* Loading */}
         {loading && (

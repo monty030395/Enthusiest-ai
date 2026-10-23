@@ -20,6 +20,23 @@ export function isTradeMeUrl(value: string): boolean {
   return /(^|\/\/|\.)trademe\.co\.nz/i.test(value);
 }
 
+// The numeric listing ID from any shape of listing link — the current
+// /a/motors/cars/.../listing/5012345678 path, the short /a/listing/<id>, or
+// the old Listing.aspx?id=<id>. Undefined for searches and non-Trade Me URLs.
+export function tradeMeListingId(value: string): string | undefined {
+  let parsed: URL;
+  try {
+    parsed = new URL(value.trim());
+  } catch {
+    return undefined;
+  }
+  if (!/(^|\.)trademe\.co\.nz$/i.test(parsed.hostname)) return undefined;
+  const fromPath = parsed.pathname.match(/\/listing\/(\d+)/i)?.[1];
+  const fromQuery = parsed.searchParams.get("id");
+  const id = fromPath ?? fromQuery ?? undefined;
+  return id && /^\d+$/.test(id) ? id : undefined;
+}
+
 // Pulls the first Trade Me link out of shared text — the Android share sheet
 // often hands over "Title — https://www.trademe.co.nz/..." as one blob.
 export function extractTradeMeUrl(...parts: (string | undefined)[]): string | undefined {
