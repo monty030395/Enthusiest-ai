@@ -12,6 +12,8 @@ import { Card, RotatingMessage, WheelSpinner, Switch } from "./_components/ui";
 import Masthead from "./_components/Masthead";
 import AnalysisResults from "./_components/AnalysisResults";
 
+const ROAST_MODE_KEY = "motormind.roastMode";
+
 export default function Home() {
   const [inputMode, setInputMode] = useState<"text" | "images">("text");
   const [images, setImages] = useState<{ file: File; dataUrl: string }[]>([]);
@@ -32,6 +34,21 @@ export default function Home() {
   // handleReset(), matching how the Paste Text/Screenshots tab selection
   // already persists across resets.
   const [roastMode, setRoastMode] = useState(false);
+  // Also remembered across visits on this device, because a Trade Me share
+  // opens the app fresh — without this a shared listing could never be
+  // roasted. The ref is what analyse() reads: a share kicks it off from the
+  // mount effect, before the restored state has re-rendered.
+  const roastModeRef = useRef(false);
+
+  function changeRoastMode(on: boolean) {
+    roastModeRef.current = on;
+    setRoastMode(on);
+    try {
+      window.localStorage.setItem(ROAST_MODE_KEY, on ? "1" : "0");
+    } catch {
+      // private browsing — the toggle just won't be remembered
+    }
+  }
   const [fetchingListing, setFetchingListing] = useState(false);
 
   // Fetches the listing behind a Trade Me link and analyses it straight
@@ -70,6 +87,15 @@ export default function Home() {
   }
 
   useEffect(() => {
+    try {
+      if (window.localStorage.getItem(ROAST_MODE_KEY) === "1") {
+        roastModeRef.current = true;
+        setRoastMode(true);
+      }
+    } catch {
+      // private browsing — start with Roast Mode off
+    }
+
     const shared = takeSharedListing();
     if (!shared) return;
     setListingUrl(shared.listingUrl);
@@ -152,8 +178,8 @@ export default function Home() {
     setLoading(true);
     try {
       const body = inputMode === "text"
-        ? { pastedText: textOverride ?? pastedText, roast: roastMode }
-        : { images: images.map((i) => i.dataUrl), roast: roastMode };
+        ? { pastedText: textOverride ?? pastedText, roast: roastModeRef.current }
+        : { images: images.map((i) => i.dataUrl), roast: roastModeRef.current };
 
       const res = await fetch("/api/analyze", {
         method: "POST",
@@ -176,7 +202,6 @@ export default function Home() {
         setError((data as { error?: string } | null)?.error || `The server choked on that one (HTTP ${res.status}) — give it another go.`);
       } else {
         const analysis = data as Analysis;
-        if (roastMode) analysis.mode = "roast";
         setResult(analysis);
         setInputCollapsed(true);
         saveCheck(analysis, urlOverride ?? listingUrl);
@@ -243,7 +268,7 @@ export default function Home() {
 
         {/* Roast Mode toggle — above the input so it's visible before any paste/type/upload triggers analysis */}
         <div className="space-y-1.5">
-          <Switch checked={roastMode} onChange={setRoastMode} label="Roast Mode" />
+          <Switch checked={roastMode} onChange={changeRoastMode} label="Roast Mode" />
           <p className="font-mono text-[10px] text-ink-faint leading-relaxed">
             Same verdict, savage delivery.
           </p>

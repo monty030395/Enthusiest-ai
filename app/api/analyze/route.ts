@@ -409,6 +409,8 @@ FEW-SHOT EXAMPLES (car: Toyota Camry — you are never rewriting this car; these
 
 Some values you receive will be arrays of strings — rewrite each entry in the array individually, preserving array order and length. Some values may be nested objects — preserve the same nested shape. Return ONLY valid JSON, no markdown, no extra text.`;
 
+/* eslint-disable @typescript-eslint/no-explicit-any -- untrusted model JSON,
+   read field by field with a fallback for anything missing or mistyped */
 // The subset of the analysis that's actually prose — every field left out
 // here (scores, enum picks like label/rating/assessment/level/trend,
 // vehicle.*, performanceSpecs.*, alternatives[].name/searchTerm/priceRange,
@@ -545,7 +547,10 @@ function applyRoastRewrite(original: Record<string, any>, rewrite: Record<string
   return merged;
 }
 
+/* eslint-enable @typescript-eslint/no-explicit-any */
+
 export async function POST(req: NextRequest) {
+  const startedAt = Date.now();
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
     return NextResponse.json(
@@ -613,7 +618,15 @@ export async function POST(req: NextRequest) {
     let result = JSON.parse(raw);
     console.log("modPotential:", JSON.stringify(result.modPotential ?? null));
 
-    if (roast) {
+    // The facts call can eat most of maxDuration on a bad day (429 retries),
+    // and a roast call that runs past it gets the whole request killed —
+    // an error instead of the serious-mode fallback below. So the roast call
+    // only gets whatever time is left, and is skipped if that's too little.
+    const roastBudgetMs = (maxDuration - 5) * 1000 - (Date.now() - startedAt);
+
+    if (roast && roastBudgetMs < 10_000) {
+      console.error(`Roast rewrite skipped, only ${roastBudgetMs}ms left — returning serious-mode result`);
+    } else if (roast) {
       // Roast Mode is decorative flair on top of an already-correct
       // analysis, not a separate feature — if this call fails for any
       // reason (rate limit, malformed JSON), fall back to the serious-mode
@@ -632,10 +645,13 @@ export async function POST(req: NextRequest) {
           // risk to guard against — only flatness.
           temperature: 1.0,
           max_tokens: 4000,
-        });
+        }, { timeout: roastBudgetMs, maxRetries: 0 });
         const roastRaw = roastResponse.choices[0].message.content;
         if (roastRaw) {
           result = applyRoastRewrite(result, JSON.parse(roastRaw));
+          // Only stamped once the rewrite actually landed, so a fallback
+          // result never wears the Roast badge over serious-mode text
+          result.mode = "roast";
         }
       } catch (roastErr) {
         console.error("Roast rewrite failed, returning serious-mode result:", roastErr);
