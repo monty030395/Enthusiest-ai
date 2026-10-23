@@ -122,7 +122,7 @@ From the post-redesign review (July 2026), roughly in priority order:
 
 ## Future ideas (not yet scoped)
 
-- ⬜ **Roast Mode** — Monty wants to come back to this. No scope/details captured yet; flesh out when picked up.
+- 🔨 **Roast Mode** — built on `feature/roast-mode` ([spec](docs/superpowers/specs/2026-08-04-roast-mode-design.md), [plan](docs/superpowers/plans/2026-08-04-roast-mode.md)), in review. A toggle on the analyse screen. Facts and scores always come from the normal serious-voice call. With Roast Mode on, the prose fields go to a second gpt-4.1 rewrite call and are merged back by explicit field path, so scores can't drift between modes. If the rewrite fails, or there isn't time left in `maxDuration`, the result falls back to serious. The toggle is remembered per device, so a listing shared from Trade Me gets roasted if you left it on. Roast checks cost two OpenAI calls.
 
 ## Open issues
 
