@@ -2,11 +2,25 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { setRoastMode, useRoastMode } from "../_lib/roastMode";
+import { Switch } from "./ui";
 
 // Sticky glass masthead, shared by every page.
 export default function Masthead({ active }: { active?: "analyse" | "garage" }) {
   const pathname = usePathname();
   const linkBase = "font-mono text-[10px] uppercase tracking-[0.2em] transition-colors py-2";
+  const [menuOpen, setMenuOpen] = useState(false);
+  const roastMode = useRoastMode();
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    function closeOnEscape(e: KeyboardEvent) {
+      if (e.key === "Escape") setMenuOpen(false);
+    }
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [menuOpen]);
 
   // Results run 6+ screens with nothing bringing you back up. Tapping a nav
   // link that targets the page you're already on scrolls to top instead of
@@ -51,7 +65,39 @@ export default function Masthead({ active }: { active?: "analyse" | "garage" }) 
           >
             Garage
           </Link>
-          <div className="h-1.5 w-1.5 rounded-full bg-ember-400 animate-pulse" />
+          {/* Extras live behind the menu, not on the analyser — Roast Mode
+              is likely to become a paid add-on */}
+          <div className="relative">
+            <button
+              type="button"
+              aria-label="Menu"
+              aria-expanded={menuOpen}
+              onClick={() => setMenuOpen((open) => !open)}
+              className="relative w-8 h-8 -mr-1.5 flex flex-col items-center justify-center gap-[3px] text-ink-faint hover:text-ink-muted transition-colors"
+            >
+              <span className="block w-4 h-px bg-current" />
+              <span className="block w-4 h-px bg-current" />
+              <span className="block w-4 h-px bg-current" />
+              {roastMode && <span className="absolute top-1 right-1 h-1.5 w-1.5 rounded-full bg-ember-400" />}
+            </button>
+            {menuOpen && (
+              <>
+                <button
+                  type="button"
+                  aria-label="Close menu"
+                  tabIndex={-1}
+                  onClick={() => setMenuOpen(false)}
+                  className="fixed inset-0 z-40 cursor-default"
+                />
+                <div className="absolute right-0 top-full mt-2 z-50 w-64 rounded-xl border border-line bg-carbon-950 p-4 space-y-1.5 shadow-2xl">
+                  <Switch checked={roastMode} onChange={setRoastMode} label="Roast Mode" />
+                  <p className="font-mono text-[10px] text-ink-faint leading-relaxed">
+                    Same verdict, savage delivery. Stays on for every check until you turn it off.
+                  </p>
+                </div>
+              </>
+            )}
+          </div>
         </nav>
       </div>
     </header>
