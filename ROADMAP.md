@@ -58,7 +58,8 @@ hint. Verified end to end on 2026-10-23 by sharing from the Trade Me app.
 
 Kept deliberately narrow: one listing, only when the user shares it. It's
 still the same automated-fetch risk the price-calibration section warns
-about. Trade Me's terms don't allow it, and the actor is a third-party
+about. Trade Me's developer docs say it won't support scraping (its main
+member terms weren't checked), and the actor is a third-party
 community build that can break or be blocked without warning. Don't widen it
 into search or bulk price data without weighing that first.
 
