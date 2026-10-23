@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { extractTradeMeUrl } from "../_lib/trademe";
+import { extractFacebookUrl } from "../_lib/facebook";
 import { stashSharedListing, extractRealListingText } from "../_lib/sharedListing";
 import Masthead from "./Masthead";
 import { Card, WheelSpinner } from "./ui";
@@ -23,7 +24,7 @@ export default function ShareTargetHandoff({
 
   useEffect(() => {
     stashSharedListing({
-      listingUrl: extractTradeMeUrl(url, text, title),
+      listingUrl: extractTradeMeUrl(url, text, title) ?? extractFacebookUrl(url, text, title),
       // Trade Me's share never contains the seller's description — see
       // extractRealListingText for why a plain length check gets this wrong
       text: extractRealListingText(text, title, url),

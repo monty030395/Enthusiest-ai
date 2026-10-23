@@ -8,9 +8,11 @@ import { saveCheck } from "./_lib/garage";
 import { takeSharedListing } from "./_lib/sharedListing";
 import { isRoastMode } from "./_lib/roastMode";
 import { extractTradeMeUrl } from "./_lib/trademe";
+import { extractFacebookUrl, FACEBOOK_HINT } from "./_lib/facebook";
 import { V_RED } from "./_components/badges";
 import { Card, RotatingMessage, WheelSpinner } from "./_components/ui";
 import Masthead from "./_components/Masthead";
+import ListingHowTo from "./_components/ListingHowTo";
 import AnalysisResults from "./_components/AnalysisResults";
 
 export default function Home() {
@@ -72,6 +74,10 @@ export default function Home() {
     setListingUrl(shared.listingUrl);
     if (shared.text) {
       setPastedText(shared.text);
+    } else if (extractFacebookUrl(shared.listingUrl)) {
+      // Facebook shares are just a link and can't be fetched — ask for the words
+      setUrlHint(FACEBOOK_HINT);
+      setTimeout(() => setUrlHintVisible(true), 10);
     } else if (shared.listingUrl) {
       // Trade Me shares a link, not the description — go and get it
       pullListing(
@@ -198,6 +204,14 @@ export default function Home() {
         setUrlHintVisible(false);
         setTimeout(() => setUrlHintVisible(true), 10);
       }
+    } else if (extractFacebookUrl(content) && content.trim().startsWith("http")) {
+      // A bare Facebook link — keep it for the Garage, but we need the text
+      e.preventDefault();
+      setPastedText("");
+      setListingUrl(extractFacebookUrl(content));
+      setUrlHint(FACEBOOK_HINT);
+      setUrlHintVisible(false);
+      setTimeout(() => setUrlHintVisible(true), 10);
     } else if (content.length > 50 && !content.startsWith("http")) {
       setUrlHint("");
       setUrlHintVisible(false);
@@ -220,7 +234,7 @@ export default function Home() {
       <main className="max-w-3xl mx-auto px-5 py-10 space-y-6">
 
         {/* Collapsible: Hero + Input */}
-        <div className={`overflow-hidden transition-all duration-500 ease-in-out ${inputCollapsed ? "max-h-0 opacity-0 pointer-events-none" : "max-h-[900px] opacity-100"}`}>
+        <div className={`overflow-hidden transition-all duration-500 ease-in-out ${inputCollapsed ? "max-h-0 opacity-0 pointer-events-none" : "max-h-[1600px] opacity-100"}`}>
           <div className="space-y-8">
 
         {/* Hero */}
@@ -233,9 +247,11 @@ export default function Home() {
             <span className="text-ember-400">worth your money?</span>
           </h2>
           <p className="mt-4 text-ink-muted text-sm leading-relaxed max-w-md">
-            Paste a listing from Trade Me or upload screenshots. Get a specific, honest enthusiast read — not the generic rubbish you already know.
+            Share a Trade Me listing straight to the app, paste a Facebook Marketplace description, or upload screenshots. Get a specific, honest enthusiast read — not the generic rubbish you already know.
           </p>
         </div>
+
+        <ListingHowTo />
 
 
         {/* Input card */}
@@ -312,7 +328,7 @@ export default function Home() {
             {inputMode === "text" && (
               <div className="space-y-2.5">
                 <p className="font-mono text-[11px] text-ink-faint leading-relaxed">
-                  Copy the listing description from Trade Me and paste it here — the more detail the better.
+                  Paste a Trade Me link, or the full listing description from Facebook or anywhere else — the more detail the better.
                 </p>
                 <textarea
                   value={pastedText}
@@ -321,7 +337,7 @@ export default function Home() {
                     if (urlHint) { setUrlHint(""); setUrlHintVisible(false); }
                   }}
                   onPaste={handlePaste}
-                  placeholder="Paste the full listing text here..."
+                  placeholder="Paste a Trade Me link or the listing text here..."
                   rows={7}
                   className="w-full bg-carbon-900/80 border border-line rounded-lg px-4 py-3.5 text-base sm:text-sm text-ink placeholder:text-ink-faint placeholder:font-mono focus:outline-none focus:border-ember-500/60 transition-all resize-none"
                 />

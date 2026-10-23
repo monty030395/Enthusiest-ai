@@ -67,6 +67,67 @@ into search or bulk price data without weighing that first.
 - ⬜ **Apify spend cap** — set a monthly usage limit in the Apify console so a runaway loop or abuse can't run up a bill.
 - ⬜ **If the actor breaks** — `APIFY_TRADEME_ACTOR` swaps in another actor without a code change, but its input and output field names will almost certainly differ (this one wants `startUrls` as plain strings and returns `priceText`), so check its schema first.
 
+## Launch-page "how to add a listing" — 🔨 in review
+
+The launch page used to only say "copy the description from Trade Me and
+paste it", even though a shared or pasted Trade Me link now gets fetched for
+you. It now has a short guide by source: Trade Me (Android share → Motormind,
+or paste the link), Facebook Marketplace (copy the description, or use
+screenshots), and anywhere else. There's also a one-line tip on installing
+the app so it appears in the Android share menu. A Facebook link that is
+shared or pasted no longer silently does nothing. It's kept as the check's
+listing link, and a Facebook-specific hint asks for the description.
+
+## Facebook Marketplace fetch via Apify — ⬜ not started (plan)
+
+Goal: share a Marketplace listing and have it analysed with no copying, the
+same as Trade Me. Facebook gets its own route and actor, not a widening of
+the Trade Me one.
+
+**What exists (checked 2026-10-24):** Apify's own
+[`apify/facebook-marketplace-scraper`](https://apify.com/apify/facebook-marketplace-scraper)
+(~$2.60–6.20 per 1,000 listings depending on plan, so under a cent each)
+plus community actors such as
+[`scraper-engine/facebook-marketplace-scraper`](https://apify.com/scraper-engine/facebook-marketplace-scraper).
+They're built around **location, category and search URLs**. A single
+`/marketplace/item/<id>` URL isn't documented as an input. The description
+only comes with `includeListingDetails` (or a "deep scrape" flag on the
+community ones). Vehicle fields like odometer aren't promised either and may
+only appear inside the generic listing attributes.
+
+**Steps:**
+
+1. **Spike (manual, Apify console, ~$0):** run the official actor on 3–4 real
+   NZ car listings, passing the item URL as the start URL with
+   `includeListingDetails: true`. Record whether it accepts an item URL,
+   whether it needs Facebook cookies, run time (it must fit inside the 50s
+   sync timeout), and which fields come back (description, price, odometer,
+   year, location). If it rejects item URLs, try the community actors before
+   giving up.
+2. **Resolve share links:** the Facebook app shares `facebook.com/share/<code>`
+   or `fb.me` short links. Check whether the actor follows them; if not,
+   resolve the redirect server-side to get the `/marketplace/item/<id>` URL
+   and the numeric id.
+3. **Build:** `/api/listing/facebook` (or a `source` branch in
+   `/api/listing`) with its own `APIFY_FACEBOOK_ACTOR` env var and a
+   `listingToText` mapper for that actor's fields. In `page.tsx`, send a
+   Facebook link to `pullListing` instead of showing `FACEBOOK_HINT`. Keep
+   the hint as the fallback for any failure, as Trade Me does.
+4. **Protect it:** extend the WAF rate-limit rule to cover the new path (Hobby
+   allows one rule per project, so use a path prefix match on `/api/listing`),
+   and make sure the Apify spend cap above is set first.
+5. **Update the guide:** change the Facebook row in `ListingHowTo.tsx` to
+   "Share → Motormind", and note the copy-description route as the fallback.
+
+**Risks — weigh before step 3:** Meta's terms prohibit automated collection
+without permission, and Meta actively blocks and litigates scrapers. Apify
+recommends residential proxies because datacenter IPs get blocked quickly, so
+expect it to break more often than the Trade Me actor. If the spike needs
+Facebook login cookies, **stop**: that puts a real account at risk and is a
+much bigger terms problem. In that case the copy-description route stays the
+answer. Same narrow scope as Trade Me: one listing, only when the user
+shares it.
+
 ## Price calibration on appreciating JDM/enthusiast imports — ✅ shipped ([PR #27](https://github.com/monty030395/Enthusiest-ai/pull/27))
 
 Closes [#24](https://github.com/monty030395/Enthusiest-ai/issues/24) (option
