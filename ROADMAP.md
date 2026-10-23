@@ -80,7 +80,7 @@ the app so it appears in the Android share menu. A Facebook link that is
 shared or pasted no longer silently does nothing. It's kept as the check's
 listing link, and a Facebook-specific hint asks for the description.
 
-## Facebook Marketplace fetch via Apify — 🔨 built, in review
+## Facebook Marketplace fetch via Apify — ✅ shipped ([PR #41](https://github.com/monty030395/Enthusiest-ai/pull/41))
 
 Goal: share a Marketplace listing and have it analysed with no copying, the
 same as Trade Me. Facebook gets its own route and actor, not a widening of
@@ -142,9 +142,14 @@ Community alternatives exist, such as
    existing `/api/listing` rule (10 / 60s per IP) covers it.
 5. ✅ **Update the guide** — Trade Me and Facebook now share one "Share →
    Motormind / Copy link" row in `ListingHowTo.tsx`.
-6. ⬜ **Check on the preview deployment:** that the share link resolves from
-   Vercel's IPs (Facebook may treat datacenter traffic differently), and
-   that an `fb.me` link resolves too.
+6. ✅ **Verified in production** (2026-10-24): shared a Marketplace listing
+   from the Facebook app on Android to the installed app on motormind.nz, and
+   it pulled and analysed. So share links do resolve from Vercel's IPs.
+   Pasting a link in a desktop browser works too. Still untested: `fb.me`
+   short links, which haven't turned up in a real share yet.
+   Testing gotcha: the share sheet always opens the installed app, which
+   runs production. A PR preview can't be tested from the share sheet
+   unless that preview is installed as its own app.
 
 ## Price calibration on appreciating JDM/enthusiast imports — ✅ shipped ([PR #27](https://github.com/monty030395/Enthusiest-ai/pull/27))
 
