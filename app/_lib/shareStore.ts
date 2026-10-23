@@ -20,7 +20,7 @@ const hasBlob = () => Boolean(process.env.BLOB_READ_WRITE_TOKEN);
 // Without a Blob store, fall back to the OS temp dir so `npm run dev` works
 // on a laptop with no Vercel storage wired up. Never used in production —
 // serverless filesystems don't persist between invocations.
-const useLocalFallback = () => !hasBlob() && process.env.NODE_ENV !== "production";
+const usingLocalFallback = () => !hasBlob() && process.env.NODE_ENV !== "production";
 
 async function localDir() {
   const { tmpdir } = await import("node:os");
@@ -32,14 +32,14 @@ async function localDir() {
 }
 
 export function shareStoreConfigured(): boolean {
-  return hasBlob() || useLocalFallback();
+  return hasBlob() || usingLocalFallback();
 }
 
 export async function putShared(payload: SharedPayload): Promise<string> {
   const id = newShareId();
   const body = JSON.stringify(payload);
 
-  if (useLocalFallback()) {
+  if (usingLocalFallback()) {
     const { writeFile } = await import("node:fs/promises");
     const { dir, join } = await localDir();
     await writeFile(join(dir, `${id}.json`), body, "utf8");
@@ -60,7 +60,7 @@ export async function getShared(id: string): Promise<SharedPayload | null> {
   // Ids come straight off the URL — never let one walk the store
   if (!/^[a-z0-9]{6,24}$/.test(id)) return null;
 
-  if (useLocalFallback()) {
+  if (usingLocalFallback()) {
     try {
       const { readFile } = await import("node:fs/promises");
       const { dir, join } = await localDir();
