@@ -68,3 +68,7 @@ Required:
 - `TRADEME_CONSUMER_KEY`
 - `TRADEME_CONSUMER_SECRET`
 - `TRADEME_SANDBOX` — set to `true` for local dev against sandbox, remove for production
+
+Optional:
+- `APIFY_TOKEN` — lets a shared/pasted Trade Me link pull the listing automatically (`/api/listing`). Without it the app falls back to asking for the description.
+- `APIFY_TRADEME_ACTOR` — override the Apify actor (default `blackfalcondata~trademe-scraper`)
