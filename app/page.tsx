@@ -40,6 +40,7 @@ export default function Home() {
     setUrlHintVisible(false);
     setFetchingListing(true);
     let text: string | undefined;
+    let hint = fallbackHint;
     try {
       const res = await fetch("/api/listing", {
         method: "POST",
@@ -47,6 +48,9 @@ export default function Home() {
         body: JSON.stringify({ url }),
       });
       if (res.ok) text = ((await res.json()) as { text?: string }).text;
+      // The Vercel WAF rate-limit rule on /api/listing answers 429 before
+      // the function runs — every fetch costs Apify credit
+      else if (res.status === 429) hint = "You've pulled a lot of listings in a short space — give it a minute and share it again, or paste the description below.";
     } catch {
       text = undefined;
     } finally {
@@ -56,7 +60,7 @@ export default function Home() {
       setPastedText(text);
       analyse(text, url);
     } else {
-      setUrlHint(fallbackHint);
+      setUrlHint(hint);
       setTimeout(() => setUrlHintVisible(true), 10);
     }
   }

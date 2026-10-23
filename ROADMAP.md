@@ -63,7 +63,7 @@ member terms weren't checked), and the actor is a third-party
 community build that can break or be blocked without warning. Don't widen it
 into search or bulk price data without weighing that first.
 
-- ⬜ **Rate limiting on `/api/listing`** — unauthenticated, and unlike `/api/share` every call costs Apify credit. Only canonical listing URLs reach the actor, but nothing stops one person hammering it.
+- ✅ **Rate limiting on `/api/listing`** — Vercel WAF rate-limit rule (dashboard → Firewall, not code): `POST /api/listing`, 10 requests / 60s per IP, 429. Blocked requests never reach the function or Apify and aren't billed. Counters are per region, and Hobby allows one rate-limit rule per project. The app shows a specific "give it a minute" hint on a 429.
 - ⬜ **Apify spend cap** — set a monthly usage limit in the Apify console so a runaway loop or abuse can't run up a bill.
 - ⬜ **If the actor breaks** — `APIFY_TRADEME_ACTOR` swaps in another actor without a code change, but its input and output field names will almost certainly differ (this one wants `startUrls` as plain strings and returns `priceText`), so check its schema first.
 
@@ -126,10 +126,10 @@ From the post-redesign review (July 2026), roughly in priority order:
 
 ## Open issues
 
-- [#10](https://github.com/monty030395/Enthusiest-ai/issues/10) — alternatives V3; Trade Me's API is now closed to buyer-side tools, so this should be closed as won't-do (see above)
+None right now.
 
 ## Closed this cycle
 
-[#6](https://github.com/monty030395/Enthusiest-ai/issues/6) compare · [#7](https://github.com/monty030395/Enthusiest-ai/issues/7) garage · [#8](https://github.com/monty030395/Enthusiest-ai/issues/8) auto-scroll · [#9](https://github.com/monty030395/Enthusiest-ai/issues/9) score drift (tally margin rule, [PR #22](https://github.com/monty030395/Enthusiest-ai/pull/22)) · [#14](https://github.com/monty030395/Enthusiest-ai/issues/14) loading messages · [#17](https://github.com/monty030395/Enthusiest-ai/pull/17) red-flag precision · [#24](https://github.com/monty030395/Enthusiest-ai/issues/24) price calibration
+[#6](https://github.com/monty030395/Enthusiest-ai/issues/6) compare · [#7](https://github.com/monty030395/Enthusiest-ai/issues/7) garage · [#8](https://github.com/monty030395/Enthusiest-ai/issues/8) auto-scroll · [#9](https://github.com/monty030395/Enthusiest-ai/issues/9) score drift (tally margin rule, [PR #22](https://github.com/monty030395/Enthusiest-ai/pull/22)) · [#14](https://github.com/monty030395/Enthusiest-ai/issues/14) loading messages · [#17](https://github.com/monty030395/Enthusiest-ai/pull/17) red-flag precision · [#24](https://github.com/monty030395/Enthusiest-ai/issues/24) price calibration · [#10](https://github.com/monty030395/Enthusiest-ai/issues/10) alternatives V3 (won't-do — Trade Me API closed to buyer-side tools)
 
 Also shipped outside any issue: editorial redesign ([#18](https://github.com/monty030395/Enthusiest-ai/pull/18)), engine-variant attribution ([#23](https://github.com/monty030395/Enthusiest-ai/pull/23)), share-target boilerplate fix ([#26](https://github.com/monty030395/Enthusiest-ai/pull/26)), shared-listing fetch via Apify ([#32](https://github.com/monty030395/Enthusiest-ai/pull/32), [#33](https://github.com/monty030395/Enthusiest-ai/pull/33), [#34](https://github.com/monty030395/Enthusiest-ai/pull/34)).
