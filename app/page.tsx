@@ -33,8 +33,8 @@ export default function Home() {
   const [listingUrl, setListingUrl] = useState<string | undefined>();
   const [fetchingListing, setFetchingListing] = useState(false);
 
-  // Fetches the listing behind a Trade Me link and analyses it straight
-  // away. Any failure (not configured, actor down, Trade Me blocking it)
+  // Fetches the listing behind a Trade Me or Facebook link and analyses it
+  // straight away. Any failure (not configured, actor down, the site blocking it)
   // drops back to asking for the description, which is where we were before.
   async function pullListing(url: string, fallbackHint: string) {
     setListingUrl(url);
@@ -81,9 +81,8 @@ export default function Home() {
     if (shared.text) {
       setPastedText(shared.text);
     } else if (extractFacebookUrl(shared.listingUrl)) {
-      // Facebook shares are just a link and can't be fetched — ask for the words
-      setUrlHint(FACEBOOK_HINT);
-      setTimeout(() => setUrlHintVisible(true), 10);
+      // Facebook shares a link too — fetch it the same way
+      pullListing(shared.listingUrl!, FACEBOOK_HINT);
     } else if (shared.listingUrl) {
       // Trade Me shares a link, not the description — go and get it
       pullListing(
@@ -212,13 +211,10 @@ export default function Home() {
         setTimeout(() => setUrlHintVisible(true), 10);
       }
     } else if (extractFacebookUrl(content) && content.trim().startsWith("http")) {
-      // A bare Facebook link — keep it for the Garage, but we need the text
+      // A bare Facebook link — go and get the listing behind it
       e.preventDefault();
       setPastedText("");
-      setListingUrl(extractFacebookUrl(content));
-      setUrlHint(FACEBOOK_HINT);
-      setUrlHintVisible(false);
-      setTimeout(() => setUrlHintVisible(true), 10);
+      pullListing(extractFacebookUrl(content)!, FACEBOOK_HINT);
     } else if (content.length > 50 && !content.startsWith("http")) {
       setUrlHint("");
       setUrlHintVisible(false);
@@ -254,7 +250,7 @@ export default function Home() {
             <span className="text-ember-400">worth your money?</span>
           </h2>
           <p className="mt-4 text-ink-muted text-sm leading-relaxed max-w-md">
-            Share a Trade Me listing straight to the app, paste a Facebook Marketplace description, or upload screenshots. Get a specific, honest enthusiast read — not the generic rubbish you already know.
+            Share a Trade Me or Facebook Marketplace listing straight to the app, paste its link, or upload screenshots. Get a specific, honest enthusiast read — not the generic rubbish you already know.
           </p>
         </div>
 
@@ -335,7 +331,7 @@ export default function Home() {
             {inputMode === "text" && (
               <div className="space-y-2.5">
                 <p className="font-mono text-[11px] text-ink-faint leading-relaxed">
-                  Paste a Trade Me link, or the full listing description from Facebook or anywhere else — the more detail the better.
+                  Paste a Trade Me or Facebook Marketplace link, or the full listing description from anywhere else — the more detail the better.
                 </p>
                 <textarea
                   value={pastedText}
@@ -344,7 +340,7 @@ export default function Home() {
                     if (urlHint) { setUrlHint(""); setUrlHintVisible(false); }
                   }}
                   onPaste={handlePaste}
-                  placeholder="Paste a Trade Me link or the listing text here..."
+                  placeholder="Paste a listing link or the listing text here..."
                   rows={7}
                   className="w-full bg-carbon-900/80 border border-line rounded-lg px-4 py-3.5 text-base sm:text-sm text-ink placeholder:text-ink-faint placeholder:font-mono focus:outline-none focus:border-ember-500/60 transition-all resize-none"
                 />
@@ -393,11 +389,11 @@ export default function Home() {
         {/* Results anchor */}
         <div ref={resultsRef} />
 
-        {/* Pulling a shared/pasted listing from Trade Me */}
+        {/* Pulling a shared/pasted listing from Trade Me or Facebook */}
         {fetchingListing && (
           <Card className="p-12 flex flex-col items-center gap-6">
             <WheelSpinner />
-            <p className="font-display text-ink font-bold text-sm uppercase tracking-[0.12em]">Pulling the listing from Trade Me</p>
+            <p className="font-display text-ink font-bold text-sm uppercase tracking-[0.12em]">Pulling the listing</p>
           </Card>
         )}
 

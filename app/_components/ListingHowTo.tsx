@@ -1,27 +1,21 @@
 // How to get a listing into the analyser, by where it's listed. Trade Me
-// links get fetched for you (see /api/listing); Facebook Marketplace can't
-// be, so that row is honest about needing the description copied.
+// and Facebook Marketplace links get fetched for you (see /api/listing);
+// copying the description is the fallback when a fetch fails.
 const SOURCES: { name: string; steps: React.ReactNode[] }[] = [
   {
-    name: "Trade Me",
+    name: "Trade Me or Facebook Marketplace",
     steps: [
       <>
         <span className="text-ink">Android:</span> tap <span className="text-ink">Share</span> on the listing and pick{" "}
         <span className="text-ink">Motormind</span>. We pull the listing and start the check.
       </>,
       <>
-        <span className="text-ink">iPhone or computer:</span> copy the listing link and paste it in the box below.
+        <span className="text-ink">iPhone or computer:</span> tap Share, then <span className="text-ink">Copy link</span>, and
+        paste it in the box below.
       </>,
-    ],
-  },
-  {
-    name: "Facebook Marketplace",
-    steps: [
       <>
-        Facebook won&apos;t let us open the listing, so copy the <span className="text-ink">description</span> instead:
-        tap <span className="text-ink">See more</span>, press and hold the text, select it all and copy it, then paste it below.
+        If we can&apos;t pull it, we&apos;ll ask you to copy the listing&apos;s description in instead, or use screenshots.
       </>,
-      <>Or take screenshots and use the Screenshots tab.</>,
     ],
   },
   {

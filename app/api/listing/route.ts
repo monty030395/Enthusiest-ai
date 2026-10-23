@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { tradeMeListingId } from "../../_lib/trademe";
+import { extractFacebookUrl } from "../../_lib/facebook";
+import { fetchFacebookListing } from "../../_lib/facebookListing";
 
 // The Trade Me Android app won't let you copy a listing's description, so
 // without this the share sheet hands us a bare link and the user is left
@@ -13,6 +15,9 @@ import { tradeMeListingId } from "../../_lib/trademe";
 // inside maxDuration for the response to make it back.
 export const maxDuration = 60;
 const APIFY_TIMEOUT_SECS = 50;
+// A Facebook fetch first resolves the share link (up to 8s), so its actor
+// run gets that much less
+const FACEBOOK_APIFY_TIMEOUT_SECS = 42;
 const DEFAULT_ACTOR = "blackfalcondata~trademe-scraper";
 
 type ListingRecord = Record<string, unknown>;
@@ -84,6 +89,15 @@ export async function POST(req: NextRequest) {
     ({ url } = await req.json());
   } catch {
     return NextResponse.json({ error: "Couldn't read that request." }, { status: 400 });
+  }
+
+  // Facebook Marketplace shares through the same endpoint, so the WAF
+  // rate-limit rule on /api/listing covers it too
+  if (typeof url === "string" && extractFacebookUrl(url) === url.trim()) {
+    const result = await fetchFacebookListing(url.trim(), token, FACEBOOK_APIFY_TIMEOUT_SECS);
+    return result.ok
+      ? NextResponse.json({ text: result.text })
+      : NextResponse.json({ error: result.error }, { status: result.status });
   }
 
   // Only ever send the actor a canonical listing URL we built ourselves, so
