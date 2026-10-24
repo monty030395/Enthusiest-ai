@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, type RefObject } from "react";
+import { useState, useRef, useEffect, type RefObject } from "react";
 import {
   type Analysis,
   type DriveMetric,
@@ -187,8 +187,23 @@ export default function AnalysisResults({
   const reliabilityRef = useRef<HTMLDivElement>(null);
   const walletRef = useRef<HTMLDivElement>(null);
   const takeRef = useRef<HTMLDivElement>(null);
+  const dashRef = useRef<HTMLDivElement>(null);
   const scrollTo = (ref: RefObject<HTMLDivElement | null>) =>
     ref.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  // Once the dash has scrolled up out of view, a strip under the masthead
+  // keeps its jumps to hand: back to the dash, the three sections, the take
+  const [pastDash, setPastDash] = useState(false);
+  useEffect(() => {
+    const dash = dashRef.current;
+    if (!dash) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setPastDash(!entry.isIntersecting && entry.boundingClientRect.top < 0),
+      { rootMargin: "-61px 0px 0px 0px" }
+    );
+    observer.observe(dash);
+    return () => observer.disconnect();
+  }, []);
 
   const characterScore = computeCharacterScore(result);
   // The trip computer leads with the price verdict; the listing's label
@@ -219,14 +234,58 @@ export default function AnalysisResults({
     setTimeout(() => setShareNote(""), 4000);
   }
 
+  const jumps = [
+    { label: "Invest", score: result.investmentScore ?? null, ref: investmentSectionRef },
+    { label: "Character", score: characterScore, ref: characterSectionRef },
+    { label: "Cred", score: result.vibeScore ?? null, ref: streetCredSectionRef },
+  ];
+
   return (
     <div className="space-y-4">
+
+      {/* The jump strip, pinned under the masthead (61px tall) */}
+      <nav
+        aria-label="Jump to a section"
+        inert={!pastDash}
+        className={`fixed inset-x-0 top-[61px] z-30 border-b border-line bg-carbon-950/95 backdrop-blur transition-[opacity,transform] duration-200 ${
+          pastDash ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2 pointer-events-none"
+        }`}
+      >
+        <div className="max-w-3xl mx-auto px-4 flex items-center justify-between">
+          <button
+            type="button"
+            onClick={() => scrollTo(dashRef)}
+            className="min-h-11 px-1 font-mono text-xs uppercase tracking-[0.08em] text-glow-400 hover:text-glow-300 transition-colors"
+          >
+            ↑<span className="hidden min-[360px]:inline"> Dash</span>
+          </button>
+          {jumps.map((j) => (
+            <button
+              key={j.label}
+              type="button"
+              onClick={() => scrollTo(j.ref)}
+              className="min-h-11 px-1 font-mono text-xs uppercase tracking-[0.08em] text-ink-muted hover:text-ink transition-colors"
+            >
+              {j.label} <span className="text-glow-300 tabular-nums">{j.score ?? "–"}</span>
+            </button>
+          ))}
+          {result.enthusiastTake && (
+            <button
+              type="button"
+              onClick={() => scrollTo(takeRef)}
+              className="min-h-11 px-1 font-mono text-xs uppercase tracking-[0.08em] text-mfd hover:text-mfd/80 transition-colors"
+            >
+              Take
+            </button>
+          )}
+        </div>
+      </nav>
 
       {/* ── THE DASH ──────────────────────────────────────
           Everything a buyer needs at a glance, sized to fit one phone
           screen: the dials, the trip computer, the warning lamps and the
           temperature and fuel gauges. The detail cards follow below. */}
-      <div className="space-y-2.5">
+      <div ref={dashRef} className="space-y-2.5 scroll-mt-20">
 
         {/* The cluster: tap a dial to jump to its section */}
         <Cluster
@@ -463,12 +522,12 @@ export default function AnalysisResults({
       )}
 
       {/* ── SECTION 1: INVESTMENT ───────────────────────── */}
-      <div id="investment" ref={investmentSectionRef} className="scroll-mt-16 space-y-4">
+      <div id="investment" ref={investmentSectionRef} className="scroll-mt-28 space-y-4">
         <TileHeader label="Investment" score={result.investmentScore ?? null} quip={getQuip("investment", result.investmentScore ?? null)} />
 
         {/* Price Analysis */}
         {result.priceVerdict && (
-          <div ref={priceVerdictRef} className="scroll-mt-16">
+          <div ref={priceVerdictRef} className="scroll-mt-28">
             <Card className="p-6">
               <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-2">
                 <SectionLabel>Price Analysis</SectionLabel>
@@ -520,7 +579,7 @@ export default function AnalysisResults({
         {result.worstFinancialDecision && (() => {
           const t = VERDICT_THEME_MAP[result.worstFinancialDecision.rating] ?? V_NEUTRAL;
           return (
-            <div ref={walletRef} className="scroll-mt-16">
+            <div ref={walletRef} className="scroll-mt-28">
             <Card className="p-6">
               <div>
                 <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-4">
@@ -548,7 +607,7 @@ export default function AnalysisResults({
         {result.ownershipPain && (() => {
           const t = result.ownershipPain.score >= 8 ? V_RED : result.ownershipPain.score >= 5 ? V_AMBER : V_GREEN;
           return (
-            <div ref={reliabilityRef} className="scroll-mt-16">
+            <div ref={reliabilityRef} className="scroll-mt-28">
             <Card className="p-6">
               <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-4">
                 <SectionLabel>Reliability Risk</SectionLabel>
@@ -615,7 +674,7 @@ export default function AnalysisResults({
       </div>
 
       {/* ── SECTION 2: CHARACTER ────────────────────────── */}
-      <div id="character" ref={characterSectionRef} className="scroll-mt-16 space-y-4">
+      <div id="character" ref={characterSectionRef} className="scroll-mt-28 space-y-4">
         <TileHeader label="Character" score={characterScore} quip={getQuip("character", characterScore)} />
 
         {/* Why Enthusiasts Care */}
@@ -657,12 +716,12 @@ export default function AnalysisResults({
       </div>
 
       {/* ── SECTION 3: STREET CRED ──────────────────────── */}
-      <div id="street-cred" ref={streetCredSectionRef} className="scroll-mt-16 space-y-4">
+      <div id="street-cred" ref={streetCredSectionRef} className="scroll-mt-28 space-y-4">
         <TileHeader label="Street Cred" score={result.vibeScore ?? null} />
 
         {/* Owner Vibe */}
         {result.ownerVibe?.label && (
-          <div ref={ownerVibeRef} className="scroll-mt-16">
+          <div ref={ownerVibeRef} className="scroll-mt-28">
             <Card className="p-6">
               <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-3">
                 <SectionLabel>Owner Vibe</SectionLabel>
@@ -795,7 +854,7 @@ export default function AnalysisResults({
 
       {/* ── THE ENTHUSIAST TAKE ─────────────────────────── */}
       {result.enthusiastTake && (
-        <div ref={takeRef} className="scroll-mt-16 rounded-xl bg-dial ring-1 ring-glow-600/40 overflow-hidden">
+        <div ref={takeRef} className="scroll-mt-28 rounded-xl bg-dial ring-1 ring-glow-600/40 overflow-hidden">
           <div className="px-6 pt-5">
             <span className="font-mono text-base uppercase tracking-[0.06em] text-mfd [text-shadow:0_0_6px_rgba(255,173,59,0.45)]">
               The Enthusiast Take

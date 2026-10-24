@@ -165,6 +165,13 @@ export default function GarageView() {
               </div>
             </div>
             <AnalysisResults analysis={selected.analysis} />
+            {/* The end of a long read: a way back without scrolling up */}
+            <button
+              onClick={() => { setSelected(null); window.scrollTo({ top: 0 }); }}
+              className="!mt-4 w-full border border-line hover:border-line-strong text-ink-faint hover:text-ink-muted rounded-lg min-h-12 font-mono text-xs font-medium uppercase tracking-[0.12em] transition-all"
+            >
+              ← Back to Garage
+            </button>
           </div>
         ) : (
           <>
