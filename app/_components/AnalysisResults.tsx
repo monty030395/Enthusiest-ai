@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect, type RefObject } from "react";
 import {
   type Analysis,
-  type DriveMetric,
   isSpecified,
   computeCharacterScore,
   getQuip,
@@ -60,16 +59,6 @@ function tripReadout(assessment: string | undefined): string | null {
 function tempReadout(score: number): string {
   const state = score >= 8 ? "Running hot" : score >= 5 ? "Runs warm" : "Runs cool";
   return `${state}: ${score} of 10`;
-}
-
-// The words behind each bar on the multi-function display
-function DriveNote({ metric, label }: { metric: DriveMetric; label: string }) {
-  return (
-    <div className="py-3 border-b border-line last:border-0">
-      <p className="font-mono text-xs uppercase tracking-[0.12em] text-mfd/85 mb-1">{label}</p>
-      <p className="text-ink-muted text-sm leading-relaxed">{metric.description}</p>
-    </div>
-  );
 }
 
 function ModPotentialCard({ data }: { data: NonNullable<Analysis["modPotential"]> }) {
@@ -691,20 +680,14 @@ export default function AnalysisResults({
             <SectionLabel>Driving Character</SectionLabel>
             <MultiFunctionDisplay
               rows={[
-                { label: "Steering", score: result.drivingCharacter.steeringFeel.score },
-                { label: "Engine", score: result.drivingCharacter.engineCharacter.score },
-                { label: "Daily", score: result.drivingCharacter.dailyComfort.score },
-                { label: "Fun", score: result.drivingCharacter.overallFun.score },
+                { label: "Steering", score: result.drivingCharacter.steeringFeel.score, note: result.drivingCharacter.steeringFeel.description },
+                { label: "Engine", score: result.drivingCharacter.engineCharacter.score, note: result.drivingCharacter.engineCharacter.description },
+                { label: "Daily", score: result.drivingCharacter.dailyComfort.score, note: result.drivingCharacter.dailyComfort.description },
+                { label: "Fun", score: result.drivingCharacter.overallFun.score, note: result.drivingCharacter.overallFun.description },
               ]}
             />
-            <div className="mt-2">
-              <DriveNote metric={result.drivingCharacter.steeringFeel} label="Steering" />
-              <DriveNote metric={result.drivingCharacter.engineCharacter} label="Engine" />
-              <DriveNote metric={result.drivingCharacter.dailyComfort} label="Daily" />
-              <DriveNote metric={result.drivingCharacter.overallFun} label="Fun" />
-            </div>
             {result.drivingCharacter.summary && (
-              <p className="text-ink-muted text-xs italic leading-relaxed border-t border-line pt-4 mt-1">
+              <p className="text-ink-muted text-sm italic leading-relaxed pt-4">
                 {result.drivingCharacter.summary}
               </p>
             )}
