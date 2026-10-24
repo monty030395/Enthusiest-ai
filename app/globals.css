@@ -31,6 +31,10 @@
   /* Gauge needle — pointers, redlines, the start button's ring */
   --color-needle: #ff3b2f;
 
+  /* Unlit gauge face, and the amber multi-function display */
+  --color-dial: #060c10;
+  --color-mfd: #ffad3b;
+
   /* Hairlines — tinted toward the glow, like a bezel catching light */
   --color-line: rgba(169, 216, 255, 0.10);
   --color-line-strong: rgba(169, 216, 255, 0.18);
@@ -63,6 +67,20 @@ body {
   transform-box: view-box;
   transform-origin: 100px 100px;
   animation: tacho-rev 2.6s cubic-bezier(0.45, 0, 0.3, 1) infinite;
+}
+
+/* Results ignition sweep: every needle swings to full scale and settles on
+   its reading, like a cluster self-test when the key turns. --needle-to is
+   set per needle; with reduced motion it simply sits at the reading. */
+@keyframes needle-sweep {
+  0% { transform: rotate(0deg); }
+  45% { transform: rotate(var(--needle-max, 270deg)); }
+  100% { transform: rotate(var(--needle-to, 0deg)); }
+}
+.dial-needle {
+  transform-box: view-box;
+  transform: rotate(var(--needle-to, 0deg));
+  animation: needle-sweep 1.6s cubic-bezier(0.5, 0, 0.25, 1) 0.15s both;
 }
 
 :focus-visible {
