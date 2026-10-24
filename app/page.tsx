@@ -24,6 +24,8 @@ export default function Home() {
   const [result, setResult] = useState<Analysis | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
+  const hintRef = useRef<HTMLDivElement>(null);
+  const errorRef = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState(false);
   const [inputCollapsed, setInputCollapsed] = useState(false);
   const [urlHint, setUrlHint] = useState("");
@@ -65,6 +67,12 @@ export default function Home() {
     } else {
       setUrlHint(hint);
       setTimeout(() => setUrlHintVisible(true), 10);
+      // The input unfolds again (500ms) with the hint under the textarea;
+      // take them to it rather than leaving them at the top of the page
+      setTimeout(() => {
+        const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        hintRef.current?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
+      }, 550);
     }
   }
 
@@ -93,6 +101,30 @@ export default function Home() {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- runs once, on arrival from the share sheet
   }, []);
   /* eslint-enable react-hooks/set-state-in-effect */
+
+  // The progress card renders below the hero, how-to and input, which on a
+  // phone is well off screen, so a shared listing looked like it did nothing.
+  // While a pull or check runs the input folds away and the progress card
+  // sits at the top. A failure unfolds it again with the hint or error.
+  // Pull -> analyse hand over in one render, so this fires once per run.
+  const working = fetchingListing || loading;
+  const collapsed = inputCollapsed || working;
+  useEffect(() => {
+    if (!working) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
+  }, [working]);
+
+  // Same for a failed check: the error sits by the start button, below the
+  // fold once the input has unfolded again
+  useEffect(() => {
+    if (!error) return;
+    const timer = setTimeout(() => {
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      errorRef.current?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
+    }, 550);
+    return () => clearTimeout(timer);
+  }, [error]);
 
   useEffect(() => {
     if (!result) return;
@@ -237,7 +269,7 @@ export default function Home() {
       <main className="max-w-3xl mx-auto px-5 py-10 space-y-6">
 
         {/* Collapsible: Hero + Input */}
-        <div className={`overflow-hidden transition-all duration-500 ease-in-out ${inputCollapsed ? "max-h-0 opacity-0 pointer-events-none" : "max-h-[1600px] opacity-100"}`}>
+        <div className={`overflow-hidden transition-all duration-500 ease-in-out ${collapsed ? "max-h-0 opacity-0 pointer-events-none" : "max-h-[1600px] opacity-100"}`}>
           <div className="space-y-8">
 
         {/* Hero */}
@@ -342,6 +374,7 @@ export default function Home() {
                 />
                 {urlHint && (
                   <div
+                    ref={hintRef}
                     className="flex gap-2.5 bg-glow-500/10 border border-glow-600/40 rounded-lg px-4 py-3 transition-opacity duration-300"
                     style={{ opacity: urlHintVisible ? 1 : 0 }}
                   >
@@ -353,7 +386,7 @@ export default function Home() {
             )}
 
             {error && (
-              <div className="flex gap-3 rounded-lg px-4 py-3" style={{ backgroundColor: V_RED.bg, border: `1px solid ${V_RED.border}` }}>
+              <div ref={errorRef} className="flex gap-3 rounded-lg px-4 py-3" style={{ backgroundColor: V_RED.bg, border: `1px solid ${V_RED.border}` }}>
                 <span className="flex-shrink-0 font-bold" style={{ color: V_RED.text }}>!</span>
                 <p className="text-sm leading-relaxed" style={{ color: V_RED.text }}>{error}</p>
               </div>
