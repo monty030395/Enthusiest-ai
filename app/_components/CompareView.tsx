@@ -5,7 +5,7 @@ import { type SavedCheck } from "../_lib/garage";
 import { tallyUp, fetchHeadToHead, buildTallyShareText, type HeadToHead } from "../_lib/compare";
 import { shareOrCopy, createShareLink } from "../_lib/share";
 import { V_RED } from "./badges";
-import { Card, Tacho } from "./ui";
+import { Card, StartButton, Tacho } from "./ui";
 import { TallyBoard, HeadToHeadCard } from "./TallyPanels";
 
 // One head-to-head per pair per session — don't re-spend the API call when
@@ -78,11 +78,14 @@ export default function CompareView({ a, b, onBack }: { a: SavedCheck; b: SavedC
       {/* ── SETTLE IT: AI head-to-head ──────────────────── */}
       {!h2h && !h2hLoading && (
         <Card className="p-6 space-y-4">
-          <div>
-            <p className="font-mono text-[10px] font-medium uppercase tracking-[0.2em] text-ink-faint mb-2">Still arguing?</p>
-            <p className="text-ink-muted text-sm leading-relaxed">
-              The tally counts rows. The head-to-head has opinions — the strongest case for each car, the deal-breakers, and a straight call on where the money goes.
-            </p>
+          <div className="flex items-center gap-5">
+            <StartButton onClick={settleIt} label={<>Settle<br />it</>} />
+            <div>
+              <p className="font-display text-ink font-bold mb-1">Still arguing?</p>
+              <p className="text-ink-muted text-sm leading-relaxed">
+                The tally counts rows. The head-to-head has opinions: the strongest case for each car, the deal-breakers, and a straight call on where the money goes.
+              </p>
+            </div>
           </div>
           {h2hError && (
             <div className="flex gap-3 rounded-lg px-4 py-3" style={{ backgroundColor: V_RED.bg, border: `1px solid ${V_RED.border}` }}>
@@ -90,12 +93,6 @@ export default function CompareView({ a, b, onBack }: { a: SavedCheck; b: SavedC
               <p className="text-sm leading-relaxed" style={{ color: V_RED.text }}>{h2hError}</p>
             </div>
           )}
-          <button
-            onClick={settleIt}
-            className="w-full bg-glow-500 hover:bg-glow-400 active:bg-glow-600 text-carbon-950 font-mono font-bold uppercase tracking-[0.22em] rounded-lg py-4 transition-all text-xs"
-          >
-            Settle It — Head-to-Head
-          </button>
         </Card>
       )}
 

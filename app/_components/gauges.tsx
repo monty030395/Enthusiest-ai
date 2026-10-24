@@ -107,6 +107,70 @@ export function Cluster({ dials }: { dials: [ClusterDial, ClusterDial, ClusterDi
   );
 }
 
+// A thumbnail dial for lists and comparisons: the reading is a lit arc plus
+// the number, since tick marks at this size are just noise.
+export function MiniDial({ score, label }: { score: number | null; label: string }) {
+  const cx = 20, cy = 20, r = 15;
+  const value = score === null ? 0 : Math.max(0, Math.min(10, score));
+  const end = DIAL_START + (DIAL_SWEEP * value) / 10;
+  const [nx, ny] = polar(cx, cy, r - 3, DIAL_START);
+  return (
+    <span className="flex flex-col items-center gap-0.5" role="img" aria-label={`${label}: ${score === null ? "not scored" : `${score} out of 10`}`}>
+      <svg viewBox="0 0 40 36" className="w-11 h-auto" aria-hidden="true">
+        <circle cx={cx} cy={cy} r="19" className="fill-dial stroke-carbon-700" strokeWidth="1" />
+        <path d={arcPath(cx, cy, r, DIAL_START, DIAL_START + DIAL_SWEEP)} className="stroke-carbon-700" strokeWidth="2.5" fill="none" />
+        {value > 0 && (
+          <path d={arcPath(cx, cy, r, DIAL_START, end)} className="stroke-glow-400" strokeWidth="2.5" fill="none" style={{ filter: "drop-shadow(0 0 2px var(--color-glow-400))" }} />
+        )}
+        <g
+          className="dial-needle"
+          style={{ "--needle-to": `${(DIAL_SWEEP * value) / 10}deg`, transformOrigin: `${cx}px ${cy}px` } as CSSProperties}
+        >
+          <line x1={cx} y1={cy} x2={nx} y2={ny} className="stroke-needle" strokeWidth="1.6" strokeLinecap="round" />
+        </g>
+        <text x={cx} y={cy + 12} textAnchor="middle" className="fill-ink font-display" fontSize="9" fontWeight="700">
+          {score === null ? "?" : score}
+        </text>
+      </svg>
+      <span className="font-display text-[10px] font-semibold text-ink-faint leading-none whitespace-nowrap">{label}</span>
+    </span>
+  );
+}
+
+// Three mini dials in a row, in the same order as the results cluster
+export function MiniCluster({ investment, character, cred }: { investment: number | null; character: number | null; cred: number | null }) {
+  return (
+    <span className="inline-flex gap-1.5 rounded-xl bg-dial ring-1 ring-line px-2 pt-1.5 pb-1.5">
+      <MiniDial label="Invest" score={investment} />
+      <MiniDial label="Character" score={character} />
+      <MiniDial label="Cred" score={cred} />
+    </span>
+  );
+}
+
+// An LCD digit readout for a single count, lit or dimmed
+export function LcdNumber({ value, lit }: { value: number; lit: boolean }) {
+  return (
+    <span
+      className={`inline-block min-w-[2.5ch] rounded-md bg-dial ring-1 ring-line px-2.5 py-1 text-center font-mono text-2xl tabular-nums shadow-[inset_0_2px_8px_rgba(0,0,0,0.7)] ${
+        lit ? "text-glow-300 [text-shadow:0_0_8px_rgba(169,216,255,0.6)]" : "text-ink-faint/60"
+      }`}
+    >
+      {value}
+    </span>
+  );
+}
+
+// A small round indicator lamp — green when the row goes this car's way
+export function IndicatorLamp({ on }: { on: boolean }) {
+  return (
+    <span
+      aria-hidden="true"
+      className={`inline-block flex-none w-2 h-2 rounded-full ${on ? "bg-[#5fe0a8] shadow-[0_0_6px_#5fe0a8]" : "bg-carbon-700"}`}
+    />
+  );
+}
+
 // Temperature / fuel style gauge: a 100° arc across the top. `level` is 0–1
 // from the left mark; the red zone sits on whichever end is bad.
 export function HalfGauge({ level, left, right, danger }: { level: number; left: string; right: string; danger: "left" | "right" }) {
