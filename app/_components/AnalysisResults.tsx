@@ -411,12 +411,12 @@ export default function AnalysisResults({
       )}
 
       {/* ── SECTION 1: INVESTMENT ───────────────────────── */}
-      <div id="investment" ref={investmentSectionRef} className="scroll-mt-4 space-y-4">
+      <div id="investment" ref={investmentSectionRef} className="scroll-mt-16 space-y-4">
         <TileHeader label="Investment" score={result.investmentScore ?? null} quip={getQuip("investment", result.investmentScore ?? null)} />
 
         {/* Price Analysis */}
         {result.priceVerdict && (
-          <div ref={priceVerdictRef} className="scroll-mt-4">
+          <div ref={priceVerdictRef} className="scroll-mt-16">
             <Card className="p-6">
               <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-2">
                 <SectionLabel>Price Analysis</SectionLabel>
@@ -468,7 +468,7 @@ export default function AnalysisResults({
         {result.worstFinancialDecision && (() => {
           const t = VERDICT_THEME_MAP[result.worstFinancialDecision.rating] ?? V_NEUTRAL;
           return (
-            <div ref={walletRef} className="scroll-mt-4 rounded-xl border border-line overflow-hidden" style={{ backgroundColor: t.bg }}>
+            <div ref={walletRef} className="scroll-mt-16 rounded-xl border border-line overflow-hidden" style={{ backgroundColor: t.bg }}>
               <div className="h-1" style={{ backgroundColor: t.border }} />
               <div className="p-6">
                 <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-4">
@@ -495,7 +495,7 @@ export default function AnalysisResults({
         {result.ownershipPain && (() => {
           const t = result.ownershipPain.score >= 8 ? V_RED : result.ownershipPain.score >= 5 ? V_AMBER : V_GREEN;
           return (
-            <div ref={reliabilityRef} className="scroll-mt-4">
+            <div ref={reliabilityRef} className="scroll-mt-16">
             <Card className="p-6">
               <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-4">
                 <SectionLabel>Reliability Risk</SectionLabel>
@@ -562,7 +562,7 @@ export default function AnalysisResults({
       </div>
 
       {/* ── SECTION 2: CHARACTER ────────────────────────── */}
-      <div id="character" ref={characterSectionRef} className="scroll-mt-4 space-y-4">
+      <div id="character" ref={characterSectionRef} className="scroll-mt-16 space-y-4">
         <TileHeader label="Character" score={characterScore} quip={getQuip("character", characterScore)} />
 
         {/* Why Enthusiasts Care */}
@@ -604,12 +604,12 @@ export default function AnalysisResults({
       </div>
 
       {/* ── SECTION 3: STREET CRED ──────────────────────── */}
-      <div id="street-cred" ref={streetCredSectionRef} className="scroll-mt-4 space-y-4">
+      <div id="street-cred" ref={streetCredSectionRef} className="scroll-mt-16 space-y-4">
         <TileHeader label="Street Cred" score={result.vibeScore ?? null} />
 
         {/* Owner Vibe */}
         {result.ownerVibe?.label && (
-          <div ref={ownerVibeRef} className="scroll-mt-4">
+          <div ref={ownerVibeRef} className="scroll-mt-16">
             <Card className="p-6">
               <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-3">
                 <SectionLabel>Owner Vibe</SectionLabel>
