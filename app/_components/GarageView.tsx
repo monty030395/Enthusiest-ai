@@ -145,13 +145,13 @@ export default function GarageView() {
                 <span className="text-glow-400">←</span> Garage
               </button>
               <div className="flex items-center gap-3">
-                <p className="hidden min-[360px]:block font-mono text-xs text-ink-faint whitespace-nowrap">Checked {checkedShort(selected.savedAt)}</p>
+                <p className="hidden min-[360px]:block font-mono text-xs text-ink-faint whitespace-nowrap" title={`Checked ${checkedOn(selected.savedAt)}`}>{checkedShort(selected.savedAt)}</p>
                 {selected.listingUrl && (
                   <a
                     href={selected.listingUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-mono text-xs font-medium uppercase tracking-[0.12em] text-ink-muted hover:text-ink transition-colors min-h-11 inline-flex items-center"
+                    className="font-mono text-xs font-medium uppercase tracking-[0.12em] text-ink-muted hover:text-ink transition-colors min-h-11 inline-flex items-center whitespace-nowrap"
                   >
                     Listing ↗
                   </a>
@@ -353,10 +353,17 @@ export default function GarageView() {
       {!comparing && !selected && compareIds.length > 0 && (
         <div className="fixed bottom-0 inset-x-0 z-30 border-t border-line bg-carbon-950/90 backdrop-blur-md px-5 py-3">
           <div className="max-w-3xl mx-auto flex items-center justify-between gap-3">
-            <p className="font-mono text-xs text-ink-muted uppercase tracking-[0.12em] leading-relaxed min-w-0 truncate">
-              {comparePair.length === 2
-                ? `${comparePair[0].analysis.vehicle.model} vs ${comparePair[1].analysis.vehicle.model}`
-                : "Pick one more to compare"}
+            {/* Body type, and two lines if it needs them: spaced capitals cut
+                the pair's names off on a phone */}
+            <p className="text-sm text-ink-muted leading-snug min-w-0 line-clamp-2">
+              {comparePair.length === 2 ? (
+                <>
+                  <span className="text-ink">{comparePair[0].analysis.vehicle.model}</span> vs{" "}
+                  <span className="text-ink">{comparePair[1].analysis.vehicle.model}</span>
+                </>
+              ) : (
+                "Pick one more to compare"
+              )}
             </p>
             <div className="flex items-center gap-2 flex-shrink-0">
               <button
