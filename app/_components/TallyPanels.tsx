@@ -49,12 +49,12 @@ const SCORE_ROWS: Record<string, { short: string; score: (a: Analysis) => number
 export function TallyBoard({ a, b, tally }: { a: Analysis; b: Analysis; tally: Tally }) {
   const aName = `${a.vehicle.make} ${a.vehicle.model}`;
   const bName = `${b.vehicle.make} ${b.vehicle.model}`;
+  // The count sits either side of this line, so it names the winner
+  // without repeating the score
   const verdictLine =
     tally.aWins === tally.bWins
-      ? `${tally.aWins}–${tally.bWins}.`
-      : tally.aWins > tally.bWins
-        ? `${aName} takes it ${tally.aWins}–${tally.bWins}.`
-        : `${bName} takes it ${tally.bWins}–${tally.aWins}.`;
+      ? "All square."
+      : `${tally.aWins > tally.bWins ? aName : bName} takes it.`;
 
   const scoreRows = tally.rows.filter((r) => r.label in SCORE_ROWS);
   // A row neither car has anything for is only a pair of dashes
@@ -123,27 +123,24 @@ export function TallyBoard({ a, b, tally }: { a: Analysis; b: Analysis; tally: T
             </li>
           ))}
         </ul>
-        <div className="border-t border-line-strong px-5 py-4 bg-white/[0.02]">
-          <p className="font-display text-xs font-semibold text-ink-faint mb-2 text-center">
-            Rows won
-          </p>
-          <div className="grid grid-cols-2 gap-4">
-            <span><LcdNumber value={tally.aWins} lit={tally.aWins >= tally.bWins} /></span>
-            <span className="text-right"><LcdNumber value={tally.bWins} lit={tally.bWins >= tally.aWins} /></span>
-          </div>
-          {/* How a row is won, where the count is read */}
-          <p className="mt-3 text-xs text-ink-faint leading-relaxed text-center">
-            Scores count when the cars are 2+ points apart; flags and ratings on any difference. Price is shown, never scored.
-          </p>
-        </div>
       </Card>
 
-      {/* Verdict bar */}
+      {/* The tally: rows won either side of the call */}
       <div className="rounded-xl bg-dial/60 ring-1 ring-line overflow-hidden">
-        <PanelLegend>The tally</PanelLegend>
-        <div className="px-6 py-5 space-y-1">
-          <p className="text-ink leading-relaxed text-[15px] font-medium">{verdictLine}</p>
-          <p className="text-ink-muted text-sm italic">{tallyQuip(tally.aWins, tally.bWins)}</p>
+        <PanelLegend>The tally: rows won</PanelLegend>
+        <div className="px-5 py-5 space-y-4">
+          <div className="grid grid-cols-[auto_1fr_auto] items-center gap-4">
+            <LcdNumber value={tally.aWins} lit={tally.aWins >= tally.bWins} />
+            <div className="text-center min-w-0">
+              <p className="text-ink leading-snug text-[15px] font-medium [overflow-wrap:anywhere]">{verdictLine}</p>
+              <p className="text-ink-muted text-sm italic mt-1">{tallyQuip(tally.aWins, tally.bWins)}</p>
+            </div>
+            <LcdNumber value={tally.bWins} lit={tally.bWins >= tally.aWins} />
+          </div>
+          {/* How a row is won, where the count is read */}
+          <p className="text-xs text-ink-faint leading-relaxed text-center border-t border-line pt-3">
+            Scores count when the cars are 2+ points apart; flags and ratings on any difference. Price is shown, never scored.
+          </p>
         </div>
       </div>
     </>
