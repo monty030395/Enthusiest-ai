@@ -1,22 +1,40 @@
 // Presentational halves of a comparison, shared by the interactive Garage
 // view and the read-only public /c/<id> page. No hooks, no state — whatever
 // renders these decides where the data came from.
-import { type Analysis } from "../_lib/analysis";
+import type { ReactNode } from "react";
+import { type Analysis, computeCharacterScore } from "../_lib/analysis";
 import { type Tally, type HeadToHead, tallyQuip } from "../_lib/compare";
-import { V_RED, verdictBadgeStyle, RoastBadge } from "./badges";
+import { V_GREEN, V_RED, verdictBadgeStyle, RoastBadge } from "./badges";
 import { Card } from "./ui";
+import { MiniCluster, LcdNumber, IndicatorLamp } from "./gauges";
+
+// Section header strip, lit like a backlit panel legend
+function PanelLegend({ children }: { children: ReactNode }) {
+  return (
+    <div className="bg-dial border-b border-line px-5 py-3">
+      <span className="font-display text-sm font-bold text-glow-300 [text-shadow:0_0_8px_rgba(169,216,255,0.45)]">{children}</span>
+    </div>
+  );
+}
 
 function CarHeader({ analysis }: { analysis: Analysis }) {
   const v = analysis.vehicle;
   return (
     <div className="min-w-0 space-y-1.5">
-      <p className="font-mono text-[9px] font-medium uppercase tracking-[0.22em] text-ink-faint">{v.year}</p>
-      <h3 className="font-display text-lg font-extrabold text-ink tracking-tight leading-tight">
+      <p className="font-mono text-[11px] text-ink-faint">{v.year}</p>
+      <h3 className="font-display text-lg font-bold text-ink tracking-tight leading-tight">
         {v.make} {v.model}
       </h3>
       {v.price && (
-        <p className="font-mono text-glow-400 text-sm font-bold tabular-nums">{v.price}</p>
+        <p className="font-mono text-glow-300 text-sm tabular-nums [text-shadow:0_0_6px_rgba(169,216,255,0.45)]">{v.price}</p>
       )}
+      <div className="pt-1">
+        <MiniCluster
+          investment={analysis.investmentScore ?? null}
+          character={computeCharacterScore(analysis)}
+          cred={analysis.vibeScore ?? null}
+        />
+      </div>
       {analysis.label && (
         <div className="pt-0.5 flex flex-wrap items-center gap-1.5">
           <span style={{ ...verdictBadgeStyle(analysis.label), whiteSpace: "normal" as const }}>{analysis.label}</span>
@@ -38,14 +56,13 @@ export function TallyBoard({ a, b, tally }: { a: Analysis; b: Analysis; tally: T
         : `${bName} takes it ${tally.bWins}–${tally.aWins}.`;
 
   const cell = (won: boolean, lost: boolean) =>
-    `text-xs leading-snug ${won ? "text-emerald-400 font-bold" : lost ? "text-ink-faint" : "text-ink-muted"}`;
+    `flex items-baseline gap-1.5 text-xs leading-snug ${won ? "text-ink font-bold" : lost ? "text-ink-faint" : "text-ink-muted"}`;
 
   return (
     <>
       {/* Car headers */}
       <Card className="overflow-hidden">
-        <div className="h-px bg-gradient-to-r from-glow-500 via-glow-500/40 to-transparent" />
-        <div className="p-5 grid grid-cols-2 gap-4">
+        <div className="p-5 grid grid-cols-1 min-[440px]:grid-cols-2 gap-5">
           <CarHeader analysis={a} />
           <CarHeader analysis={b} />
         </div>
@@ -56,7 +73,7 @@ export function TallyBoard({ a, b, tally }: { a: Analysis; b: Analysis; tally: T
         <ul className="divide-y divide-line">
           {tally.rows.map((row) => (
             <li key={row.label} className="px-5 py-3">
-              <p className="font-mono text-[9px] font-medium uppercase tracking-[0.22em] text-ink-faint mb-1.5 flex items-center gap-1.5">
+              <p className="font-display text-[11px] font-semibold text-ink-faint mb-1.5 flex items-center gap-1.5">
                 {row.label}
                 {row.winner === 0 && !row.exact && (
                   <span className="normal-case tracking-normal text-ink-faint/60">· too close to call</span>
@@ -64,11 +81,11 @@ export function TallyBoard({ a, b, tally }: { a: Analysis; b: Analysis; tally: T
               </p>
               <div className="grid grid-cols-2 gap-4">
                 <p className={cell(row.winner === 1, row.winner === 2)}>
-                  {row.winner === 1 && <span className="text-emerald-400 mr-1.5">●</span>}
+                  <IndicatorLamp on={row.winner === 1} />
                   {row.aDisplay}
                 </p>
                 <p className={cell(row.winner === 2, row.winner === 1)}>
-                  {row.winner === 2 && <span className="text-emerald-400 mr-1.5">●</span>}
+                  <IndicatorLamp on={row.winner === 2} />
                   {row.bDisplay}
                 </p>
               </div>
@@ -76,28 +93,19 @@ export function TallyBoard({ a, b, tally }: { a: Analysis; b: Analysis; tally: T
           ))}
         </ul>
         <div className="border-t border-line-strong px-5 py-4 bg-white/[0.02]">
-          <p className="font-mono text-[9px] font-medium uppercase tracking-[0.22em] text-ink-faint mb-1.5">
+          <p className="font-display text-[11px] font-semibold text-ink-faint mb-2">
             Rows won
           </p>
           <div className="grid grid-cols-2 gap-4">
-            <p className={`font-mono text-2xl font-bold tabular-nums ${tally.aWins >= tally.bWins ? "text-emerald-400" : "text-ink-faint"}`}>
-              {tally.aWins}
-            </p>
-            <p className={`font-mono text-2xl font-bold tabular-nums ${tally.bWins >= tally.aWins ? "text-emerald-400" : "text-ink-faint"}`}>
-              {tally.bWins}
-            </p>
+            <span><LcdNumber value={tally.aWins} lit={tally.aWins >= tally.bWins} /></span>
+            <span><LcdNumber value={tally.bWins} lit={tally.bWins >= tally.aWins} /></span>
           </div>
         </div>
       </Card>
 
       {/* Verdict bar */}
       <div className="rounded-xl bg-carbon-900 border border-line-strong overflow-hidden">
-        <div className="bg-glow-500 px-5 py-3 flex items-center gap-2.5">
-          <div className="w-1.5 h-1.5 rounded-full bg-carbon-950/50" />
-          <span className="font-mono text-[10px] font-bold uppercase tracking-[0.24em] text-carbon-950">
-            The Tally
-          </span>
-        </div>
+        <PanelLegend>The tally</PanelLegend>
         <div className="px-6 py-5 space-y-1">
           <p className="text-ink leading-relaxed text-[15px] font-medium">{verdictLine}</p>
           <p className="text-ink-muted text-sm italic">{tallyQuip(tally.aWins, tally.bWins)}</p>
@@ -118,8 +126,11 @@ export function HeadToHeadCard({ a, b, h2h }: { a: Analysis; b: Analysis; h2h: H
           Case for the {analysis.vehicle.model}
         </p>
         {h2h.winner === side && (
-          <span className="font-mono text-[8px] font-bold uppercase tracking-[0.16em] text-emerald-400 border border-emerald-400/40 bg-emerald-400/10 rounded px-1.5 py-0.5">
-            Winner
+          <span
+            className="inline-flex items-center gap-1.5 font-display text-[11px] font-bold rounded px-1.5 py-0.5"
+            style={{ color: V_GREEN.text, backgroundColor: V_GREEN.bg, border: `1px solid ${V_GREEN.border}` }}
+          >
+            <IndicatorLamp on /> Winner
           </span>
         )}
       </div>
@@ -142,12 +153,7 @@ export function HeadToHeadCard({ a, b, h2h }: { a: Analysis; b: Analysis; h2h: H
 
   return (
     <div className="rounded-xl bg-carbon-900 border border-line-strong overflow-hidden">
-      <div className="bg-glow-500 px-5 py-3 flex items-center gap-2.5">
-        <div className="w-1.5 h-1.5 rounded-full bg-carbon-950/50" />
-        <span className="font-mono text-[10px] font-bold uppercase tracking-[0.24em] text-carbon-950">
-          The Head-to-Head
-        </span>
-      </div>
+      <PanelLegend>The head-to-head</PanelLegend>
       <div className="px-6 py-5 space-y-5">
         <div>
           <h3 className="font-display text-2xl font-extrabold text-ink tracking-tight leading-tight">{winnerName}</h3>

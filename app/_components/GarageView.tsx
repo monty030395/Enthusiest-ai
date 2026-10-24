@@ -6,25 +6,21 @@ import { computeCharacterScore } from "../_lib/analysis";
 import { type SavedCheck, useGarage, deleteCheck, clearGarage, exportCheck, importCheck } from "../_lib/garage";
 import { verdictBadgeStyle, RoastBadge } from "./badges";
 import { Card } from "./ui";
+import { MiniCluster } from "./gauges";
 import Masthead from "./Masthead";
 import AnalysisResults from "./AnalysisResults";
 import CompareView from "./CompareView";
 
-function scoreColor(score: number | null): string {
-  if (score === null) return "text-ink-faint";
-  if (score >= 7) return "text-emerald-400";
-  if (score >= 5) return "text-amber-400";
-  return "text-red-400";
-}
-
-function MiniScore({ label, score }: { label: string; score: number | null }) {
+// The punched hole of a key tag. With the car picked to tally it lights up,
+// like a key hung on the board ready to go.
+function TagHole({ picked }: { picked: boolean }) {
   return (
-    <div className="flex flex-col items-center gap-0.5">
-      <span className={`font-mono text-sm font-bold tabular-nums leading-none ${scoreColor(score)}`}>
-        {score ?? "?"}
-      </span>
-      <span className="font-mono text-[8px] uppercase tracking-[0.16em] text-ink-faint whitespace-nowrap">{label}</span>
-    </div>
+    <span
+      aria-hidden="true"
+      className={`block w-4 h-4 rounded-full bg-carbon-950 shadow-[inset_0_2px_3px_rgba(0,0,0,0.8)] ring-[3px] transition-shadow ${
+        picked ? "ring-glow-400 shadow-[0_0_10px_rgba(169,216,255,0.6)]" : "ring-carbon-600"
+      }`}
+    />
   );
 }
 
@@ -183,28 +179,37 @@ export default function GarageView() {
                 {checks.map((check) => {
                   const a = check.analysis;
                   return (
-                    <Card key={check.id} className="overflow-hidden">
+                    <div
+                      key={check.id}
+                      className={`flex rounded-xl rounded-l-[2rem] bg-carbon-900 overflow-hidden ring-1 transition-shadow ${
+                        compareIds.includes(check.id) ? "ring-glow-500/60" : "ring-line"
+                      }`}
+                    >
+                      <div className="flex-none w-11 grid place-items-center border-r border-dashed border-line-strong">
+                        <TagHole picked={compareIds.includes(check.id)} />
+                      </div>
+                      <div className="flex-1 min-w-0">
                       <button
                         onClick={() => { setSelected(check); window.scrollTo({ top: 0 }); }}
                         className="w-full text-left p-5 hover:bg-white/[0.03] active:bg-white/[0.05] transition-colors"
                       >
-                        <div className="flex items-start justify-between gap-3">
+                        <div className="flex flex-wrap items-start justify-between gap-3">
                           <div className="min-w-0">
-                            <p className="font-mono text-[9px] font-medium uppercase tracking-[0.22em] text-ink-faint mb-1.5">
-                              {a.vehicle.year} · Checked {checkedOn(check.savedAt)}
+                            <p className="font-mono text-[11px] text-ink-faint mb-1.5">
+                              {a.vehicle.year}, checked {checkedOn(check.savedAt)}
                             </p>
-                            <h3 className="font-display text-xl font-extrabold text-ink tracking-tight leading-tight truncate">
+                            <h3 className="font-display text-xl font-bold text-ink tracking-tight leading-tight truncate">
                               {a.vehicle.make} {a.vehicle.model}
                             </h3>
                             {a.vehicle.price && (
-                              <p className="font-mono text-glow-400 text-sm font-bold tabular-nums mt-1">{a.vehicle.price}</p>
+                              <p className="font-mono text-glow-300 text-sm tabular-nums mt-1 [text-shadow:0_0_6px_rgba(169,216,255,0.45)]">{a.vehicle.price}</p>
                             )}
                           </div>
-                          <div className="flex gap-3 flex-shrink-0 pt-1">
-                            <MiniScore label="Inv" score={a.investmentScore ?? null} />
-                            <MiniScore label="Chr" score={computeCharacterScore(a)} />
-                            <MiniScore label="Cred" score={a.vibeScore ?? null} />
-                          </div>
+                          <MiniCluster
+                            investment={a.investmentScore ?? null}
+                            character={computeCharacterScore(a)}
+                            cred={a.vibeScore ?? null}
+                          />
                         </div>
                         {a.label && (
                           <div className="mt-3 flex flex-wrap items-center gap-2">
@@ -222,7 +227,7 @@ export default function GarageView() {
                               : "text-ink-faint hover:text-ink-muted"
                           }`}
                         >
-                          {compareIds.includes(check.id) ? "✓ Picked to tally" : "+ Tally up"}
+                          {compareIds.includes(check.id) ? "On the hook to tally" : "+ Tally up"}
                         </button>
                         <button
                           onClick={() => handleDelete(check.id)}
@@ -231,7 +236,8 @@ export default function GarageView() {
                           Remove
                         </button>
                       </div>
-                    </Card>
+                      </div>
+                    </div>
                   );
                 })}
 

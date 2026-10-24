@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 
 export function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
@@ -59,7 +59,7 @@ export function GuardedSwitch({ checked, onChange, label }: { checked: boolean; 
 // The one big control on the analyser: a push-to-start button. Round, ringed
 // in needle red when it can fire, dimmed when there's nothing to check yet.
 // A running check disables it but keeps it lit, like an engine that's on.
-export function StartButton({ onClick, disabled, busy }: { onClick: () => void; disabled?: boolean; busy?: boolean }) {
+export function StartButton({ onClick, disabled, busy, label }: { onClick: () => void; disabled?: boolean; busy?: boolean; label?: ReactNode }) {
   const lit = !disabled || busy;
   return (
     <button
@@ -74,7 +74,7 @@ export function StartButton({ onClick, disabled, busy }: { onClick: () => void; 
           aria-hidden="true"
         />
         <span className={`font-display text-[11px] font-bold uppercase tracking-[0.1em] leading-tight ${lit ? "text-ink" : "text-ink-faint"}`}>
-          {busy ? <>Checking</> : <>Start<br />check</>}
+          {busy ? <>Checking</> : label ?? <>Start<br />check</>}
         </span>
       </span>
     </button>
