@@ -214,7 +214,7 @@ export default function Home() {
         data = null;
       }
       if (!res.ok || !data) {
-        setError((data as { error?: string } | null)?.error || `The server choked on that one (HTTP ${res.status}) — give it another go.`);
+        setError((data as { error?: string } | null)?.error || "Couldn't finish that check — give it another go.");
       } else {
         const analysis = data as Analysis;
         setResult(analysis);
@@ -259,7 +259,7 @@ export default function Home() {
 
   const canAnalyse = inputMode === "text" ? pastedText.trim().length > 0 : images.length > 0;
 
-  const inputModeLabels: Record<"text" | "images", string> = { text: "Paste Text", images: "Screenshots" };
+  const inputModeLabels: Record<"text" | "images", string> = { text: "Link or Text", images: "Screenshots" };
 
   return (
     <div className="min-h-screen bg-carbon-950 text-ink font-sans">
@@ -418,7 +418,7 @@ export default function Home() {
             onClick={handleReset}
             className="w-full border border-line hover:border-line-strong text-ink-faint hover:text-ink-muted rounded-lg py-3 font-mono text-[10px] font-medium uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2"
           >
-            <span className="text-glow-400 text-sm leading-none">+</span> New Analysis
+            <span className="text-glow-400 text-sm leading-none">+</span> New Check
           </button>
         )}
 
@@ -458,7 +458,7 @@ export default function Home() {
               onClick={handleReset}
               className="w-full border border-line hover:border-line-strong text-ink-faint hover:text-ink-muted rounded-lg py-3.5 font-mono text-[11px] font-medium uppercase tracking-[0.2em] transition-all"
             >
-              Analyse Another Listing
+              Check Another Listing
             </button>
           </div>
         )}

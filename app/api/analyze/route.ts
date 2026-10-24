@@ -776,7 +776,7 @@ export async function POST(req: NextRequest) {
       );
     }
     return NextResponse.json(
-      { error: "Analysis failed. Check your API key and try again." },
+      { error: "Couldn't finish that check — give it another go. If it keeps failing, paste the listing's description instead of the link." },
       { status: 500 }
     );
   }
