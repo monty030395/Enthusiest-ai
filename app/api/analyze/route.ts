@@ -155,10 +155,6 @@ Return ONLY valid JSON in this exact structure, no markdown, no extra text:
     "level": "",
     "reason": ""
   },
-  "marketTrend": {
-    "trend": "",
-    "reason": ""
-  },
   "worstFinancialDecision": {
     "rating": "",
     "reasons": [""]
@@ -334,9 +330,6 @@ socialStanding — one punchy, quotable sentence capturing THIS exact model's so
 regretRisk.level — pick ONE: "Low" | "Medium" | "High" | "Extreme". Likelihood a typical buyer will regret this purchase within 12 months.
 regretRisk.reason — one sentence on the specific factors that could turn this purchase sour. Reference real risks for this model and condition.
 
-marketTrend.trend — pick ONE: "Stable" | "Rising" | "Falling". Direction of this model's market value in NZ over the next 2–3 years.
-marketTrend.reason — one sentence on the investment trajectory, specific to this model's NZ market (supply, demand, what's capping or lifting values). Write it fresh — do not reuse any example wording from this prompt.
-
 investmentScore — a single number 1–10 representing overall investment worthiness. Combine price fairness (priceVerdict), ownership cost (ownershipPain.score, worstFinancialDecision), and long-term value outlook (classicPotential, priceOutlook). Use the full range — 10 = exceptional deal on a rising classic, 1 = overpriced financial nightmare. If no asking price is listed, you cannot judge deal quality — base the score on ownership cost and desirability alone and do NOT award a high score that implies good value you can't verify.
 
 vibeScore — a single number 1–10 representing social desirability and community standing among NZ enthusiasts. Weight: Cars & Coffee appeal, community credibility, owner vibe reputation, and social standing. SPREAD these scores — most cars land 4–7. Reserve 8–10 for genuinely iconic, crowd-stopping metal (E46 M3, R34 GTR, NSX, FD RX-7); a common trim, a base luxury sedan, or a mainstream hatch is a 5–6, not an 8. A damaged or compromised example of an iconic car scores lower than a clean one.
@@ -473,7 +466,6 @@ function extractRoastableFields(a: Record<string, any>) {
     },
     classicPotentialReasons: a.classicPotential?.reasons ?? [],
     regretRiskReason: a.regretRisk?.reason ?? "",
-    marketTrendReason: a.marketTrend?.reason ?? "",
     worstFinancialDecisionReasons: a.worstFinancialDecision?.reasons ?? [],
     redFlagExplanations: (a.redFlags ?? []).map((r: any) => r.explanation ?? ""),
     modPotential: {
@@ -543,7 +535,6 @@ function applyRoastRewrite(original: Record<string, any>, rewrite: Record<string
 
   if (merged.classicPotential) merged.classicPotential.reasons = strArr(rewrite.classicPotentialReasons, original.classicPotential?.reasons ?? []);
   if (merged.regretRisk) merged.regretRisk.reason = str(rewrite.regretRiskReason, original.regretRisk?.reason);
-  if (merged.marketTrend) merged.marketTrend.reason = str(rewrite.marketTrendReason, original.marketTrend?.reason);
   if (merged.worstFinancialDecision)
     merged.worstFinancialDecision.reasons = strArr(rewrite.worstFinancialDecisionReasons, original.worstFinancialDecision?.reasons ?? []);
 
