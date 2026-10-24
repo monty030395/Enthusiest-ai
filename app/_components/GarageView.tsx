@@ -114,7 +114,7 @@ export default function GarageView() {
     if (updated) {
       setImportError("");
     } else {
-      setImportError("That file isn't a Motormind check — export one from a Garage on another device and try again.");
+      setImportError("That file isn't a Motormind check — use Save file on a check in another Garage and try again.");
       setTimeout(() => setImportError(""), 5000);
     }
   }
@@ -158,9 +158,10 @@ export default function GarageView() {
                 )}
                 <button
                   onClick={() => handleExport(selected)}
-                  className="font-mono text-xs font-medium uppercase tracking-[0.12em] text-glow-400 hover:text-glow-300 transition-colors min-h-11 inline-flex items-center"
+                  title="Download this check as a file to send to a mate or open on another device"
+                  className="font-mono text-xs font-medium uppercase tracking-[0.12em] text-glow-400 hover:text-glow-300 transition-colors min-h-11 inline-flex items-center whitespace-nowrap"
                 >
-                  Export
+                  Save file
                 </button>
               </div>
             </div>
