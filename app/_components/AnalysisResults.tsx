@@ -31,12 +31,29 @@ const FUEL_LEVEL: Record<string, number> = {
   "Catastrophic Wallet Destruction": 0.04,
 };
 
-// The trip computer's headline: the price verdict as a dash readout. Null
-// when there's no price to judge, so the listing's label shows instead.
+// What the fuel gauge says, in its own words. The full rating is a joke
+// that wraps on a half-width gauge; it stays on the Wallet Damage card
+const FUEL_READOUT: Record<string, string> = {
+  "Sensible Purchase": "Sips fuel",
+  "Manageable Pain": "Steady drain",
+  "Emotionally Justified Disaster": "Heavy drain",
+  "Dangerous": "Near empty",
+  "Catastrophic Wallet Destruction": "Running on fumes",
+};
+
+// The trip computer's headline: the price verdict as a short dash readout,
+// sized to sit beside the price on one line. The full verdict stays on the
+// Price Analysis card. Null when there's no price to judge, so the
+// listing's label shows instead.
+const TRIP_READOUT: Record<string, string> = {
+  "Fair": "Fair buy",
+  "Premium Justified": "Fair premium",
+  "Paying the Premium": "Premium price",
+};
+
 function tripReadout(assessment: string | undefined): string | null {
   if (!assessment || assessment === "No Price Listed") return null;
-  if (assessment === "Fair") return "Fair buy";
-  return assessment;
+  return TRIP_READOUT[assessment] ?? assessment;
 }
 
 // What the temperature needle says, in the gauge's own words
@@ -243,8 +260,11 @@ export default function AnalysisResults({
           className="w-full text-left rounded-lg bg-dial ring-1 ring-line px-3.5 py-3 font-mono text-mfd shadow-[inset_0_0_18px_rgba(255,173,59,0.06)] [text-shadow:0_0_6px_rgba(255,173,59,0.45)] active:scale-[0.99] transition-transform"
         >
           <span className="flex items-baseline justify-between gap-3">
-            <span className="text-2xl uppercase tracking-[0.06em] leading-tight">
+            <span className="text-xl min-[360px]:text-2xl uppercase tracking-[0.06em] leading-tight">
               {tripHeadline ?? result.label}
+              {tripHeadline && result.priceVerdict.assessment in TRIP_READOUT && result.priceVerdict.assessment !== "Fair" && (
+                <span className="sr-only">: {result.priceVerdict.assessment}</span>
+              )}
             </span>
             {result.vehicle.price && (
               <span className="text-lg tabular-nums whitespace-nowrap">{result.vehicle.price}</span>
@@ -334,7 +354,10 @@ export default function AnalysisResults({
               >
                 <span className="justify-self-start font-display text-xs font-semibold uppercase tracking-[0.08em] text-ink-faint">Wallet damage</span>
                 <HalfGauge level={FUEL_LEVEL[result.worstFinancialDecision.rating]} left="E" right="F" danger="left" />
-                <span className="font-display text-xs font-semibold text-ink">{result.worstFinancialDecision.rating}</span>
+                <span className="font-display text-xs font-semibold text-ink">
+                  {FUEL_READOUT[result.worstFinancialDecision.rating] ?? result.worstFinancialDecision.rating}
+                  <span className="sr-only">: {result.worstFinancialDecision.rating}</span>
+                </span>
               </button>
             )}
           </div>
