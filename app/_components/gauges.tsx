@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useId, useRef, type CSSProperties, type ReactNode } from "react";
 
 // The results screen's instrument panel: dials for scores, half-moon gauges
 // for temperature and fuel, an amber multi-function display, warning lamps
@@ -42,7 +42,9 @@ const DIAL_START = 135; // bottom-left, sweeping 270° clockwise to bottom-right
 const DIAL_SWEEP = 270;
 
 // A 0–10 score dial. Null scores show "?" with the needle parked at zero.
-export function Dial({ score, label, big = false }: { score: number | null; label: string; big?: boolean }) {
+// The cluster prints its labels on the switches underneath, so it turns the
+// face label off and lets the reading sit a little lower and larger.
+export function Dial({ score, label, big = false, faceLabel = true }: { score: number | null; label: string; big?: boolean; faceLabel?: boolean }) {
   const glow = useSvgId("dial");
   const cx = 50, cy = 50, r = 42;
   const value = score === null ? 0 : Math.max(0, Math.min(10, score));
@@ -68,12 +70,14 @@ export function Dial({ score, label, big = false }: { score: number | null; labe
           </g>
         );
       })}
-      <text x={cx} y={cy + 24} textAnchor="middle" className="fill-ink font-display" fontSize={big ? 12 : 13} fontWeight="700">
+      <text x={cx} y={cy + (faceLabel ? 24 : 30)} textAnchor="middle" className="fill-ink font-display" fontSize={faceLabel ? (big ? 12 : 13) : (big ? 14 : 16)} fontWeight="700">
         {score === null ? "?" : score}
       </text>
-      <text x={cx} y={cy + 34} textAnchor="middle" className="fill-ink-faint font-display" fontSize={big ? 6.5 : 5.8} fontWeight="600" letterSpacing="0.4">
-        {label.toUpperCase()}
-      </text>
+      {faceLabel && (
+        <text x={cx} y={cy + 34} textAnchor="middle" className="fill-ink-faint font-display" fontSize={big ? 6.5 : 5.8} fontWeight="600" letterSpacing="0.4">
+          {label.toUpperCase()}
+        </text>
+      )}
       <g
         className="dial-needle"
         style={{ "--needle-to": `${(DIAL_SWEEP * value) / 10}deg`, transformOrigin: `${cx}px ${cy}px` } as CSSProperties}
@@ -87,20 +91,46 @@ export function Dial({ score, label, big = false }: { score: number | null; labe
 
 export type ClusterDial = { label: string; score: number | null; onClick: () => void };
 
-// Investment, Character (the big centre dial), Street Cred. Each dial is a
-// button that jumps to its section, as the old score chips did.
+// Remembers that the switches have had their one-time glow on this device
+const SWITCH_HINT_KEY = "motormind.switchHint.v1";
+
+// Investment, Character (the big centre dial), Street Cred. Each column is
+// one button: the dial plus a lit dash switch underneath with a ↓, so it
+// reads as something to press. The first time anyone sees results, the
+// switches glow once after the ignition sweep, like a self-test.
 export function Cluster({ dials }: { dials: [ClusterDial, ClusterDial, ClusterDial] }) {
+  const ref = useRef<HTMLDivElement>(null);
+  // Set on the DOM, not in state, so a server-rendered shared page hydrates
+  // without a mismatch
+  useEffect(() => {
+    try {
+      if (window.localStorage.getItem(SWITCH_HINT_KEY)) return;
+      window.localStorage.setItem(SWITCH_HINT_KEY, "1");
+    } catch {
+      return; // storage blocked — skip the hint rather than glow every time
+    }
+    ref.current?.classList.add("switch-hint");
+  }, []);
   return (
-    <div className="mx-auto w-full max-w-md grid grid-cols-[1fr_1.35fr_1fr] items-end gap-1 rounded-2xl bg-dial ring-1 ring-line px-2 pt-3 pb-2 shadow-[inset_0_10px_24px_rgba(0,0,0,0.6)]">
+    <div ref={ref} className="mx-auto w-full max-w-md grid grid-cols-[1fr_1.35fr_1fr] items-end gap-1 rounded-2xl bg-dial ring-1 ring-line px-2 pt-3 pb-2.5 shadow-[inset_0_10px_24px_rgba(0,0,0,0.6)]">
       {dials.map((d, i) => (
         <button
           key={d.label}
           type="button"
           onClick={d.onClick}
           aria-label={`${d.label}: ${d.score === null ? "not scored" : `${d.score} out of 10`}. Jump to section.`}
-          className="rounded-full active:scale-95 transition-transform focus-visible:outline-offset-0"
+          className="group grid justify-items-center gap-1.5 rounded-xl focus-visible:outline-offset-0"
         >
-          <Dial score={d.score} label={d.label} big={i === 1} />
+          <span className="w-full transition-transform group-active:scale-95">
+            <Dial score={d.score} label={d.label} big={i === 1} faceLabel={false} />
+          </span>
+          <span
+            className="dash-switch inline-flex items-center gap-1 rounded-md bg-carbon-850 ring-1 ring-line-strong px-2 py-1 font-display text-[10px] font-semibold uppercase tracking-[0.06em] text-glow-400 whitespace-nowrap shadow-[0_2px_0_var(--color-carbon-950),inset_0_1px_0_rgba(255,255,255,0.06)] [text-shadow:0_0_6px_rgba(169,216,255,0.45)] transition-all group-hover:text-glow-300 group-hover:ring-glow-600/60 group-active:translate-y-[2px] group-active:shadow-none"
+            aria-hidden="true"
+          >
+            {d.label}
+            <span className="text-[9px] leading-none opacity-80">↓</span>
+          </span>
         </button>
       ))}
     </div>

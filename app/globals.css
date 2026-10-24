@@ -83,6 +83,16 @@ body {
   animation: needle-sweep 1.6s cubic-bezier(0.5, 0, 0.25, 1) 0.15s both;
 }
 
+/* The cluster's switches glow twice once the needles settle, the first time
+   results are ever shown, to say "press me". Reduced motion skips it. */
+@keyframes switch-hint {
+  0%, 50%, 100% { box-shadow: 0 2px 0 var(--color-carbon-950); }
+  25%, 75% { box-shadow: 0 2px 0 var(--color-carbon-950), 0 0 0 1px var(--color-glow-500), 0 0 14px var(--color-glow-500); color: var(--color-glow-300); }
+}
+.switch-hint .dash-switch {
+  animation: switch-hint 1.4s ease-in-out 1.8s both;
+}
+
 :focus-visible {
   outline: 2px solid var(--color-glow-500);
   outline-offset: 2px;
