@@ -409,6 +409,41 @@ FEW-SHOT EXAMPLES (car: Toyota Camry — you are never rewriting this car; these
 
 Some values you receive will be arrays of strings — rewrite each entry in the array individually, preserving array order and length. Some values may be nested objects — preserve the same nested shape. Return ONLY valid JSON, no markdown, no extra text.`;
 
+// The labels the prompt allows. The model still invents one now and then
+// ("Project Potential"), which then has no badge colour and no place in
+// Compare, so an invented label is swapped for the closest real one: first
+// by the words in it, then by what the rest of the analysis says.
+const LABELS = [
+  "Hidden Gem", "Future Classic", "Premium Asking Price", "Cheap Thrill",
+  "Money Pit", "Peak Daily Driver", "Overrated", "Underrated",
+] as const;
+
+const LABEL_WORDS: [(typeof LABELS)[number], RegExp][] = [
+  ["Money Pit", /project|pit|repair|rebuild|basket|risk|liabilit/i],
+  ["Hidden Gem", /gem|bargain|steal|sleeper|find/i],
+  ["Future Classic", /classic|collect|icon|legend|apprec/i],
+  ["Premium Asking Price", /premium|overpriced|expensive|pricey|ambitious/i],
+  ["Cheap Thrill", /cheap|thrill|fun|budget|toy/i],
+  ["Peak Daily Driver", /daily|commut|practical|sensible|reliab/i],
+  ["Overrated", /overrat|hype/i],
+  ["Underrated", /underrat|overlook|unloved/i],
+];
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- untrusted model JSON
+function normalizeLabel(a: Record<string, any>): string {
+  const label = typeof a.label === "string" ? a.label.trim() : "";
+  const exact = LABELS.find((l) => l.toLowerCase() === label.toLowerCase());
+  if (exact) return exact;
+  const byWords = LABEL_WORDS.find(([, re]) => re.test(label))?.[0];
+  if (byWords) return byWords;
+  const price = a.priceVerdict?.assessment;
+  if (price === "Overpriced" || price === "Paying the Premium") return "Premium Asking Price";
+  if (price === "Underpriced") return "Hidden Gem";
+  if ((a.ownershipPain?.score ?? 0) >= 7) return "Money Pit";
+  if ((a.classicPotential?.score ?? 0) >= 7) return "Future Classic";
+  return "Peak Daily Driver";
+}
+
 /* eslint-disable @typescript-eslint/no-explicit-any -- untrusted model JSON,
    read field by field with a fallback for anything missing or mistyped */
 // The subset of the analysis that's actually prose — every field left out
@@ -689,6 +724,12 @@ export async function POST(req: NextRequest) {
 
     let result = JSON.parse(raw);
     console.log("modPotential:", JSON.stringify(result.modPotential ?? null));
+
+    const label = normalizeLabel(result);
+    if (label !== result.label) {
+      console.log(`Label "${result.label}" is not on the list, using "${label}"`);
+      result.label = label;
+    }
 
     // Runs before the roast rewrite so the filled-in text gets roasted too.
     // Same budget rule as the roast call: never risk the whole request.
