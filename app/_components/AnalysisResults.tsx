@@ -834,8 +834,8 @@ export default function AnalysisResults({
                 </a>
               </div>
             ))}
-            <p className="font-mono text-ink-faint text-xs leading-relaxed pt-3 border-t border-line">
-              These are AI suggestions from general market knowledge, not listings we&apos;ve seen. The prices are rough estimates and appreciating cars can run well past them — each link searches Trade Me for that car, so trust what comes back over what we guessed.
+            <p className="text-ink-muted text-xs leading-relaxed pt-3 border-t border-line">
+              AI suggestions, not listings we&apos;ve seen. Prices are rough guesses and rising classics can go well past them, so trust what each Trade Me search finds.
             </p>
           </Card>
         </div>
