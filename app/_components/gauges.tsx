@@ -368,7 +368,7 @@ export function TelltalePanel({ flags, size = "md" }: { flags: { kind: LampKind;
   const lit = tones.filter((t) => t.tone !== "off");
   return (
     <div
-      className="flex flex-wrap gap-2.5"
+      className="flex flex-wrap gap-1 min-[360px]:gap-2.5"
       role="img"
       aria-label={lit.length === 0 ? "No warning lamps lit" : `Warning lamps lit: ${lit.map((t) => `${LAMP_NAME[t.kind]} (${t.tone})`).join(", ")}`}
     >
