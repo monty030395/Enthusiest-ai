@@ -297,7 +297,8 @@ const LAMP_MATCH: [LampKind, RegExp][] = [
   ["temp", /coolant|cooling|overheat|radiator|water pump|thermostat|head gasket/i],
   ["gearbox", /gearbox|transmission|clutch|\bcvt\b|\bdsg\b|differential|\bdiff\b|synchro|auto box/i],
   ["battery", /electric|battery|alternator|wiring|\bfuse/i],
-  ["engine", /engine|turbo|timing|misfire|vanos|camshaft|piston|rod knock|compression|boost|injector|ignition|coil pack|rebuil/i],
+  // A car that doesn't run is an engine lamp until shown otherwise
+  ["engine", /engine|turbo|timing|misfire|vanos|camshaft|piston|rod knock|compression|boost|injector|ignition|coil pack|rebuil|non[- ]?running|not running|(?:doesn'?t|does not|won'?t|will not) (?:run|start)|no start|non[- ]?starter|seized/i],
 ];
 
 export function lampFor(text: string): LampKind {
