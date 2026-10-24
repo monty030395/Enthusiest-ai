@@ -185,6 +185,26 @@ Follow-ups after phone testing:
 
 Every item from the design critique has shipped. None of it has been tried on a real phone yet.
 
+Second design critique — all 12 items shipped in [PR #66](https://github.com/monty030395/Enthusiest-ai/pull/66):
+
+- ✅ **Results page.**
+  - A reopened Garage check has one compact top row: ← Garage · date · Listing ↗ · Save file.
+  - A jump strip (↑ Dash · Invest · Character · Cred · Take) appears once the dash scrolls away.
+  - A reopened check ends with Back to Garage.
+  - Driving notes sit under their bars in the amber display.
+  - The Reliability card uses the gauge's words (Runs cool / Runs warm / Running hot).
+  - "Premium Asking Price" no longer argues with the trip computer's price headline.
+  - The tiny caption on the Future Classic dial is gone.
+  - "Export" is now "Save file".
+  - The AI note under the alternatives is short and in the body font.
+- ✅ **Compare.**
+  - Rows where neither car has an answer are hidden.
+  - The scoring rules sit under the count.
+  - Rows won and the call share one card.
+  - The Garage compare bar names the pair in full.
+
+Still open: with two or more warning flags, a reopened Garage check's wallet gauge ends about 66px below a 740px phone screen. Fitting it would mean shrinking something in the dash itself. None of round 2 has been seen on a real phone or a shared /c/ link yet.
+
 ## Price calibration on appreciating JDM/enthusiast imports — ✅ shipped ([PR #27](https://github.com/monty030395/Enthusiest-ai/pull/27))
 
 Closes [#24](https://github.com/monty030395/Enthusiest-ai/issues/24) (option
@@ -250,4 +270,4 @@ None right now.
 
 [#6](https://github.com/monty030395/Enthusiest-ai/issues/6) compare · [#7](https://github.com/monty030395/Enthusiest-ai/issues/7) garage · [#8](https://github.com/monty030395/Enthusiest-ai/issues/8) auto-scroll · [#9](https://github.com/monty030395/Enthusiest-ai/issues/9) score drift (tally margin rule, [PR #22](https://github.com/monty030395/Enthusiest-ai/pull/22)) · [#14](https://github.com/monty030395/Enthusiest-ai/issues/14) loading messages · [#17](https://github.com/monty030395/Enthusiest-ai/pull/17) red-flag precision · [#24](https://github.com/monty030395/Enthusiest-ai/issues/24) price calibration · [#10](https://github.com/monty030395/Enthusiest-ai/issues/10) alternatives V3 (won't-do — Trade Me API closed to buyer-side tools)
 
-Also shipped outside any issue: editorial redesign ([#18](https://github.com/monty030395/Enthusiest-ai/pull/18)), engine-variant attribution ([#23](https://github.com/monty030395/Enthusiest-ai/pull/23)), share-target boilerplate fix ([#26](https://github.com/monty030395/Enthusiest-ai/pull/26)), shared-listing fetch via Apify ([#32](https://github.com/monty030395/Enthusiest-ai/pull/32), [#33](https://github.com/monty030395/Enthusiest-ai/pull/33), [#34](https://github.com/monty030395/Enthusiest-ai/pull/34)), Facebook Marketplace fetch ([#41](https://github.com/monty030395/Enthusiest-ai/pull/41)), Night dash redesign ([#43](https://github.com/monty030395/Enthusiest-ai/pull/43), [#44](https://github.com/monty030395/Enthusiest-ai/pull/44), [#45](https://github.com/monty030395/Enthusiest-ai/pull/45)) and its follow-ups ([#47](https://github.com/monty030395/Enthusiest-ai/pull/47), [#48](https://github.com/monty030395/Enthusiest-ai/pull/48), [#50](https://github.com/monty030395/Enthusiest-ai/pull/50), [#52](https://github.com/monty030395/Enthusiest-ai/pull/52), [#54](https://github.com/monty030395/Enthusiest-ai/pull/54), [#56](https://github.com/monty030395/Enthusiest-ai/pull/56), [#58](https://github.com/monty030395/Enthusiest-ai/pull/58), [#60](https://github.com/monty030395/Enthusiest-ai/pull/60), [#62](https://github.com/monty030395/Enthusiest-ai/pull/62), [#64](https://github.com/monty030395/Enthusiest-ai/pull/64)).
+Also shipped outside any issue: editorial redesign ([#18](https://github.com/monty030395/Enthusiest-ai/pull/18)), engine-variant attribution ([#23](https://github.com/monty030395/Enthusiest-ai/pull/23)), share-target boilerplate fix ([#26](https://github.com/monty030395/Enthusiest-ai/pull/26)), shared-listing fetch via Apify ([#32](https://github.com/monty030395/Enthusiest-ai/pull/32), [#33](https://github.com/monty030395/Enthusiest-ai/pull/33), [#34](https://github.com/monty030395/Enthusiest-ai/pull/34)), Facebook Marketplace fetch ([#41](https://github.com/monty030395/Enthusiest-ai/pull/41)), Night dash redesign ([#43](https://github.com/monty030395/Enthusiest-ai/pull/43), [#44](https://github.com/monty030395/Enthusiest-ai/pull/44), [#45](https://github.com/monty030395/Enthusiest-ai/pull/45)) and its follow-ups ([#47](https://github.com/monty030395/Enthusiest-ai/pull/47), [#48](https://github.com/monty030395/Enthusiest-ai/pull/48), [#50](https://github.com/monty030395/Enthusiest-ai/pull/50), [#52](https://github.com/monty030395/Enthusiest-ai/pull/52), [#54](https://github.com/monty030395/Enthusiest-ai/pull/54), [#56](https://github.com/monty030395/Enthusiest-ai/pull/56), [#58](https://github.com/monty030395/Enthusiest-ai/pull/58), [#60](https://github.com/monty030395/Enthusiest-ai/pull/60), [#62](https://github.com/monty030395/Enthusiest-ai/pull/62), [#64](https://github.com/monty030395/Enthusiest-ai/pull/64), [#66](https://github.com/monty030395/Enthusiest-ai/pull/66)).
