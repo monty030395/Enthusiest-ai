@@ -1,5 +1,12 @@
 # Motormind UI Redesign — Editorial Dark Theme
 
+> **Superseded (2026-10-24) by the Night dash redesign.** The palette, fonts
+> and film grain below are gone: tokens now live in `app/globals.css` as a
+> petrol-blue / Optitron-glow system (Chakra Petch, Saira, Share Tech Mono),
+> and controls are becoming car hardware (push-to-start, tacho loader,
+> guarded switch). See the "Night dash redesign" section in `ROADMAP.md`.
+> The notes below are kept as history.
+
 Full visual redesign of the Motormind app (NZ car-buying copilot). **Styling, layout,
 and visual hierarchy only — zero functional changes.** Routing, component structure,
 state, the analysis API, and all AI output are untouched.

@@ -49,7 +49,7 @@ export default async function SharedCheckPage({ params }: Props) {
         {/* Shared banner — makes it obvious this is someone else's check */}
         <div className="rounded-xl border border-line bg-white/[0.02] px-5 py-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
           <div>
-            <p className="font-mono text-[10px] font-medium uppercase tracking-[0.24em] text-ember-400">
+            <p className="font-mono text-[10px] font-medium uppercase tracking-[0.24em] text-glow-400">
               Shared {payload.kind === "check" ? "check" : "tally"}
             </p>
             <p className="font-mono text-[10px] text-ink-faint mt-1">Run on {sharedOn}</p>
@@ -67,7 +67,7 @@ export default async function SharedCheckPage({ params }: Props) {
         ) : (
           <div className="space-y-4">
             <div className="pt-1">
-              <p className="font-mono text-[10px] font-medium uppercase tracking-[0.3em] text-ember-400 mb-3">
+              <p className="font-mono text-[10px] font-medium uppercase tracking-[0.3em] text-glow-400 mb-3">
                 Head to head
               </p>
               <h2 className="font-display text-4xl font-extrabold text-ink leading-[1.05] tracking-tight">
@@ -81,7 +81,7 @@ export default async function SharedCheckPage({ params }: Props) {
 
         {/* Closing CTA — this page is the shop window */}
         <div className="rounded-xl bg-carbon-900 border border-line-strong overflow-hidden">
-          <div className="bg-ember-500 px-5 py-3 flex items-center gap-2.5">
+          <div className="bg-glow-500 px-5 py-3 flex items-center gap-2.5">
             <div className="w-1.5 h-1.5 rounded-full bg-carbon-950/50" />
             <span className="font-mono text-[10px] font-bold uppercase tracking-[0.24em] text-carbon-950">
               Your turn
@@ -94,7 +94,7 @@ export default async function SharedCheckPage({ params }: Props) {
             </p>
             <Link
               href="/"
-              className="block w-full text-center bg-ember-500 hover:bg-ember-400 active:bg-ember-600 text-carbon-950 font-mono font-bold uppercase tracking-[0.22em] rounded-lg py-4 transition-all text-xs"
+              className="block w-full text-center bg-glow-500 hover:bg-glow-400 active:bg-glow-600 text-carbon-950 font-mono font-bold uppercase tracking-[0.22em] rounded-lg py-4 transition-all text-xs"
             >
               Check a Listing — Free
             </Link>

@@ -88,7 +88,7 @@ function ModPotentialCard({ data }: { data: NonNullable<Analysis["modPotential"]
                 <ul className="space-y-1.5">
                   {data.firstMods.map((mod, i) => (
                     <li key={i} className="flex gap-2 text-sm text-ink-muted leading-snug">
-                      <span className="text-ember-400 flex-shrink-0 font-bold">+</span>
+                      <span className="text-glow-400 flex-shrink-0 font-bold">+</span>
                       {mod}
                     </li>
                   ))}
@@ -201,7 +201,7 @@ export default function AnalysisResults({
 
       {/* ── HERO TILE ───────────────────────────────────── */}
       <Card className="overflow-hidden">
-        <div className="h-px bg-gradient-to-r from-ember-500 via-ember-500/40 to-transparent" />
+        <div className="h-px bg-gradient-to-r from-glow-500 via-glow-500/40 to-transparent" />
         <div className="p-6 sm:p-7 space-y-5">
 
           {/* Year / import / location + price */}
@@ -212,7 +212,7 @@ export default function AnalysisResults({
               {isSpecified(result.vehicle.location) ? ` · ${result.vehicle.location}` : ""}
             </p>
             {result.vehicle.price && (
-              <div className="bg-ember-500 rounded-lg px-4 py-2 text-right flex-shrink-0">
+              <div className="bg-glow-500 rounded-lg px-4 py-2 text-right flex-shrink-0">
                 <p className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-carbon-950/60">Asking</p>
                 <p className="font-mono text-xl font-bold text-carbon-950 tabular-nums">{result.vehicle.price}</p>
               </div>
@@ -261,7 +261,7 @@ export default function AnalysisResults({
 
           {/* Pull-quote */}
           {result.whatMakesSpecial && (
-            <div className="pl-4 border-l-2 border-ember-400">
+            <div className="pl-4 border-l-2 border-glow-400">
               <p className="text-ink text-[17px] font-medium italic leading-snug">{result.whatMakesSpecial}</p>
             </div>
           )}
@@ -317,7 +317,7 @@ export default function AnalysisResults({
                 )}
               </div>
               {result.performanceSpecs.jdmNote && (
-                <p className="text-ember-300/80 text-xs mt-5 pt-4 border-t border-line leading-snug">{result.performanceSpecs.jdmNote}</p>
+                <p className="text-glow-300/80 text-xs mt-5 pt-4 border-t border-line leading-snug">{result.performanceSpecs.jdmNote}</p>
               )}
             </div>
           )}
@@ -528,7 +528,7 @@ export default function AnalysisResults({
           <Card className="p-6">
             <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-4">
               <SectionLabel>Future Classic Potential</SectionLabel>
-              <span className="font-mono text-xl font-bold text-ember-400 tabular-nums">
+              <span className="font-mono text-xl font-bold text-glow-400 tabular-nums">
                 {result.classicPotential.score}
                 <span className="text-ink-faint text-xs font-normal">/10</span>
               </span>
@@ -537,7 +537,7 @@ export default function AnalysisResults({
               <ul className="space-y-2">
                 {result.classicPotential.reasons.map((r, i) => (
                   <li key={i} className="flex gap-2.5 text-xs text-ink-muted leading-relaxed">
-                    <span className="text-ember-600 flex-shrink-0">▸</span>
+                    <span className="text-glow-600 flex-shrink-0">▸</span>
                     {r}
                   </li>
                 ))}
@@ -627,7 +627,7 @@ export default function AnalysisResults({
             {result.socialStanding && (
               <>
                 <div className="h-px bg-line" />
-                <p className="text-ink-muted text-sm italic leading-relaxed pl-3.5 border-l-2 border-ember-500/60">
+                <p className="text-ink-muted text-sm italic leading-relaxed pl-3.5 border-l-2 border-glow-500/60">
                   {result.socialStanding}
                 </p>
               </>
@@ -651,14 +651,14 @@ export default function AnalysisResults({
       {result.specSignificance?.length > 0 && (
         <div className="space-y-3">
           <div className="flex items-center gap-3 pt-2">
-            <span className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-ember-400">Spec Significance</span>
+            <span className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-glow-400">Spec Significance</span>
             <div className="flex-1 h-px bg-line" />
           </div>
           <Card className="p-6">
             <ul className="space-y-3.5">
               {result.specSignificance.map((s, i) => (
                 <li key={i} className="flex gap-3">
-                  <span className="text-ember-400 flex-shrink-0 font-bold mt-0.5">+</span>
+                  <span className="text-glow-400 flex-shrink-0 font-bold mt-0.5">+</span>
                   <div>
                     <span className="font-bold text-ink text-sm">{s.item}</span>
                     {s.note && <p className="text-ink-faint text-xs mt-1 leading-relaxed">{s.note}</p>}
@@ -674,14 +674,14 @@ export default function AnalysisResults({
       {result.questionsToAsk?.length > 0 && (
         <div className="space-y-3">
           <div className="flex items-center gap-3 pt-2">
-            <span className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-ember-400">Ask the Seller</span>
+            <span className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-glow-400">Ask the Seller</span>
             <div className="flex-1 h-px bg-line" />
           </div>
           <Card className="p-6">
             <ol className="space-y-3.5">
               {result.questionsToAsk.map((q, i) => (
                 <li key={i} className="flex gap-3.5 text-sm border-b border-line pb-3.5 last:border-0 last:pb-0">
-                  <span className="font-mono text-ember-500 font-bold w-5 flex-shrink-0 tabular-nums">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="font-mono text-glow-500 font-bold w-5 flex-shrink-0 tabular-nums">{String(i + 1).padStart(2, "0")}</span>
                   <span className="text-ink/85 leading-snug">{q}</span>
                 </li>
               ))}
@@ -694,7 +694,7 @@ export default function AnalysisResults({
       {result.alternatives && result.alternatives.length > 0 && (
         <div className="space-y-3">
           <div className="flex items-center gap-3 pt-2">
-            <span className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-ember-400">You Might Also Consider</span>
+            <span className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-glow-400">You Might Also Consider</span>
             <div className="flex-1 h-px bg-line" />
           </div>
           <Card className="p-6 space-y-5">
@@ -715,7 +715,7 @@ export default function AnalysisResults({
                   href={trademeSearchUrl(alt.searchTerm || alt.name)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-2.5 inline-flex items-center gap-1.5 min-h-10 font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-ember-400 hover:text-ember-300 transition-colors"
+                  className="mt-2.5 inline-flex items-center gap-1.5 min-h-10 font-mono text-[10px] font-medium uppercase tracking-[0.18em] text-glow-400 hover:text-glow-300 transition-colors"
                 >
                   Find on Trade Me <span aria-hidden="true">↗</span>
                 </a>
@@ -731,7 +731,7 @@ export default function AnalysisResults({
       {/* ── THE ENTHUSIAST TAKE ─────────────────────────── */}
       {result.enthusiastTake && (
         <div className="rounded-xl bg-carbon-900 border border-line-strong overflow-hidden">
-          <div className="bg-ember-500 px-5 py-3 flex items-center gap-2.5">
+          <div className="bg-glow-500 px-5 py-3 flex items-center gap-2.5">
             <div className="w-1.5 h-1.5 rounded-full bg-carbon-950/50" />
             <span className="font-mono text-[10px] font-bold uppercase tracking-[0.24em] text-carbon-950">
               The Enthusiast Take
@@ -749,7 +749,7 @@ export default function AnalysisResults({
           <button
             onClick={shareVerdict}
             disabled={sharing}
-            className="w-full border border-ember-600/50 hover:border-ember-500 disabled:border-line disabled:text-ink-faint text-ember-400 hover:text-ember-300 rounded-lg py-3.5 font-mono text-[11px] font-medium uppercase tracking-[0.2em] transition-all"
+            className="w-full border border-glow-600/50 hover:border-glow-500 disabled:border-line disabled:text-ink-faint text-glow-400 hover:text-glow-300 rounded-lg py-3.5 font-mono text-[11px] font-medium uppercase tracking-[0.2em] transition-all"
           >
             {sharing ? "Building the link..." : "Share the Verdict"}
           </button>

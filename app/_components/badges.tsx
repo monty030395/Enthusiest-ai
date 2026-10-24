@@ -1,20 +1,20 @@
 // ── Verdict badge colour system ───────────────────────────────
-// Warm-tuned signal palette to sit on the carbon/ember theme.
+// Signal palette tuned to sit on the petrol-blue Night dash panels.
 // Colour tracks sentiment: red negative, amber caution, green positive,
 // blue neutral. Every signal element on a card must derive from the same
 // theme as the card's badge.
 
 export type VerdictTheme = { bg: string; border: string; text: string };
 
-export const V_RED:     VerdictTheme = { bg: "#2a100b", border: "#803023", text: "#ff9d8a" };
-export const V_AMBER:   VerdictTheme = { bg: "#271b06", border: "#7a5a1e", text: "#ffc96b" };
-export const V_GREEN:   VerdictTheme = { bg: "#0e2316", border: "#2f5e40", text: "#93dbad" };
-export const V_BLUE:    VerdictTheme = { bg: "#101b29", border: "#31506f", text: "#a3bedf" };
-export const V_NEUTRAL: VerdictTheme = { bg: "#1c1c20", border: "#3a3a42", text: "#a6a29a" };
-// Roast Mode's own theme — ember-hued, deliberately distinct from V_AMBER so
+export const V_RED:     VerdictTheme = { bg: "#2a1418", border: "#7a2c31", text: "#ff8f86" };
+export const V_AMBER:   VerdictTheme = { bg: "#262110", border: "#7a5d20", text: "#ffc566" };
+export const V_GREEN:   VerdictTheme = { bg: "#0d2522", border: "#2a5e50", text: "#8fe0c4" };
+export const V_BLUE:    VerdictTheme = { bg: "#0f2233", border: "#2f5a7d", text: "#a9d8ff" };
+export const V_NEUTRAL: VerdictTheme = { bg: "#15252e", border: "#2f4552", text: "#a4bac3" };
+// Roast Mode's own theme — flame orange, deliberately distinct from V_AMBER so
 // it never reads as a severity signal. It's a modifier on a check, not part
 // of the verdict system above.
-export const V_EMBER: VerdictTheme = { bg: "#2a1708", border: "#8a5a1e", text: "#f5b04c" };
+export const V_EMBER: VerdictTheme = { bg: "#2b1a14", border: "#8a4524", text: "#ff9f5a" };
 
 export const VERDICT_THEME_MAP: Record<string, VerdictTheme> = {
   // Hero labels

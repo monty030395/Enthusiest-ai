@@ -4,8 +4,8 @@
   "description": "AI car-buying copilot for NZ enthusiasts",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0b0b0c",
-  "theme_color": "#0b0b0c",
+  "background_color": "#0b151b",
+  "theme_color": "#0b151b",
   "icons": [
     {
       "src": "/icon.svg",

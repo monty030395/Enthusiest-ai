@@ -1,21 +1,25 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Syne, JetBrains_Mono } from "next/font/google";
+import { Chakra_Petch, Saira, Share_Tech_Mono } from "next/font/google";
 import "./globals.css";
 import PwaInit from "./pwa-init";
 
-const inter = Inter({
-  variable: "--font-inter",
+// Chakra Petch's squared-off forms read like gauge markings; Saira stays
+// readable for the long analysis text; Share Tech Mono is the LCD readout.
+const chakra = Chakra_Petch({
+  variable: "--font-chakra",
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+});
+
+const saira = Saira({
+  variable: "--font-saira",
   subsets: ["latin"],
 });
 
-const syne = Syne({
-  variable: "--font-syne",
+const shareTech = Share_Tech_Mono({
+  variable: "--font-sharetech",
   subsets: ["latin"],
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jbmono",
-  subsets: ["latin"],
+  weight: "400",
 });
 
 // Shared /c/<id> links need absolute URLs for their OG images. Preview
@@ -34,7 +38,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0b0b0c",
+  themeColor: "#0b151b",
 };
 
 export default function RootLayout({
@@ -45,7 +49,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${syne.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      className={`${chakra.variable} ${saira.variable} ${shareTech.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <PwaInit />

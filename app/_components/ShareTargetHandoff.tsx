@@ -6,7 +6,7 @@ import { extractTradeMeUrl } from "../_lib/trademe";
 import { extractFacebookUrl } from "../_lib/facebook";
 import { stashSharedListing, extractRealListingText } from "../_lib/sharedListing";
 import Masthead from "./Masthead";
-import { Card, WheelSpinner } from "./ui";
+import { Card, Tacho } from "./ui";
 
 // Android hands the share over as a GET, so this can't be a POST handler —
 // it stashes what arrived in sessionStorage and redirects, which also keeps
@@ -38,7 +38,7 @@ export default function ShareTargetHandoff({
       <Masthead />
       <main className="max-w-3xl mx-auto px-5 py-10">
         <Card className="p-12 flex flex-col items-center gap-5">
-          <WheelSpinner />
+          <Tacho />
           <p className="font-display text-ink font-bold text-sm uppercase tracking-[0.12em]">
             Catching that listing
           </p>
