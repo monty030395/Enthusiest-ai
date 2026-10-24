@@ -44,9 +44,10 @@ const FUEL_READOUT: Record<string, string> = {
 // The trip computer's headline: the price verdict as a short dash readout,
 // sized to sit beside the price on one line. The full verdict stays on the
 // Price Analysis card. Null when there's no price to judge, so the
-// listing's label shows instead.
+// listing's label shows instead. "Fair price", not "Fair buy": it judges
+// the price only, and sits beside labels like Money Pit that judge the car.
 const TRIP_READOUT: Record<string, string> = {
-  "Fair": "Fair buy",
+  "Fair": "Fair price",
   "Premium Justified": "Fair premium",
   "Paying the Premium": "Premium price",
 };
@@ -202,7 +203,7 @@ export default function AnalysisResults({
   const characterScore = computeCharacterScore(result);
   // The trip computer leads with the price verdict; the listing's label
   // drops to the small line unless there's no verdict to show. "Premium
-  // Asking Price" is itself a price call, so beside a headline like FAIR BUY
+  // Asking Price" is itself a price call, so beside a headline like FAIR PRICE
   // it would argue with it — the headline already speaks to price
   const tripHeadline = tripReadout(result.priceVerdict?.assessment);
   const tripDetail = [

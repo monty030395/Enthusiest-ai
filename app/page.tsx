@@ -272,10 +272,12 @@ export default function Home() {
 
       <Masthead active="analyse" />
 
-      <main className="max-w-3xl mx-auto px-5 py-6 space-y-6">
+      {/* Once the input folds away the page starts tight under the masthead,
+          so a result's dash sits as high as it can */}
+      <main className={`max-w-3xl mx-auto px-5 pb-6 space-y-6 ${collapsed ? "pt-3" : "pt-6"}`}>
 
         {/* Collapsible: Hero + Input */}
-        <div className={`overflow-hidden transition-all duration-500 ease-in-out ${collapsed ? "max-h-0 opacity-0 pointer-events-none" : "max-h-[1600px] opacity-100"}`}>
+        <div className={`overflow-hidden transition-all duration-500 ease-in-out ${collapsed ? "max-h-0 mb-0 opacity-0 pointer-events-none" : "max-h-[1600px] opacity-100"}`}>
           <div className="space-y-5">
 
         {/* Hero */}
