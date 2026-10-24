@@ -33,6 +33,17 @@ function checkedOn(savedAt: number): string {
   });
 }
 
+// The date for the reopened check's top row, where space is tight: the year
+// only shows when it isn't this one
+function checkedShort(savedAt: number): string {
+  const d = new Date(savedAt);
+  return d.toLocaleDateString("en-NZ", {
+    day: "numeric",
+    month: "short",
+    ...(d.getFullYear() !== new Date().getFullYear() && { year: "numeric" }),
+  });
+}
+
 export default function GarageView() {
   // Null until hydrated — see useGarage. Writes below (delete, clear,
   // import) update it on their own.
@@ -117,22 +128,24 @@ export default function GarageView() {
 
       <Masthead active="garage" />
 
-      <main className="max-w-3xl mx-auto px-5 py-10 space-y-6">
+      {/* A reopened check starts high so its dash still fits one phone screen */}
+      <main className={`max-w-3xl mx-auto px-5 pb-10 space-y-6 ${selected && !comparing ? "pt-1" : "pt-10"}`}>
 
         {comparing && comparePair.length === 2 ? (
           <CompareView a={comparePair[0]} b={comparePair[1]} onBack={() => setComparing(false)} />
         ) : selected ? (
-          <>
-            {/* Detail view: one saved check, re-rendered in full */}
-            <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+          <div className="space-y-2">
+            {/* Detail view: one saved check, re-rendered in full. One short
+                row on top so the dash below still fits one phone screen */}
+            <div className="flex items-center justify-between gap-3">
               <button
                 onClick={() => setSelected(null)}
                 className="font-mono text-xs font-medium uppercase tracking-[0.12em] text-ink-faint hover:text-ink-muted transition-colors min-h-11 flex items-center gap-2"
               >
-                <span className="text-glow-400">←</span> Back to Garage
+                <span className="text-glow-400">←</span> Garage
               </button>
               <div className="flex items-center gap-3">
-                <p className="font-mono text-xs text-ink-faint">Checked {checkedOn(selected.savedAt)}</p>
+                <p className="hidden min-[360px]:block font-mono text-xs text-ink-faint whitespace-nowrap">Checked {checkedShort(selected.savedAt)}</p>
                 {selected.listingUrl && (
                   <a
                     href={selected.listingUrl}
@@ -152,7 +165,7 @@ export default function GarageView() {
               </div>
             </div>
             <AnalysisResults analysis={selected.analysis} />
-          </>
+          </div>
         ) : (
           <>
             {/* List view */}
