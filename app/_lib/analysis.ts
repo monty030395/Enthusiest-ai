@@ -108,11 +108,23 @@ export function computeCharacterScore(a: Analysis): number | null {
   return Math.round(scores.reduce((acc, s) => acc + s, 0) / scores.length);
 }
 
+// Listings sometimes give the price as a bare number ("12990"). Shown as
+// it came, that reads like a stock code, so a plain amount gets a dollar
+// sign and thousands commas. Anything with words in it ("$12,990 ono",
+// "Offers") is left exactly as the listing wrote it.
+export function formatPrice(price: string): string {
+  const p = price.trim();
+  const m = p.match(/^\$?\s*(\d{1,3}(?:,\d{3})+|\d+)(\.\d{1,2})?$/);
+  if (!m) return p;
+  const dollars = Number(m[1].replace(/,/g, ""));
+  return `$${dollars.toLocaleString("en-NZ")}${m[2] && m[2] !== ".00" ? m[2] : ""}`;
+}
+
 // Text summary for the Web Share sheet / clipboard — the group-chat verdict.
 export function buildShareText(a: Analysis): string {
   const v = a.vehicle;
   const title = [v.year, v.make, v.model].filter(isSpecified).join(" ");
-  const price = v.price ? ` — ${v.price}` : "";
+  const price = v.price ? ` — ${formatPrice(v.price)}` : "";
   const character = computeCharacterScore(a);
   const scores = [
     a.investmentScore != null ? `Investment ${a.investmentScore}/10` : "",

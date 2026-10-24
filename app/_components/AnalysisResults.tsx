@@ -8,6 +8,7 @@ import {
   getQuip,
   buildShareText,
   isConditional,
+  formatPrice,
 } from "../_lib/analysis";
 import { shareOrCopy, createShareLink } from "../_lib/share";
 import { trademeSearchUrl } from "../_lib/trademe";
@@ -321,7 +322,7 @@ export default function AnalysisResults({
               )}
             </span>
             {result.vehicle.price && (
-              <span className="text-lg tabular-nums whitespace-nowrap">{result.vehicle.price}</span>
+              <span className="text-lg tabular-nums whitespace-nowrap">{formatPrice(result.vehicle.price)}</span>
             )}
           </span>
           <span className="block mt-1.5 font-display font-bold text-xl text-ink leading-tight [text-shadow:none]">

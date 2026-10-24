@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { computeCharacterScore } from "../_lib/analysis";
+import { computeCharacterScore, formatPrice } from "../_lib/analysis";
 import { type SavedCheck, useGarage, deleteCheck, restoreCheck, clearGarage, exportCheck, importCheck } from "../_lib/garage";
 import { verdictBadgeStyle, RoastBadge } from "./badges";
 import { Card } from "./ui";
@@ -241,7 +241,7 @@ export default function GarageView() {
                               {a.vehicle.make} {a.vehicle.model}
                             </h3>
                             {a.vehicle.price && (
-                              <p className="font-mono text-glow-300 text-sm tabular-nums mt-1 [text-shadow:0_0_6px_rgba(169,216,255,0.45)]">{a.vehicle.price}</p>
+                              <p className="font-mono text-glow-300 text-sm tabular-nums mt-1 [text-shadow:0_0_6px_rgba(169,216,255,0.45)]">{formatPrice(a.vehicle.price)}</p>
                             )}
                           </div>
                           <MiniCluster
