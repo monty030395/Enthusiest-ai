@@ -55,10 +55,14 @@ function tripReadout(assessment: string | undefined): string | null {
   return TRIP_READOUT[assessment] ?? assessment;
 }
 
-// What the temperature needle says, in the gauge's own words
+// What the temperature needle says, in the gauge's own words. The
+// Reliability Risk card uses the same words so the two read as one reading
+function tempState(score: number): string {
+  return score >= 8 ? "Running hot" : score >= 5 ? "Runs warm" : "Runs cool";
+}
+
 function tempReadout(score: number): string {
-  const state = score >= 8 ? "Running hot" : score >= 5 ? "Runs warm" : "Runs cool";
-  return `${state}: ${score} of 10`;
+  return `${tempState(score)}: ${score} of 10`;
 }
 
 function ModPotentialCard({ data }: { data: NonNullable<Analysis["modPotential"]> }) {
@@ -600,7 +604,7 @@ export default function AnalysisResults({
             <Card className="p-6">
               <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-4">
                 <SectionLabel>Reliability Risk</SectionLabel>
-                <VerdictBadge verdict={result.ownershipPain.score >= 8 ? "High Pain" : result.ownershipPain.score >= 5 ? "Moderate" : "Low Pain"} />
+                <span style={themeToStyle(t)}>{tempState(result.ownershipPain.score)}</span>
               </div>
               {result.ownershipPain.issues?.length > 0 && (
                 <ul className="space-y-3.5 mt-1">
