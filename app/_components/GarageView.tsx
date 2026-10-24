@@ -126,25 +126,25 @@ export default function GarageView() {
             <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
               <button
                 onClick={() => setSelected(null)}
-                className="font-mono text-[10px] font-medium uppercase tracking-[0.2em] text-ink-faint hover:text-ink-muted transition-colors py-2 flex items-center gap-2"
+                className="font-mono text-xs font-medium uppercase tracking-[0.12em] text-ink-faint hover:text-ink-muted transition-colors min-h-11 flex items-center gap-2"
               >
                 <span className="text-glow-400">←</span> Back to Garage
               </button>
               <div className="flex items-center gap-3">
-                <p className="font-mono text-[10px] text-ink-faint">Checked {checkedOn(selected.savedAt)}</p>
+                <p className="font-mono text-xs text-ink-faint">Checked {checkedOn(selected.savedAt)}</p>
                 {selected.listingUrl && (
                   <a
                     href={selected.listingUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-ink-muted hover:text-ink transition-colors py-2"
+                    className="font-mono text-xs font-medium uppercase tracking-[0.12em] text-ink-muted hover:text-ink transition-colors min-h-11 inline-flex items-center"
                   >
                     Listing ↗
                   </a>
                 )}
                 <button
                   onClick={() => handleExport(selected)}
-                  className="font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-glow-400 hover:text-glow-300 transition-colors py-2"
+                  className="font-mono text-xs font-medium uppercase tracking-[0.12em] text-glow-400 hover:text-glow-300 transition-colors min-h-11 inline-flex items-center"
                 >
                   Export
                 </button>
@@ -156,7 +156,7 @@ export default function GarageView() {
           <>
             {/* List view */}
             <div className="pt-2">
-              <p className="font-mono text-[10px] font-medium uppercase tracking-[0.3em] text-glow-400 mb-4">
+              <p className="font-mono text-xs font-medium uppercase tracking-[0.12em] text-glow-400 mb-4">
                 Your saved checks
               </p>
               <h2 className="font-display text-4xl font-extrabold text-ink leading-[1.05] tracking-tight">
@@ -175,11 +175,11 @@ export default function GarageView() {
                 </p>
                 <Link
                   href="/"
-                  className="inline-block font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-glow-400 hover:text-glow-300 transition-colors py-2"
+                  className="font-mono text-xs font-medium uppercase tracking-[0.12em] text-glow-400 hover:text-glow-300 transition-colors min-h-11 inline-flex items-center"
                 >
                   Check a listing →
                 </Link>
-                <p className="font-mono text-[10px] text-ink-faint">
+                <p className="font-mono text-xs text-ink-faint">
                   or{" "}
                   <button
                     onClick={() => importInputRef.current?.click()}
@@ -212,7 +212,7 @@ export default function GarageView() {
                       >
                         <div className="flex flex-wrap items-start justify-between gap-3">
                           <div className="min-w-0">
-                            <p className="font-mono text-[11px] text-ink-faint mb-1.5">
+                            <p className="font-mono text-xs text-ink-faint mb-1.5">
                               {a.vehicle.year}, checked {checkedOn(check.savedAt)}
                             </p>
                             <h3 className="font-display text-xl font-bold text-ink tracking-tight leading-tight truncate">
@@ -238,7 +238,7 @@ export default function GarageView() {
                       <div className="border-t border-line px-5 py-2 flex justify-between items-center">
                         <button
                           onClick={() => toggleCompare(check.id)}
-                          className={`font-mono text-[9px] font-medium uppercase tracking-[0.18em] transition-colors py-2 px-2 -ml-2 ${
+                          className={`font-mono text-xs font-medium uppercase tracking-[0.12em] transition-colors min-h-11 inline-flex items-center px-2 -ml-2 ${
                             compareIds.includes(check.id)
                               ? "text-glow-400"
                               : "text-ink-faint hover:text-ink-muted"
@@ -248,7 +248,7 @@ export default function GarageView() {
                         </button>
                         <button
                           onClick={() => handleDelete(check.id)}
-                          className="font-mono text-[9px] font-medium uppercase tracking-[0.18em] text-ink-faint hover:text-red-400 transition-colors py-2 px-2 -mr-2"
+                          className="font-mono text-xs font-medium uppercase tracking-[0.12em] text-ink-faint hover:text-red-400 transition-colors min-h-11 inline-flex items-center px-2 -mr-2"
                         >
                           Remove
                         </button>
@@ -261,14 +261,14 @@ export default function GarageView() {
                 <div className="flex justify-center items-center gap-2 pt-2">
                   <button
                     onClick={() => importInputRef.current?.click()}
-                    className="font-mono text-[10px] font-medium uppercase tracking-[0.2em] text-ink-faint hover:text-ink-muted transition-colors py-3 px-4"
+                    className="font-mono text-xs font-medium uppercase tracking-[0.12em] text-ink-faint hover:text-ink-muted transition-colors min-h-11 inline-flex items-center px-4"
                   >
                     Import Check
                   </button>
                   <div className="h-3 w-px bg-line-strong" />
                   <button
                     onClick={handleClearAll}
-                    className={`font-mono text-[10px] font-medium uppercase tracking-[0.2em] transition-colors py-3 px-4 ${
+                    className={`font-mono text-xs font-medium uppercase tracking-[0.12em] transition-colors min-h-11 inline-flex items-center px-4 ${
                       confirmClear ? "text-red-400" : "text-ink-faint hover:text-ink-muted"
                     }`}
                   >
@@ -279,7 +279,7 @@ export default function GarageView() {
             )}
 
             {importError && (
-              <p className="font-mono text-[10px] text-center leading-relaxed" style={{ color: "#ff9d8a" }}>
+              <p className="font-mono text-xs text-center leading-relaxed" style={{ color: "#ff9d8a" }}>
                 {importError}
               </p>
             )}
@@ -297,7 +297,7 @@ export default function GarageView() {
               }}
             />
 
-            <p className="font-mono text-ink-faint text-[10px] leading-relaxed text-center pt-4">
+            <p className="font-mono text-ink-faint text-xs leading-relaxed text-center pt-4">
               Checks live in this browser&apos;s storage only — clearing your browser data clears the Garage too.
             </p>
 
@@ -331,7 +331,7 @@ export default function GarageView() {
       {!comparing && !selected && compareIds.length > 0 && (
         <div className="fixed bottom-0 inset-x-0 z-30 border-t border-line bg-carbon-950/90 backdrop-blur-md px-5 py-3">
           <div className="max-w-3xl mx-auto flex items-center justify-between gap-3">
-            <p className="font-mono text-[10px] text-ink-muted uppercase tracking-[0.16em] leading-relaxed min-w-0 truncate">
+            <p className="font-mono text-xs text-ink-muted uppercase tracking-[0.12em] leading-relaxed min-w-0 truncate">
               {comparePair.length === 2
                 ? `${comparePair[0].analysis.vehicle.model} vs ${comparePair[1].analysis.vehicle.model}`
                 : "Pick one more to compare"}
@@ -340,14 +340,14 @@ export default function GarageView() {
               <button
                 onClick={() => setCompareIds([])}
                 aria-label="Clear picks"
-                className="font-mono text-[10px] uppercase tracking-[0.16em] text-ink-faint hover:text-ink-muted transition-colors py-3 px-2"
+                className="font-mono text-xs uppercase tracking-[0.12em] text-ink-faint hover:text-ink-muted transition-colors min-h-11 inline-flex items-center px-2"
               >
                 Clear
               </button>
               <button
                 onClick={() => setComparing(true)}
                 disabled={comparePair.length < 2}
-                className="bg-glow-500 hover:bg-glow-400 active:bg-glow-600 disabled:bg-carbon-800 disabled:text-ink-faint disabled:cursor-not-allowed text-carbon-950 font-mono font-bold uppercase tracking-[0.18em] rounded-lg py-3 px-5 transition-all text-[10px]"
+                className="bg-glow-500 hover:bg-glow-400 active:bg-glow-600 disabled:bg-carbon-800 disabled:text-ink-faint disabled:cursor-not-allowed text-carbon-950 font-mono font-bold uppercase tracking-[0.12em] rounded-lg min-h-11 inline-flex items-center px-5 transition-all text-xs"
               >
                 Compare
               </button>

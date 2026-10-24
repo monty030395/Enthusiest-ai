@@ -21,7 +21,7 @@ function CarHeader({ analysis }: { analysis: Analysis }) {
   const v = analysis.vehicle;
   return (
     <div className="min-w-0 space-y-1.5">
-      <p className="font-mono text-[11px] text-ink-faint">{v.year}</p>
+      <p className="font-mono text-xs text-ink-faint">{v.year}</p>
       <h3 className="font-display text-lg font-bold text-ink tracking-tight leading-tight">
         {v.make} {v.model}
       </h3>
@@ -73,7 +73,7 @@ export function TallyBoard({ a, b, tally }: { a: Analysis; b: Analysis; tally: T
         <ul className="divide-y divide-line">
           {tally.rows.map((row) => (
             <li key={row.label} className="px-5 py-3">
-              <p className="font-display text-[11px] font-semibold text-ink-faint mb-1.5 flex items-center gap-1.5">
+              <p className="font-display text-xs font-semibold text-ink-faint mb-1.5 flex items-center gap-1.5">
                 {row.label}
                 {row.winner === 0 && !row.exact && (
                   <span className="normal-case tracking-normal text-ink-faint/60">· too close to call</span>
@@ -93,7 +93,7 @@ export function TallyBoard({ a, b, tally }: { a: Analysis; b: Analysis; tally: T
           ))}
         </ul>
         <div className="border-t border-line-strong px-5 py-4 bg-white/[0.02]">
-          <p className="font-display text-[11px] font-semibold text-ink-faint mb-2">
+          <p className="font-display text-xs font-semibold text-ink-faint mb-2">
             Rows won
           </p>
           <div className="grid grid-cols-2 gap-4">
@@ -122,12 +122,12 @@ export function HeadToHeadCard({ a, b, h2h }: { a: Analysis; b: Analysis; h2h: H
   const col = (side: "a" | "b", analysis: Analysis) => (
     <div className="space-y-3 min-w-0">
       <div className="flex flex-wrap items-center gap-2">
-        <p className="font-mono text-[9px] font-medium uppercase tracking-[0.22em] text-ink-faint">
+        <p className="font-mono text-xs font-medium uppercase tracking-[0.12em] text-ink-faint">
           Case for the {analysis.vehicle.model}
         </p>
         {h2h.winner === side && (
           <span
-            className="inline-flex items-center gap-1.5 font-display text-[11px] font-bold rounded px-1.5 py-0.5"
+            className="inline-flex items-center gap-1.5 font-display text-xs font-bold rounded px-1.5 py-0.5"
             style={{ color: V_GREEN.text, backgroundColor: V_GREEN.bg, border: `1px solid ${V_GREEN.border}` }}
           >
             <IndicatorLamp on /> Winner
@@ -144,7 +144,7 @@ export function HeadToHeadCard({ a, b, h2h }: { a: Analysis; b: Analysis; h2h: H
       </ul>
       {h2h.dealBreaker?.[side] && (
         <div className="pl-2.5 border-l-2" style={{ borderColor: V_RED.border }}>
-          <p className="font-mono text-[8px] font-medium uppercase tracking-[0.2em] text-ink-faint mb-1">Deal-breaker</p>
+          <p className="font-mono text-xs font-medium uppercase tracking-[0.12em] text-ink-faint mb-1">Deal-breaker</p>
           <p className="text-xs leading-relaxed" style={{ color: V_RED.text }}>{h2h.dealBreaker[side]}</p>
         </div>
       )}
@@ -164,11 +164,11 @@ export function HeadToHeadCard({ a, b, h2h }: { a: Analysis; b: Analysis; h2h: H
           <div className="pt-0 sm:pt-4">{col("b", b)}</div>
         </div>
         <div className="pl-4 border-l-2 border-glow-400">
-          <p className="font-mono text-[9px] font-medium uppercase tracking-[0.22em] text-ink-faint mb-1.5">If it were my money</p>
+          <p className="font-mono text-xs font-medium uppercase tracking-[0.12em] text-ink-faint mb-1.5">If it were my money</p>
           <p className="text-ink text-sm leading-relaxed">{h2h.myMoney}</p>
         </div>
         {h2h.curveball && (
-          <p className="font-mono text-[11px] text-ink-faint leading-relaxed pt-3 border-t border-line">
+          <p className="font-mono text-xs text-ink-faint leading-relaxed pt-3 border-t border-line">
             <span className="text-glow-400 font-bold">Curveball:</span> {h2h.curveball}
           </p>
         )}
