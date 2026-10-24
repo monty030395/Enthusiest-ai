@@ -69,6 +69,33 @@ body {
   animation: tacho-rev 2.6s cubic-bezier(0.45, 0, 0.3, 1) infinite;
 }
 
+/* Analysis tacho: the needle climbs toward the redline over the expected
+   check time (duration set inline), easing off as it nears so it never
+   looks finished, with a small idle wobble on top so it never looks stuck.
+   Reduced motion parks it mid-scale; the text still shows progress. */
+@keyframes tacho-climb {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(150deg); }
+}
+@keyframes tacho-idle {
+  0%, 100% { transform: rotate(-2.5deg); }
+  50% { transform: rotate(2.5deg); }
+}
+.tacho-climb {
+  transform-box: view-box;
+  transform-origin: 100px 100px;
+  animation: tacho-climb 20s cubic-bezier(0.2, 0.6, 0.35, 1) forwards;
+}
+.tacho-idle {
+  transform-box: view-box;
+  transform-origin: 100px 100px;
+  animation: tacho-idle 0.8s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tacho-climb { animation: none; transform: rotate(90deg); }
+  .tacho-idle { animation: none; }
+}
+
 /* Results ignition sweep: every needle swings to full scale and settles on
    its reading, like a cluster self-test when the key turns. --needle-to is
    set per needle; with reduced motion it simply sits at the reading. */

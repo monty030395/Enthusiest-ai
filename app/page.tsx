@@ -10,7 +10,7 @@ import { isRoastMode } from "./_lib/roastMode";
 import { extractTradeMeUrl } from "./_lib/trademe";
 import { extractFacebookUrl, FACEBOOK_HINT } from "./_lib/facebook";
 import { V_RED } from "./_components/badges";
-import { Card, RotatingMessage, StartButton, Tacho } from "./_components/ui";
+import { Card, CheckProgress, StartButton, Tacho } from "./_components/ui";
 import Masthead from "./_components/Masthead";
 import ListingHowTo from "./_components/ListingHowTo";
 import AnalysisResults from "./_components/AnalysisResults";
@@ -34,6 +34,9 @@ export default function Home() {
   // saved check can link back to the listing it came from
   const [listingUrl, setListingUrl] = useState<string | undefined>();
   const [fetchingListing, setFetchingListing] = useState(false);
+  // The listing's title, when we pulled it ourselves and so know its first
+  // line is the title. Pasted text has no reliable title, so it gets none
+  const [checkingTitle, setCheckingTitle] = useState<string | undefined>();
 
   // Fetches the listing behind a Trade Me or Facebook link and analyses it
   // straight away. Any failure (not configured, actor down, the site blocking it)
@@ -63,6 +66,8 @@ export default function Home() {
     }
     if (text) {
       setPastedText(text);
+      const firstLine = text.split("\n")[0]?.trim();
+      setCheckingTitle(firstLine && firstLine.length <= 90 && !firstLine.includes(":") ? firstLine : undefined);
       analyse(text, url);
     } else {
       setUrlHint(hint);
@@ -143,6 +148,7 @@ export default function Home() {
     setUrlHint("");
     setUrlHintVisible(false);
     setListingUrl(undefined);
+    setCheckingTitle(undefined);
     if (fileInputRef.current) fileInputRef.current.value = "";
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
@@ -289,7 +295,7 @@ export default function Home() {
             {(["text", "images"] as const).map((m) => (
               <button
                 key={m}
-                onClick={() => { setInputMode(m); setError(""); }}
+                onClick={() => { setInputMode(m); setError(""); setCheckingTitle(undefined); }}
                 className={`flex-1 min-h-12 font-mono text-xs font-medium uppercase tracking-[0.12em] transition-colors ${
                   inputMode === m
                     ? "text-ink border-b-2 border-glow-400 bg-white/[0.03]"
@@ -360,6 +366,7 @@ export default function Home() {
                   value={pastedText}
                   onChange={(e) => {
                     setPastedText(e.target.value);
+                    setCheckingTitle(undefined);
                     if (urlHint) { setUrlHint(""); setUrlHintVisible(false); }
                   }}
                   onPaste={handlePaste}
@@ -432,12 +439,9 @@ export default function Home() {
 
         {/* Loading */}
         {loading && (
-          <Card className="p-12 flex flex-col items-center gap-6">
-            <Tacho />
-            <div className="text-center">
-              <p className="font-display text-ink font-bold text-sm uppercase tracking-[0.12em]">Getting Under the Hood</p>
-              <RotatingMessage />
-            </div>
+          <Card className="p-12">
+            {/* A roast check makes two calls, so it runs longer */}
+            <CheckProgress title={checkingTitle} seconds={isRoastMode() ? 35 : 20} />
           </Card>
         )}
 
