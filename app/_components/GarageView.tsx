@@ -11,16 +11,17 @@ import Masthead from "./Masthead";
 import AnalysisResults from "./AnalysisResults";
 import CompareView from "./CompareView";
 
-// The punched hole of a key tag. With the car picked to tally it lights up,
-// like a key hung on the board ready to go.
-function TagHole({ picked }: { picked: boolean }) {
+// The eyelet of a key tag with the key ring through it. Purely decorative,
+// with no picked state, so it can't be mistaken for a tick box.
+function TagHole() {
   return (
-    <span
-      aria-hidden="true"
-      className={`block w-4 h-4 rounded-full bg-carbon-950 shadow-[inset_0_2px_3px_rgba(0,0,0,0.8)] ring-[3px] transition-shadow ${
-        picked ? "ring-glow-400 shadow-[0_0_10px_rgba(169,216,255,0.6)]" : "ring-carbon-600"
-      }`}
-    />
+    <svg aria-hidden="true" width="44" height="44" viewBox="0 0 44 44" className="block">
+      {/* the split ring, coming in from off the tag's left edge */}
+      <path d="M-2 9 A16 16 0 0 1 26 22" fill="none" stroke="#2c3a44" strokeWidth="2.5" strokeLinecap="round" />
+      {/* metal eyelet */}
+      <circle cx="26" cy="22" r="6" fill="#060c10" stroke="#3d4d59" strokeWidth="2.5" />
+      <path d="M-2 35 A16 16 0 0 0 26 22" fill="none" stroke="#3a4a55" strokeWidth="2.5" strokeLinecap="round" />
+    </svg>
   );
 }
 
@@ -202,8 +203,8 @@ export default function GarageView() {
                         compareIds.includes(check.id) ? "ring-glow-500/60" : "ring-line"
                       }`}
                     >
-                      <div className="flex-none w-11 grid place-items-center border-r border-dashed border-line-strong">
-                        <TagHole picked={compareIds.includes(check.id)} />
+                      <div className="flex-none w-11 grid place-items-center overflow-hidden border-r border-dashed border-line-strong">
+                        <TagHole />
                       </div>
                       <div className="flex-1 min-w-0">
                       <button
