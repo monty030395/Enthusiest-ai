@@ -6,7 +6,7 @@ import { type Analysis, computeCharacterScore } from "../_lib/analysis";
 import { type Tally, type HeadToHead, tallyQuip } from "../_lib/compare";
 import { V_GREEN, V_RED, verdictBadgeStyle, RoastBadge } from "./badges";
 import { Card } from "./ui";
-import { MiniCluster, LcdNumber, IndicatorLamp } from "./gauges";
+import { MiniDial, LcdNumber, IndicatorLamp } from "./gauges";
 
 // Section header strip, lit like a backlit panel legend
 function PanelLegend({ children }: { children: ReactNode }) {
@@ -17,26 +17,19 @@ function PanelLegend({ children }: { children: ReactNode }) {
   );
 }
 
-function CarHeader({ analysis }: { analysis: Analysis }) {
+function CarHeader({ analysis, mirror = false }: { analysis: Analysis; mirror?: boolean }) {
   const v = analysis.vehicle;
   return (
-    <div className="min-w-0 space-y-1.5">
+    <div className={`min-w-0 space-y-1.5 ${mirror ? "text-right" : ""}`}>
       <p className="font-mono text-xs text-ink-faint">{v.year}</p>
-      <h3 className="font-display text-lg font-bold text-ink tracking-tight leading-tight">
+      <h3 className="font-display text-base font-bold text-ink tracking-tight leading-tight [overflow-wrap:anywhere]">
         {v.make} {v.model}
       </h3>
       {v.price && (
         <p className="font-mono text-glow-300 text-sm tabular-nums [text-shadow:0_0_6px_rgba(169,216,255,0.45)]">{v.price}</p>
       )}
-      <div className="pt-1">
-        <MiniCluster
-          investment={analysis.investmentScore ?? null}
-          character={computeCharacterScore(analysis)}
-          cred={analysis.vibeScore ?? null}
-        />
-      </div>
       {analysis.label && (
-        <div className="pt-0.5 flex flex-wrap items-center gap-1.5">
+        <div className={`pt-0.5 flex flex-wrap items-center gap-1.5 ${mirror ? "justify-end" : ""}`}>
           <span style={{ ...verdictBadgeStyle(analysis.label), whiteSpace: "normal" as const }}>{analysis.label}</span>
           {analysis.mode === "roast" && <RoastBadge />}
         </div>
@@ -44,6 +37,14 @@ function CarHeader({ analysis }: { analysis: Analysis }) {
     </div>
   );
 }
+
+// The three dash scores, drawn as two clusters facing each other: car A's
+// dials on the left, car B's on the right, the lamp lit beside the winner
+const SCORE_ROWS: Record<string, { short: string; score: (a: Analysis) => number | null }> = {
+  Investment: { short: "Invest", score: (a) => a.investmentScore ?? null },
+  Character: { short: "Character", score: (a) => computeCharacterScore(a) },
+  "Street Cred": { short: "Cred", score: (a) => a.vibeScore ?? null },
+};
 
 export function TallyBoard({ a, b, tally }: { a: Analysis; b: Analysis; tally: Tally }) {
   const aName = `${a.vehicle.make} ${a.vehicle.model}`;
@@ -55,25 +56,52 @@ export function TallyBoard({ a, b, tally }: { a: Analysis; b: Analysis; tally: T
         ? `${aName} takes it ${tally.aWins}–${tally.bWins}.`
         : `${bName} takes it ${tally.bWins}–${tally.aWins}.`;
 
+  const scoreRows = tally.rows.filter((r) => r.label in SCORE_ROWS);
+  const otherRows = tally.rows.filter((r) => !(r.label in SCORE_ROWS));
+
   const cell = (won: boolean, lost: boolean) =>
     `flex items-baseline gap-1.5 text-xs leading-snug ${won ? "text-ink font-bold" : lost ? "text-ink-faint" : "text-ink-muted"}`;
 
   return (
     <>
-      {/* Car headers */}
+      {/* The two cars face off: headers side by side, then their clusters */}
       <Card className="overflow-hidden">
-        <div className="p-5 grid grid-cols-1 min-[440px]:grid-cols-2 gap-5">
+        <div className="p-4 grid grid-cols-[1fr_auto_1fr] gap-3">
           <CarHeader analysis={a} />
-          <CarHeader analysis={b} />
+          <span className="self-start mt-6 font-display text-xs font-bold text-ink-faint" aria-hidden="true">VS</span>
+          <CarHeader analysis={b} mirror />
         </div>
+        <ul className="bg-dial border-t border-line px-3 py-2.5 space-y-1.5">
+          {scoreRows.map((row) => {
+            const def = SCORE_ROWS[row.label];
+            return (
+              <li key={row.label} className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+                <span className="flex items-center justify-end gap-2">
+                  <IndicatorLamp on={row.winner === 1} />
+                  <MiniDial score={def.score(a)} label={`${aName} ${row.label}`} caption={false} />
+                </span>
+                <span className="w-20 text-center leading-tight">
+                  <span className="block font-display text-xs font-semibold uppercase tracking-[0.08em] text-ink-faint">{def.short}</span>
+                  {row.winner === 0 && !row.exact && (
+                    <span className="block text-xs text-ink-faint/70">too close</span>
+                  )}
+                </span>
+                <span className="flex items-center gap-2">
+                  <MiniDial score={def.score(b)} label={`${bName} ${row.label}`} caption={false} />
+                  <IndicatorLamp on={row.winner === 2} />
+                </span>
+              </li>
+            );
+          })}
+        </ul>
       </Card>
 
-      {/* Tally table */}
+      {/* Tally table — the scores above are rows too; they count in "Rows won" */}
       <Card className="overflow-hidden">
         <ul className="divide-y divide-line">
-          {tally.rows.map((row) => (
+          {otherRows.map((row) => (
             <li key={row.label} className="px-5 py-3">
-              <p className="font-display text-xs font-semibold text-ink-faint mb-1.5 flex items-center gap-1.5">
+              <p className="font-display text-xs font-semibold text-ink-faint mb-1.5 flex items-center justify-center gap-1.5">
                 {row.label}
                 {row.winner === 0 && !row.exact && (
                   <span className="normal-case tracking-normal text-ink-faint/60">· too close to call</span>
@@ -84,27 +112,27 @@ export function TallyBoard({ a, b, tally }: { a: Analysis; b: Analysis; tally: T
                   <IndicatorLamp on={row.winner === 1} />
                   {row.aDisplay}
                 </p>
-                <p className={cell(row.winner === 2, row.winner === 1)}>
-                  <IndicatorLamp on={row.winner === 2} />
+                <p className={`${cell(row.winner === 2, row.winner === 1)} justify-end text-right`}>
                   {row.bDisplay}
+                  <IndicatorLamp on={row.winner === 2} />
                 </p>
               </div>
             </li>
           ))}
         </ul>
         <div className="border-t border-line-strong px-5 py-4 bg-white/[0.02]">
-          <p className="font-display text-xs font-semibold text-ink-faint mb-2">
+          <p className="font-display text-xs font-semibold text-ink-faint mb-2 text-center">
             Rows won
           </p>
           <div className="grid grid-cols-2 gap-4">
             <span><LcdNumber value={tally.aWins} lit={tally.aWins >= tally.bWins} /></span>
-            <span><LcdNumber value={tally.bWins} lit={tally.bWins >= tally.aWins} /></span>
+            <span className="text-right"><LcdNumber value={tally.bWins} lit={tally.bWins >= tally.aWins} /></span>
           </div>
         </div>
       </Card>
 
       {/* Verdict bar */}
-      <div className="rounded-xl bg-carbon-900 border border-line-strong overflow-hidden">
+      <div className="rounded-xl bg-dial/60 ring-1 ring-line overflow-hidden">
         <PanelLegend>The tally</PanelLegend>
         <div className="px-6 py-5 space-y-1">
           <p className="text-ink leading-relaxed text-[15px] font-medium">{verdictLine}</p>
@@ -152,7 +180,7 @@ export function HeadToHeadCard({ a, b, h2h }: { a: Analysis; b: Analysis; h2h: H
   );
 
   return (
-    <div className="rounded-xl bg-carbon-900 border border-line-strong overflow-hidden">
+    <div className="rounded-xl bg-dial/60 ring-1 ring-line overflow-hidden">
       <PanelLegend>The head-to-head</PanelLegend>
       <div className="px-6 py-5 space-y-5">
         <div>

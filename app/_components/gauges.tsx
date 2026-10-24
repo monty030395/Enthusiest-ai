@@ -140,7 +140,9 @@ export function Cluster({ dials }: { dials: [ClusterDial, ClusterDial, ClusterDi
 
 // A thumbnail dial for lists and comparisons: the reading is a lit arc plus
 // the number, since tick marks at this size are just noise.
-export function MiniDial({ score, label }: { score: number | null; label: string }) {
+// `caption` off drops the printed name (the aria-label keeps it) for rows
+// that label the dials themselves, like Compare's facing clusters.
+export function MiniDial({ score, label, caption = true }: { score: number | null; label: string; caption?: boolean }) {
   const cx = 20, cy = 20, r = 15;
   const value = score === null ? 0 : Math.max(0, Math.min(10, score));
   const end = DIAL_START + (DIAL_SWEEP * value) / 10;
@@ -163,7 +165,7 @@ export function MiniDial({ score, label }: { score: number | null; label: string
           {score === null ? "?" : score}
         </text>
       </svg>
-      <span className="font-display text-xs font-semibold text-ink-faint leading-none whitespace-nowrap">{label}</span>
+      {caption && <span className="font-display text-xs font-semibold text-ink-faint leading-none whitespace-nowrap">{label}</span>}
     </span>
   );
 }
