@@ -200,12 +200,14 @@ export default function AnalysisResults({
 
   const characterScore = computeCharacterScore(result);
   // The trip computer leads with the price verdict; the listing's label
-  // drops to the small line unless there's no verdict to show
+  // drops to the small line unless there's no verdict to show. "Premium
+  // Asking Price" is itself a price call, so beside a headline like FAIR BUY
+  // it would argue with it — the headline already speaks to price
   const tripHeadline = tripReadout(result.priceVerdict?.assessment);
   const tripDetail = [
     result.vehicle.variant,
     isSpecified(result.vehicle.importStatus) ? result.vehicle.importStatus : "",
-    tripHeadline ? result.label : "",
+    tripHeadline && result.label !== "Premium Asking Price" ? result.label : "",
   ].filter(Boolean).join(" · ");
   const [shareNote, setShareNote] = useState("");
   const [sharing, setSharing] = useState(false);
