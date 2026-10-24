@@ -235,10 +235,10 @@ export default function GarageView() {
                         <div className="flex flex-wrap items-start justify-between gap-3">
                           <div className="min-w-0">
                             <p className="font-mono text-xs text-ink-faint mb-1.5">
-                              {a.vehicle.year}, checked {checkedOn(check.savedAt)}
+                              Checked {checkedOn(check.savedAt)}
                             </p>
                             <h3 className="font-display text-xl font-bold text-ink tracking-tight leading-tight truncate">
-                              {a.vehicle.make} {a.vehicle.model}
+                              {a.vehicle.year} {a.vehicle.make} {a.vehicle.model}
                             </h3>
                             {a.vehicle.price && (
                               <p className="font-mono text-glow-300 text-sm tabular-nums mt-1 [text-shadow:0_0_6px_rgba(169,216,255,0.45)]">{formatPrice(a.vehicle.price)}</p>
