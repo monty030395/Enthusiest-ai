@@ -164,8 +164,8 @@ with a Japanese GT-R-style cluster. Mockups: [Night Dash Kit](https://claude.ai/
 
 | Phase | What | Status |
 |---|---|---|
-| 1 | The look — petrol-blue/glow tokens, Chakra Petch + Saira + Share Tech Mono, no film grain, push-to-start button, revving tacho loader, Roast Mode behind a flip-up switch guard | 🔨 in review |
-| 2 | The results — three-dial cluster with an ignition sweep, amber multi-function display for driving character, warning lamps for red flags, temperature gauge (reliability), fuel gauge (wallet damage), odometer | ⬜ |
+| 1 | The look — petrol-blue/glow tokens, Chakra Petch + Saira + Share Tech Mono, no film grain, push-to-start button, revving tacho loader, Roast Mode behind a flip-up switch guard | ✅ shipped (#43) |
+| 2 | The results — three-dial cluster with an ignition sweep, amber multi-function display for driving character, warning lamps for red flags, temperature gauge (reliability), fuel gauge (wallet damage), odometer | 🔨 in review |
 | 3 | Garage key tags; Compare as two clusters side by side | ⬜ |
 
 ## Price calibration on appreciating JDM/enthusiast imports — ✅ shipped ([PR #27](https://github.com/monty030395/Enthusiest-ai/pull/27))

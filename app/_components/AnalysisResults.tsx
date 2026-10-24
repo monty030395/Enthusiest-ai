@@ -19,43 +19,25 @@ import {
   VerdictBadge, RatingBadge, RoastBadge,
 } from "./badges";
 import { Card, Pill, SectionLabel } from "./ui";
+import { Cluster, Dial, HalfGauge, MultiFunctionDisplay, Odometer, WarningLamp, parseOdometer } from "./gauges";
 
-// Single-column drive row — matches mockup layout
-function DriveScoreRow({ metric, label }: { metric: DriveMetric; label: string }) {
-  const color =
-    metric.score >= 7 ? "text-emerald-400"
-    : metric.score >= 5 ? "text-amber-400"
-    : "text-red-500";
+// Where the fuel needle sits for each wallet-damage rating: a sensible buy
+// leaves the tank nearly full, a catastrophic one runs it dry
+const FUEL_LEVEL: Record<string, number> = {
+  "Sensible Purchase": 0.88,
+  "Manageable Pain": 0.62,
+  "Emotionally Justified Disaster": 0.4,
+  "Dangerous": 0.2,
+  "Catastrophic Wallet Destruction": 0.04,
+};
+
+// The words behind each bar on the multi-function display
+function DriveNote({ metric, label }: { metric: DriveMetric; label: string }) {
   return (
-    <div className="flex items-start gap-4 py-3.5 border-b border-line last:border-0">
-      <span className={`font-mono text-xl font-bold tabular-nums min-w-[30px] leading-none pt-0.5 ${color}`}>
-        {metric.score}
-      </span>
-      <div>
-        <p className="font-mono text-[9px] font-medium uppercase tracking-[0.22em] text-ink-faint mb-1.5">{label}</p>
-        <p className="text-ink-muted text-sm leading-relaxed">{metric.description}</p>
-      </div>
+    <div className="py-3 border-b border-line last:border-0">
+      <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-mfd/85 mb-1">{label}</p>
+      <p className="text-ink-muted text-sm leading-relaxed">{metric.description}</p>
     </div>
-  );
-}
-
-function ScoreChip({ label, score, onClick }: { label: string; score: number | null; onClick: () => void }) {
-  const numColor =
-    score === null ? "text-ink-faint"
-    : score >= 7 ? "text-emerald-400"
-    : score >= 5 ? "text-amber-400"
-    : "text-red-400";
-  return (
-    <button
-      onClick={onClick}
-      className="flex-1 flex flex-col items-center gap-1 py-3.5 px-2 rounded-lg bg-white/[0.03] hover:bg-white/[0.06] border border-line hover:border-line-strong active:scale-95 transition-all"
-    >
-      <span className={`font-mono text-2xl font-bold tabular-nums leading-none ${numColor}`}>
-        {score !== null ? score : "?"}
-        <span className="text-ink-faint text-xs font-normal">/10</span>
-      </span>
-      <span className="font-mono text-[9px] font-medium uppercase tracking-[0.2em] text-ink-faint whitespace-nowrap">{label}</span>
-    </button>
   );
 }
 
@@ -132,7 +114,7 @@ function ConditionalTag() {
   );
 }
 
-function TileHeader({ label, score, quip, index }: { label: string; score: number | null; quip?: string; index?: string }) {
+function TileHeader({ label, score, quip }: { label: string; score: number | null; quip?: string }) {
   const numColor =
     score === null ? "text-ink-faint"
     : score >= 7 ? "text-emerald-400"
@@ -141,9 +123,6 @@ function TileHeader({ label, score, quip, index }: { label: string; score: numbe
   return (
     <div className="pt-4 space-y-1.5">
       <div className="flex items-baseline gap-3">
-        {index && (
-          <span className="font-display text-3xl font-extrabold leading-none tabular-nums text-ink/15 select-none">{index}</span>
-        )}
         <span className="font-display text-base font-bold uppercase tracking-[0.14em] text-ink">{label}</span>
         <div className="flex-1 h-px bg-line self-center" />
         {score !== null && (
@@ -212,9 +191,9 @@ export default function AnalysisResults({
               {isSpecified(result.vehicle.location) ? ` · ${result.vehicle.location}` : ""}
             </p>
             {result.vehicle.price && (
-              <div className="bg-glow-500 rounded-lg px-4 py-2 text-right flex-shrink-0">
-                <p className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-carbon-950/60">Asking</p>
-                <p className="font-mono text-xl font-bold text-carbon-950 tabular-nums">{result.vehicle.price}</p>
+              <div className="bg-dial ring-1 ring-line rounded-md px-3.5 py-2 text-right flex-shrink-0 shadow-[inset_0_2px_8px_rgba(0,0,0,0.7)]">
+                <p className="font-mono text-[10px] text-ink-faint">Asking</p>
+                <p className="font-mono text-xl text-glow-300 tabular-nums [text-shadow:0_0_8px_rgba(169,216,255,0.55)]">{result.vehicle.price}</p>
               </div>
             )}
           </div>
@@ -231,7 +210,10 @@ export default function AnalysisResults({
 
           {/* Spec pills + label badge + owner vibe */}
           <div className="flex flex-wrap items-center gap-2">
-            {isSpecified(result.vehicle.mileage) && <Pill>{result.vehicle.mileage}</Pill>}
+            {isSpecified(result.vehicle.mileage) && (() => {
+              const odo = parseOdometer(result.vehicle.mileage);
+              return odo ? <Odometer digits={odo} /> : <Pill>{result.vehicle.mileage}</Pill>;
+            })()}
             {isSpecified(result.vehicle.transmission) && <Pill>{result.vehicle.transmission}</Pill>}
             {isSpecified(result.vehicle.colour) && <Pill>{result.vehicle.colour}</Pill>}
             {result.label && (
@@ -322,31 +304,33 @@ export default function AnalysisResults({
             </div>
           )}
 
-          {/* Score chips — tap to scroll */}
-          <div className="flex gap-2.5">
-            <ScoreChip
-              label="Investment"
-              score={result.investmentScore ?? null}
-              onClick={() => investmentSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
-            />
-            <ScoreChip
-              label="Character"
-              score={characterScore}
-              onClick={() => characterSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
-            />
-            <ScoreChip
-              label="Street Cred"
-              score={result.vibeScore ?? null}
-              onClick={() => streetCredSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
-            />
-          </div>
+          {/* The cluster: tap a dial to jump to its section */}
+          <Cluster
+            dials={[
+              {
+                label: "Investment",
+                score: result.investmentScore ?? null,
+                onClick: () => investmentSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }),
+              },
+              {
+                label: "Character",
+                score: characterScore,
+                onClick: () => characterSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }),
+              },
+              {
+                label: "Street Cred",
+                score: result.vibeScore ?? null,
+                onClick: () => streetCredSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }),
+              },
+            ]}
+          />
 
         </div>
       </Card>
 
       {/* ── SECTION 1: INVESTMENT ───────────────────────── */}
       <div id="investment" ref={investmentSectionRef} className="scroll-mt-4 space-y-4">
-        <TileHeader index="01" label="Investment" score={result.investmentScore ?? null} quip={getQuip("investment", result.investmentScore ?? null)} />
+        <TileHeader label="Investment" score={result.investmentScore ?? null} quip={getQuip("investment", result.investmentScore ?? null)} />
 
         {/* Price Analysis */}
         {result.priceVerdict && (
@@ -409,6 +393,11 @@ export default function AnalysisResults({
                   <SectionLabel>Wallet Damage Rating</SectionLabel>
                   <VerdictBadge verdict={result.worstFinancialDecision.rating} />
                 </div>
+                {FUEL_LEVEL[result.worstFinancialDecision.rating] !== undefined && (
+                  <div className="flex justify-center mb-4">
+                    <HalfGauge level={FUEL_LEVEL[result.worstFinancialDecision.rating]} left="E" right="F" danger="left" />
+                  </div>
+                )}
                 {result.worstFinancialDecision.reasons?.length > 0 && (
                   <ul className="space-y-2.5">
                     {result.worstFinancialDecision.reasons.map((r, i) => (
@@ -433,6 +422,9 @@ export default function AnalysisResults({
               <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-4">
                 <SectionLabel>Reliability Risk</SectionLabel>
                 <VerdictBadge verdict={result.ownershipPain.score >= 8 ? "High Pain" : result.ownershipPain.score >= 5 ? "Moderate" : "Low Pain"} />
+              </div>
+              <div className="flex justify-center mb-4">
+                <HalfGauge level={result.ownershipPain.score / 10} left="C" right="H" danger="right" />
               </div>
               {result.ownershipPain.issues?.length > 0 && (
                 <ul className="space-y-3.5 mt-1">
@@ -459,56 +451,33 @@ export default function AnalysisResults({
           );
         })()}
 
-        {/* Red flags — chrome follows the strongest flag present, so an
-            all-conditional set doesn't shout in danger red */}
+        {/* Red flags as warning lamps: red for a confirmed fault, amber for
+            one that hinges on the variant. The heading follows the strongest */}
         {result.redFlags?.length > 0 && (() => {
           const anyConfirmed = result.redFlags.some((f) => !isConditional(f));
           return (
-            <div
-              className="rounded-xl overflow-hidden"
-              style={
-                anyConfirmed
-                  ? { border: "1px solid rgb(239 68 68 / 0.5)", backgroundColor: "rgb(69 10 10 / 0.25)" }
-                  : { border: `1px solid ${V_AMBER.border}`, backgroundColor: V_AMBER.bg }
-              }
-            >
-              <div
-                className="px-5 py-3 flex items-center gap-2.5"
-                style={{ backgroundColor: anyConfirmed ? "#dc2626" : V_AMBER.border }}
-              >
-                <span className="text-white text-sm">⚠️</span>
-                <span className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-white">
-                  {anyConfirmed ? "Red Flags — Read Before Buying" : "Worth Checking — Depends on the Variant"}
-                </span>
-              </div>
-              <ul className="divide-y" style={{ borderColor: anyConfirmed ? "rgb(127 29 29 / 0.4)" : V_AMBER.border }}>
+            <Card className="overflow-hidden">
+              <p className="px-5 pt-5 pb-1 font-display text-sm font-bold" style={{ color: anyConfirmed ? V_RED.text : V_AMBER.text }}>
+                {anyConfirmed ? "Red flags: read before buying" : "Worth checking: depends on the variant"}
+              </p>
+              <ul className="divide-y divide-line">
                 {result.redFlags.map((f, i) => {
                   const cond = isConditional(f);
                   return (
-                    <li key={i} className="px-5 py-4 flex gap-3">
-                      <span
-                        className="flex-shrink-0 text-base leading-tight mt-0.5"
-                        style={{ color: cond ? V_AMBER.text : "#f87171" }}
-                      >
-                        ⚠
-                      </span>
+                    <li key={i} className="px-5 py-4 flex gap-3.5">
+                      <WarningLamp tone={cond ? "amber" : "red"} />
                       <div>
-                        <p className="font-bold text-sm" style={{ color: cond ? V_AMBER.text : "#fecaca" }}>
+                        <p className="font-bold text-sm text-ink">
                           {f.flag}
                           {cond && <ConditionalTag />}
                         </p>
-                        <p
-                          className="text-xs mt-1 leading-relaxed"
-                          style={{ color: cond ? `${V_AMBER.text}cc` : "rgb(252 165 165 / 0.8)" }}
-                        >
-                          {f.explanation}
-                        </p>
+                        <p className="text-xs mt-1 leading-relaxed text-ink-muted">{f.explanation}</p>
                       </div>
                     </li>
                   );
                 })}
               </ul>
-            </div>
+            </Card>
           );
         })()}
 
@@ -528,9 +497,8 @@ export default function AnalysisResults({
           <Card className="p-6">
             <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-4">
               <SectionLabel>Future Classic Potential</SectionLabel>
-              <span className="font-mono text-xl font-bold text-glow-400 tabular-nums">
-                {result.classicPotential.score}
-                <span className="text-ink-faint text-xs font-normal">/10</span>
+              <span className="w-20 rounded-full bg-dial" role="img" aria-label={`${result.classicPotential.score} out of 10`}>
+                <Dial score={result.classicPotential.score} label="Classic" />
               </span>
             </div>
             {result.classicPotential.reasons?.length > 0 && (
@@ -549,7 +517,7 @@ export default function AnalysisResults({
 
       {/* ── SECTION 2: CHARACTER ────────────────────────── */}
       <div id="character" ref={characterSectionRef} className="scroll-mt-4 space-y-4">
-        <TileHeader index="02" label="Character" score={characterScore} quip={getQuip("character", characterScore)} />
+        <TileHeader label="Character" score={characterScore} quip={getQuip("character", characterScore)} />
 
         {/* Why Enthusiasts Care */}
         {result.whyEnthusiastsCare && (
@@ -563,11 +531,19 @@ export default function AnalysisResults({
         {result.drivingCharacter && (
           <Card className="p-6">
             <SectionLabel>Driving Character</SectionLabel>
-            <div className="space-y-0">
-              <DriveScoreRow metric={result.drivingCharacter.steeringFeel} label="Steering" />
-              <DriveScoreRow metric={result.drivingCharacter.engineCharacter} label="Engine" />
-              <DriveScoreRow metric={result.drivingCharacter.dailyComfort} label="Daily" />
-              <DriveScoreRow metric={result.drivingCharacter.overallFun} label="Fun" />
+            <MultiFunctionDisplay
+              rows={[
+                { label: "Steering", score: result.drivingCharacter.steeringFeel.score },
+                { label: "Engine", score: result.drivingCharacter.engineCharacter.score },
+                { label: "Daily", score: result.drivingCharacter.dailyComfort.score },
+                { label: "Fun", score: result.drivingCharacter.overallFun.score },
+              ]}
+            />
+            <div className="mt-2">
+              <DriveNote metric={result.drivingCharacter.steeringFeel} label="Steering" />
+              <DriveNote metric={result.drivingCharacter.engineCharacter} label="Engine" />
+              <DriveNote metric={result.drivingCharacter.dailyComfort} label="Daily" />
+              <DriveNote metric={result.drivingCharacter.overallFun} label="Fun" />
             </div>
             {result.drivingCharacter.summary && (
               <p className="text-ink-muted text-xs italic leading-relaxed border-t border-line pt-4 mt-1">
@@ -583,7 +559,7 @@ export default function AnalysisResults({
 
       {/* ── SECTION 3: STREET CRED ──────────────────────── */}
       <div id="street-cred" ref={streetCredSectionRef} className="scroll-mt-4 space-y-4">
-        <TileHeader index="03" label="Street Cred" score={result.vibeScore ?? null} />
+        <TileHeader label="Street Cred" score={result.vibeScore ?? null} />
 
         {/* Owner Vibe */}
         {result.ownerVibe?.label && (
