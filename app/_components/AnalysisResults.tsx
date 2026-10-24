@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, type RefObject } from "react";
 import {
   type Analysis,
   type DriveMetric,
@@ -15,11 +15,11 @@ import { trademeSearchUrl } from "../_lib/trademe";
 import {
   V_RED, V_AMBER, V_GREEN, V_NEUTRAL,
   VERDICT_THEME_MAP, TAX_LEVEL_THEMES,
-  themeToStyle, verdictBadgeStyle,
+  themeToStyle,
   VerdictBadge, RatingBadge, RoastBadge,
 } from "./badges";
 import { Card, Pill, SectionLabel } from "./ui";
-import { Cluster, Dial, HalfGauge, MultiFunctionDisplay, Odometer, TelltalePanel, WarningLamp, lampFor, parseOdometer } from "./gauges";
+import { Cluster, Dial, HalfGauge, MultiFunctionDisplay, Odometer, TelltalePanel, lampFor, parseOdometer } from "./gauges";
 
 // Where the fuel needle sits for each wallet-damage rating: a sensible buy
 // leaves the tank nearly full, a catastrophic one runs it dry
@@ -30,6 +30,20 @@ const FUEL_LEVEL: Record<string, number> = {
   "Dangerous": 0.2,
   "Catastrophic Wallet Destruction": 0.04,
 };
+
+// The trip computer's headline: the price verdict as a dash readout. Null
+// when there's no price to judge, so the listing's label shows instead.
+function tripReadout(assessment: string | undefined): string | null {
+  if (!assessment || assessment === "No Price Listed") return null;
+  if (assessment === "Fair") return "Fair buy";
+  return assessment;
+}
+
+// What the temperature needle says, in the gauge's own words
+function tempReadout(score: number): string {
+  const state = score >= 8 ? "Running hot" : score >= 5 ? "Runs warm" : "Runs cool";
+  return `${state}: ${score} of 10`;
+}
 
 // The words behind each bar on the multi-function display
 function DriveNote({ metric, label }: { metric: DriveMetric; label: string }) {
@@ -153,8 +167,20 @@ export default function AnalysisResults({
   const streetCredSectionRef = useRef<HTMLDivElement>(null);
   const priceVerdictRef = useRef<HTMLDivElement>(null);
   const ownerVibeRef = useRef<HTMLDivElement>(null);
+  const reliabilityRef = useRef<HTMLDivElement>(null);
+  const walletRef = useRef<HTMLDivElement>(null);
+  const scrollTo = (ref: RefObject<HTMLDivElement | null>) =>
+    ref.current?.scrollIntoView({ behavior: "smooth", block: "start" });
 
   const characterScore = computeCharacterScore(result);
+  // The trip computer leads with the price verdict; the listing's label
+  // drops to the small line unless there's no verdict to show
+  const tripHeadline = tripReadout(result.priceVerdict?.assessment);
+  const tripDetail = [
+    result.vehicle.variant,
+    isSpecified(result.vehicle.importStatus) ? result.vehicle.importStatus : "",
+    tripHeadline ? result.label : "",
+  ].filter(Boolean).join(" · ");
   const [shareNote, setShareNote] = useState("");
   const [sharing, setSharing] = useState(false);
 
@@ -178,86 +204,148 @@ export default function AnalysisResults({
   return (
     <div className="space-y-4">
 
-      {/* ── HERO TILE ───────────────────────────────────── */}
-      <Card className="overflow-hidden">
-        <div className="h-px bg-gradient-to-r from-glow-500 via-glow-500/40 to-transparent" />
-        <div className="p-6 sm:p-7 space-y-5">
+      {/* ── THE DASH ──────────────────────────────────────
+          Everything a buyer needs at a glance, sized to fit one phone
+          screen: the dials, the trip computer, the warning lamps and the
+          temperature and fuel gauges. The detail cards follow below. */}
+      <div className="space-y-3">
 
-          {/* Year / import / location + price */}
-          <div className="flex items-start justify-between gap-3">
-            <p className="font-mono text-[10px] font-medium uppercase tracking-[0.24em] text-ink-faint pt-1.5">
-              {result.vehicle.year}
-              {isSpecified(result.vehicle.importStatus) ? ` · ${result.vehicle.importStatus}` : ""}
-              {isSpecified(result.vehicle.location) ? ` · ${result.vehicle.location}` : ""}
-            </p>
+        {/* The cluster: tap a dial to jump to its section */}
+        <Cluster
+          dials={[
+            {
+              label: "Investment",
+              score: result.investmentScore ?? null,
+              onClick: () => scrollTo(investmentSectionRef),
+            },
+            {
+              label: "Character",
+              score: characterScore,
+              onClick: () => scrollTo(characterSectionRef),
+            },
+            {
+              label: "Street Cred",
+              score: result.vibeScore ?? null,
+              onClick: () => scrollTo(streetCredSectionRef),
+            },
+          ]}
+        />
+
+        {/* Trip computer: the price verdict, then the car. Tap for the
+            price analysis */}
+        <button
+          type="button"
+          onClick={() => scrollTo(priceVerdictRef)}
+          disabled={!result.priceVerdict}
+          className="w-full text-left rounded-lg bg-dial ring-1 ring-line px-3.5 py-3 font-mono text-mfd shadow-[inset_0_0_18px_rgba(255,173,59,0.06)] [text-shadow:0_0_6px_rgba(255,173,59,0.45)] active:scale-[0.99] transition-transform"
+        >
+          <span className="flex items-baseline justify-between gap-3">
+            <span className="text-2xl uppercase tracking-[0.06em] leading-tight">
+              {tripHeadline ?? result.label}
+            </span>
             {result.vehicle.price && (
-              <div className="bg-dial ring-1 ring-line rounded-md px-3.5 py-2 text-right flex-shrink-0 shadow-[inset_0_2px_8px_rgba(0,0,0,0.7)]">
-                <p className="font-mono text-[10px] text-ink-faint">Asking</p>
-                <p className="font-mono text-xl text-glow-300 tabular-nums [text-shadow:0_0_8px_rgba(169,216,255,0.55)]">{result.vehicle.price}</p>
-              </div>
+              <span className="text-lg tabular-nums whitespace-nowrap">{result.vehicle.price}</span>
             )}
-          </div>
+          </span>
+          <span className="block mt-1.5 font-display font-bold text-xl text-ink leading-tight [text-shadow:none]">
+            {result.vehicle.year} {result.vehicle.make} {result.vehicle.model}
+          </span>
+          {tripDetail && <span className="block mt-0.5 text-sm text-mfd/75">{tripDetail}</span>}
+        </button>
 
-          {/* Make / model / variant */}
-          <div>
-            <h3 className="font-display text-3xl sm:text-4xl font-extrabold text-ink tracking-tight leading-tight">
-              {result.vehicle.make} {result.vehicle.model}
-            </h3>
-            {result.vehicle.variant && (
-              <p className="text-ink-muted font-medium mt-1">{result.vehicle.variant}</p>
-            )}
-          </div>
+        {/* Odometer and the listing's particulars */}
+        <div className="flex flex-wrap items-center gap-2">
+          {isSpecified(result.vehicle.mileage) && (() => {
+            const odo = parseOdometer(result.vehicle.mileage);
+            return odo ? <Odometer digits={odo} /> : <Pill>{result.vehicle.mileage}</Pill>;
+          })()}
+          {isSpecified(result.vehicle.location) && <Pill>{result.vehicle.location}</Pill>}
+          {isSpecified(result.vehicle.transmission) && <Pill>{result.vehicle.transmission}</Pill>}
+          {result.mode === "roast" && <RoastBadge />}
+        </div>
 
-          {/* Spec pills + label badge + owner vibe */}
-          <div className="flex flex-wrap items-center gap-2">
-            {isSpecified(result.vehicle.mileage) && (() => {
-              const odo = parseOdometer(result.vehicle.mileage);
-              return odo ? <Odometer digits={odo} /> : <Pill>{result.vehicle.mileage}</Pill>;
-            })()}
-            {isSpecified(result.vehicle.transmission) && <Pill>{result.vehicle.transmission}</Pill>}
-            {isSpecified(result.vehicle.colour) && <Pill>{result.vehicle.colour}</Pill>}
-            {result.label && (
-              <button
-                title="Tap to view details"
-                onClick={() => priceVerdictRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
-                style={{ ...verdictBadgeStyle(result.label), display: "inline-flex", alignItems: "center" }}
-                className="gap-1.5 min-h-10 cursor-pointer hover:brightness-110 active:scale-95 transition-all"
+        {/* Warning lamps: red for a confirmed fault, amber for one that
+            hinges on the variant, all dark when the listing is clean. Each
+            flag's explanation opens on tap so the dash stays on one screen */}
+        {(() => {
+          const flags = (result.redFlags ?? []).map((f) => ({ ...f, kind: lampFor(`${f.flag} ${f.explanation}`), conditional: isConditional(f) }));
+          const anyConfirmed = flags.some((f) => !f.conditional);
+          return (
+            <div className="rounded-xl bg-dial/60 ring-1 ring-line p-3.5 space-y-3">
+              <p
+                className="font-display text-xs font-bold uppercase tracking-[0.08em]"
+                style={{ color: flags.length === 0 ? undefined : anyConfirmed ? V_RED.text : V_AMBER.text }}
               >
-                {result.label}
-                <span className="opacity-70 text-[9px] leading-none">↓</span>
+                {flags.length === 0 ? <span className="text-ink-faint">Warning lamps: all clear</span>
+                  : anyConfirmed ? "Warning lamps: read before buying"
+                  : "Warning lamps: depends on the variant"}
+              </p>
+              <TelltalePanel flags={flags} size="sm" />
+              {flags.length > 0 && (
+                <ul className="divide-y divide-line">
+                  {flags.map((f, i) => (
+                    <li key={i}>
+                      <details className="group">
+                        <summary className="flex items-center gap-2.5 py-2 min-h-10 cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                          <span
+                            className="flex-none w-2.5 h-2.5 rounded-full"
+                            style={{ backgroundColor: f.conditional ? "var(--color-mfd)" : "var(--color-needle)" }}
+                            aria-hidden="true"
+                          />
+                          <span className="flex-1 font-bold text-sm text-ink leading-snug">
+                            {f.flag}
+                            {f.conditional && <ConditionalTag />}
+                          </span>
+                          <span className="flex-none text-ink-faint text-[10px] transition-transform group-open:rotate-180" aria-hidden="true">▼</span>
+                        </summary>
+                        <p className="text-xs pb-3 pl-5 leading-relaxed text-ink-muted">{f.explanation}</p>
+                      </details>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          );
+        })()}
+
+        {/* Temperature (reliability) and fuel (wallet damage). Tap for the
+            details further down */}
+        {(result.ownershipPain || FUEL_LEVEL[result.worstFinancialDecision?.rating ?? ""] !== undefined) && (
+          <div className="grid grid-cols-2 gap-3">
+            {result.ownershipPain && (
+              <button
+                type="button"
+                onClick={() => scrollTo(reliabilityRef)}
+                className="rounded-xl bg-dial ring-1 ring-line px-2.5 pt-2 pb-2.5 grid justify-items-center gap-0.5 text-center active:scale-[0.98] transition-transform"
+              >
+                <span className="justify-self-start font-display text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-faint">Reliability risk</span>
+                <HalfGauge level={result.ownershipPain.score / 10} left="C" right="H" danger="right" />
+                <span className="font-display text-xs font-semibold text-ink">{tempReadout(result.ownershipPain.score)}</span>
               </button>
             )}
-            {result.mode === "roast" && <RoastBadge />}
-            {result.ownerVibe?.label && (
+            {result.worstFinancialDecision && FUEL_LEVEL[result.worstFinancialDecision.rating] !== undefined && (
               <button
-                title="Tap to view details"
-                onClick={() => ownerVibeRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
-                style={{ ...verdictBadgeStyle(result.ownerVibe.label), display: "inline-flex", alignItems: "center" }}
-                className="gap-1.5 min-h-10 cursor-pointer hover:brightness-110 active:scale-95 transition-all"
+                type="button"
+                onClick={() => scrollTo(walletRef)}
+                className="rounded-xl bg-dial ring-1 ring-line px-2.5 pt-2 pb-2.5 grid justify-items-center gap-0.5 text-center active:scale-[0.98] transition-transform"
               >
-                {result.ownerVibe.label}
-                <span className="opacity-70 text-[9px] leading-none">↓</span>
+                <span className="justify-self-start font-display text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-faint">Wallet damage</span>
+                <HalfGauge level={FUEL_LEVEL[result.worstFinancialDecision.rating]} left="E" right="F" danger="left" />
+                <span className="font-display text-xs font-semibold text-ink">{result.worstFinancialDecision.rating}</span>
               </button>
             )}
           </div>
+        )}
+      </div>
 
-          {/* Pull-quote */}
-          {result.whatMakesSpecial && (
-            <div className="pl-4 border-l-2 border-glow-400">
-              <p className="text-ink text-[17px] font-medium italic leading-snug">{result.whatMakesSpecial}</p>
-            </div>
-          )}
-
-          {/* Verdict */}
-          {result.verdict && (
-            <div className="pl-4 border-l border-line-strong">
-              <p className="text-ink-muted leading-relaxed text-sm italic">{result.verdict}</p>
-            </div>
-          )}
+      {/* ── UNDER THE DASH: specs and the short verdict ─── */}
+      {(result.performanceSpecs?.engine || result.whatMakesSpecial || result.verdict) && (
+        <Card className="overflow-hidden">
+          <div className="p-6 space-y-5">
 
           {/* Performance specs */}
           {result.performanceSpecs?.engine && (
-            <div className="bg-carbon-900/60 rounded-lg border border-line p-5">
+            <div>
               <SectionLabel>Performance Specs</SectionLabel>
               <p className="font-mono text-ink font-bold text-sm mb-5">{result.performanceSpecs.engine}</p>
               <div className="grid grid-cols-2 gap-x-4 gap-y-4">
@@ -304,29 +392,23 @@ export default function AnalysisResults({
             </div>
           )}
 
-          {/* The cluster: tap a dial to jump to its section */}
-          <Cluster
-            dials={[
-              {
-                label: "Investment",
-                score: result.investmentScore ?? null,
-                onClick: () => investmentSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }),
-              },
-              {
-                label: "Character",
-                score: characterScore,
-                onClick: () => characterSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }),
-              },
-              {
-                label: "Street Cred",
-                score: result.vibeScore ?? null,
-                onClick: () => streetCredSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }),
-              },
-            ]}
-          />
+          {/* Pull-quote */}
+          {result.whatMakesSpecial && (
+            <div className="pl-4 border-l-2 border-glow-400">
+              <p className="text-ink text-[17px] font-medium italic leading-snug">{result.whatMakesSpecial}</p>
+            </div>
+          )}
 
-        </div>
-      </Card>
+          {/* Verdict */}
+          {result.verdict && (
+            <div className="pl-4 border-l border-line-strong">
+              <p className="text-ink-muted leading-relaxed text-sm italic">{result.verdict}</p>
+            </div>
+          )}
+
+          </div>
+        </Card>
+      )}
 
       {/* ── SECTION 1: INVESTMENT ───────────────────────── */}
       <div id="investment" ref={investmentSectionRef} className="scroll-mt-4 space-y-4">
@@ -386,18 +468,13 @@ export default function AnalysisResults({
         {result.worstFinancialDecision && (() => {
           const t = VERDICT_THEME_MAP[result.worstFinancialDecision.rating] ?? V_NEUTRAL;
           return (
-            <div className="rounded-xl border border-line overflow-hidden" style={{ backgroundColor: t.bg }}>
+            <div ref={walletRef} className="scroll-mt-4 rounded-xl border border-line overflow-hidden" style={{ backgroundColor: t.bg }}>
               <div className="h-1" style={{ backgroundColor: t.border }} />
               <div className="p-6">
                 <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-4">
                   <SectionLabel>Wallet Damage Rating</SectionLabel>
                   <VerdictBadge verdict={result.worstFinancialDecision.rating} />
                 </div>
-                {FUEL_LEVEL[result.worstFinancialDecision.rating] !== undefined && (
-                  <div className="flex justify-center mb-4">
-                    <HalfGauge level={FUEL_LEVEL[result.worstFinancialDecision.rating]} left="E" right="F" danger="left" />
-                  </div>
-                )}
                 {result.worstFinancialDecision.reasons?.length > 0 && (
                   <ul className="space-y-2.5">
                     {result.worstFinancialDecision.reasons.map((r, i) => (
@@ -418,13 +495,11 @@ export default function AnalysisResults({
         {result.ownershipPain && (() => {
           const t = result.ownershipPain.score >= 8 ? V_RED : result.ownershipPain.score >= 5 ? V_AMBER : V_GREEN;
           return (
+            <div ref={reliabilityRef} className="scroll-mt-4">
             <Card className="p-6">
               <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-4">
                 <SectionLabel>Reliability Risk</SectionLabel>
                 <VerdictBadge verdict={result.ownershipPain.score >= 8 ? "High Pain" : result.ownershipPain.score >= 5 ? "Moderate" : "Low Pain"} />
-              </div>
-              <div className="flex justify-center mb-4">
-                <HalfGauge level={result.ownershipPain.score / 10} left="C" right="H" danger="right" />
               </div>
               {result.ownershipPain.issues?.length > 0 && (
                 <ul className="space-y-3.5 mt-1">
@@ -448,40 +523,7 @@ export default function AnalysisResults({
                 </ul>
               )}
             </Card>
-          );
-        })()}
-
-        {/* Red flags as warning lamps: red for a confirmed fault, amber for
-            one that hinges on the variant. The heading follows the strongest */}
-        {result.redFlags?.length > 0 && (() => {
-          const anyConfirmed = result.redFlags.some((f) => !isConditional(f));
-          const flags = result.redFlags.map((f) => ({ ...f, kind: lampFor(`${f.flag} ${f.explanation}`), conditional: isConditional(f) }));
-          return (
-            <Card className="overflow-hidden">
-              <div className="px-5 pt-5 pb-2 space-y-3.5">
-                <p className="font-display text-sm font-bold" style={{ color: anyConfirmed ? V_RED.text : V_AMBER.text }}>
-                  {anyConfirmed ? "Red flags: read before buying" : "Worth checking: depends on the variant"}
-                </p>
-                <TelltalePanel flags={flags} />
-              </div>
-              <ul className="divide-y divide-line">
-                {flags.map((f, i) => {
-                  const cond = f.conditional;
-                  return (
-                    <li key={i} className="px-5 py-4 flex gap-3.5">
-                      <WarningLamp kind={f.kind} tone={cond ? "amber" : "red"} size="sm" />
-                      <div>
-                        <p className="font-bold text-sm text-ink">
-                          {f.flag}
-                          {cond && <ConditionalTag />}
-                        </p>
-                        <p className="text-xs mt-1 leading-relaxed text-ink-muted">{f.explanation}</p>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            </Card>
+            </div>
           );
         })()}
 

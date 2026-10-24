@@ -326,7 +326,7 @@ export function WarningLamp({ kind, tone, size = "md" }: { kind: LampKind; tone:
 
 // The row of telltales across the panel. A lamp is red if any confirmed flag
 // lights it, amber if only "depends on the variant" ones do, else dark.
-export function TelltalePanel({ flags }: { flags: { kind: LampKind; conditional: boolean }[] }) {
+export function TelltalePanel({ flags, size = "md" }: { flags: { kind: LampKind; conditional: boolean }[]; size?: "sm" | "md" }) {
   const tones = LAMP_ORDER.map((kind) => {
     const hits = flags.filter((f) => f.kind === kind);
     const tone: LampTone = hits.length === 0 ? "off" : hits.some((f) => !f.conditional) ? "red" : "amber";
@@ -337,10 +337,10 @@ export function TelltalePanel({ flags }: { flags: { kind: LampKind; conditional:
     <div
       className="flex flex-wrap gap-2.5"
       role="img"
-      aria-label={`Warning lamps lit: ${lit.map((t) => `${LAMP_NAME[t.kind]} (${t.tone})`).join(", ")}`}
+      aria-label={lit.length === 0 ? "No warning lamps lit" : `Warning lamps lit: ${lit.map((t) => `${LAMP_NAME[t.kind]} (${t.tone})`).join(", ")}`}
     >
       {tones.map((t) => (
-        <WarningLamp key={t.kind} kind={t.kind} tone={t.tone} />
+        <WarningLamp key={t.kind} kind={t.kind} tone={t.tone} size={size} />
       ))}
     </div>
   );
