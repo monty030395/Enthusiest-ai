@@ -120,9 +120,6 @@ export default function CompareView({ a, b, onBack }: { a: SavedCheck; b: SavedC
         )}
       </div>
 
-      <p className="font-mono text-ink-faint text-xs leading-relaxed text-center">
-        AI scores only count when the two cars are more than one point apart — a single point either way is noise, not a finding. Flag counts and rated tiers score on any real difference. Asking price is shown but never scored: cheaper isn&apos;t better, it&apos;s just cheaper.
-      </p>
     </div>
   );
 }

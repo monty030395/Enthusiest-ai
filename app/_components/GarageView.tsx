@@ -33,6 +33,17 @@ function checkedOn(savedAt: number): string {
   });
 }
 
+// The date for the reopened check's top row, where space is tight: the year
+// only shows when it isn't this one
+function checkedShort(savedAt: number): string {
+  const d = new Date(savedAt);
+  return d.toLocaleDateString("en-NZ", {
+    day: "numeric",
+    month: "short",
+    ...(d.getFullYear() !== new Date().getFullYear() && { year: "numeric" }),
+  });
+}
+
 export default function GarageView() {
   // Null until hydrated — see useGarage. Writes below (delete, clear,
   // import) update it on their own.
@@ -103,7 +114,7 @@ export default function GarageView() {
     if (updated) {
       setImportError("");
     } else {
-      setImportError("That file isn't a Motormind check — export one from a Garage on another device and try again.");
+      setImportError("That file isn't a Motormind check — use Save file on a check in another Garage and try again.");
       setTimeout(() => setImportError(""), 5000);
     }
   }
@@ -117,42 +128,52 @@ export default function GarageView() {
 
       <Masthead active="garage" />
 
-      <main className="max-w-3xl mx-auto px-5 py-10 space-y-6">
+      {/* A reopened check starts high so its dash still fits one phone screen */}
+      <main className={`max-w-3xl mx-auto px-5 pb-10 space-y-6 ${selected && !comparing ? "pt-1" : "pt-10"}`}>
 
         {comparing && comparePair.length === 2 ? (
           <CompareView a={comparePair[0]} b={comparePair[1]} onBack={() => setComparing(false)} />
         ) : selected ? (
-          <>
-            {/* Detail view: one saved check, re-rendered in full */}
-            <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+          <div className="space-y-2">
+            {/* Detail view: one saved check, re-rendered in full. One short
+                row on top so the dash below still fits one phone screen */}
+            <div className="flex items-center justify-between gap-3">
               <button
                 onClick={() => setSelected(null)}
                 className="font-mono text-xs font-medium uppercase tracking-[0.12em] text-ink-faint hover:text-ink-muted transition-colors min-h-11 flex items-center gap-2"
               >
-                <span className="text-glow-400">←</span> Back to Garage
+                <span className="text-glow-400">←</span> Garage
               </button>
               <div className="flex items-center gap-3">
-                <p className="font-mono text-xs text-ink-faint">Checked {checkedOn(selected.savedAt)}</p>
+                <p className="hidden min-[360px]:block font-mono text-xs text-ink-faint whitespace-nowrap" title={`Checked ${checkedOn(selected.savedAt)}`}>{checkedShort(selected.savedAt)}</p>
                 {selected.listingUrl && (
                   <a
                     href={selected.listingUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-mono text-xs font-medium uppercase tracking-[0.12em] text-ink-muted hover:text-ink transition-colors min-h-11 inline-flex items-center"
+                    className="font-mono text-xs font-medium uppercase tracking-[0.12em] text-ink-muted hover:text-ink transition-colors min-h-11 inline-flex items-center whitespace-nowrap"
                   >
                     Listing ↗
                   </a>
                 )}
                 <button
                   onClick={() => handleExport(selected)}
-                  className="font-mono text-xs font-medium uppercase tracking-[0.12em] text-glow-400 hover:text-glow-300 transition-colors min-h-11 inline-flex items-center"
+                  title="Download this check as a file to send to a mate or open on another device"
+                  className="font-mono text-xs font-medium uppercase tracking-[0.12em] text-glow-400 hover:text-glow-300 transition-colors min-h-11 inline-flex items-center whitespace-nowrap"
                 >
-                  Export
+                  Save file
                 </button>
               </div>
             </div>
             <AnalysisResults analysis={selected.analysis} />
-          </>
+            {/* The end of a long read: a way back without scrolling up */}
+            <button
+              onClick={() => { setSelected(null); window.scrollTo({ top: 0 }); }}
+              className="!mt-4 w-full border border-line hover:border-line-strong text-ink-faint hover:text-ink-muted rounded-lg min-h-12 font-mono text-xs font-medium uppercase tracking-[0.12em] transition-all"
+            >
+              ← Back to Garage
+            </button>
+          </div>
         ) : (
           <>
             {/* List view */}
@@ -332,10 +353,17 @@ export default function GarageView() {
       {!comparing && !selected && compareIds.length > 0 && (
         <div className="fixed bottom-0 inset-x-0 z-30 border-t border-line bg-carbon-950/90 backdrop-blur-md px-5 py-3">
           <div className="max-w-3xl mx-auto flex items-center justify-between gap-3">
-            <p className="font-mono text-xs text-ink-muted uppercase tracking-[0.12em] leading-relaxed min-w-0 truncate">
-              {comparePair.length === 2
-                ? `${comparePair[0].analysis.vehicle.model} vs ${comparePair[1].analysis.vehicle.model}`
-                : "Pick one more to compare"}
+            {/* Body type, and two lines if it needs them: spaced capitals cut
+                the pair's names off on a phone */}
+            <p className="text-sm text-ink-muted leading-snug min-w-0 line-clamp-2">
+              {comparePair.length === 2 ? (
+                <>
+                  <span className="text-ink">{comparePair[0].analysis.vehicle.model}</span> vs{" "}
+                  <span className="text-ink">{comparePair[1].analysis.vehicle.model}</span>
+                </>
+              ) : (
+                "Pick one more to compare"
+              )}
             </p>
             <div className="flex items-center gap-2 flex-shrink-0">
               <button

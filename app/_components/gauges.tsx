@@ -241,13 +241,17 @@ export function HalfGauge({ level, left, right, danger }: { level: number; left:
 
 // Amber multi-function display, GT-R style: one bar graph per drive score,
 // top two segments in needle red like a redline.
-export function MultiFunctionDisplay({ rows }: { rows: { label: string; score: number }[] }) {
+// A row's note, when given, sits under its bar so the reading and the
+// words behind it stay together
+export function MultiFunctionDisplay({ rows }: { rows: { label: string; score: number; note?: string }[] }) {
+  const withNotes = rows.some((r) => r.note);
   return (
-    <div className="rounded-lg bg-dial px-3.5 py-3 ring-1 ring-line shadow-[0_0_0_4px_var(--color-carbon-900)] font-mono text-mfd grid gap-2">
+    <div className={`rounded-lg bg-dial px-3.5 py-3 ring-1 ring-line shadow-[0_0_0_4px_var(--color-carbon-900)] font-mono text-mfd grid ${withNotes ? "gap-3.5" : "gap-2"}`}>
       {rows.map((row) => {
         const lit = Math.max(0, Math.min(10, Math.round(row.score)));
         return (
-          <div key={row.label} className="grid grid-cols-[4.5rem_1fr_1.25rem] items-center gap-2.5 text-xs">
+          <div key={row.label} className="space-y-1">
+          <div className="grid grid-cols-[4.5rem_1fr_1.25rem] items-center gap-2.5 text-xs">
             <span className="uppercase tracking-[0.08em]">{row.label}</span>
             <span className="grid grid-cols-10 gap-[2px]" role="img" aria-label={`${row.label} ${row.score} out of 10`}>
               {Array.from({ length: 10 }, (_, i) => (
@@ -262,6 +266,8 @@ export function MultiFunctionDisplay({ rows }: { rows: { label: string; score: n
               ))}
             </span>
             <span className="text-right tabular-nums">{row.score}</span>
+          </div>
+          {row.note && <p className="font-sans text-sm text-ink-muted leading-snug">{row.note}</p>}
           </div>
         );
       })}

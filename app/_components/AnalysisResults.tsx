@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useRef, type RefObject } from "react";
+import { useState, useRef, useEffect, type RefObject } from "react";
 import {
   type Analysis,
-  type DriveMetric,
   isSpecified,
   computeCharacterScore,
   getQuip,
@@ -56,20 +55,14 @@ function tripReadout(assessment: string | undefined): string | null {
   return TRIP_READOUT[assessment] ?? assessment;
 }
 
-// What the temperature needle says, in the gauge's own words
-function tempReadout(score: number): string {
-  const state = score >= 8 ? "Running hot" : score >= 5 ? "Runs warm" : "Runs cool";
-  return `${state}: ${score} of 10`;
+// What the temperature needle says, in the gauge's own words. The
+// Reliability Risk card uses the same words so the two read as one reading
+function tempState(score: number): string {
+  return score >= 8 ? "Running hot" : score >= 5 ? "Runs warm" : "Runs cool";
 }
 
-// The words behind each bar on the multi-function display
-function DriveNote({ metric, label }: { metric: DriveMetric; label: string }) {
-  return (
-    <div className="py-3 border-b border-line last:border-0">
-      <p className="font-mono text-xs uppercase tracking-[0.12em] text-mfd/85 mb-1">{label}</p>
-      <p className="text-ink-muted text-sm leading-relaxed">{metric.description}</p>
-    </div>
-  );
+function tempReadout(score: number): string {
+  return `${tempState(score)}: ${score} of 10`;
 }
 
 function ModPotentialCard({ data }: { data: NonNullable<Analysis["modPotential"]> }) {
@@ -187,17 +180,34 @@ export default function AnalysisResults({
   const reliabilityRef = useRef<HTMLDivElement>(null);
   const walletRef = useRef<HTMLDivElement>(null);
   const takeRef = useRef<HTMLDivElement>(null);
+  const dashRef = useRef<HTMLDivElement>(null);
   const scrollTo = (ref: RefObject<HTMLDivElement | null>) =>
     ref.current?.scrollIntoView({ behavior: "smooth", block: "start" });
 
+  // Once the dash has scrolled up out of view, a strip under the masthead
+  // keeps its jumps to hand: back to the dash, the three sections, the take
+  const [pastDash, setPastDash] = useState(false);
+  useEffect(() => {
+    const dash = dashRef.current;
+    if (!dash) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setPastDash(!entry.isIntersecting && entry.boundingClientRect.top < 0),
+      { rootMargin: "-61px 0px 0px 0px" }
+    );
+    observer.observe(dash);
+    return () => observer.disconnect();
+  }, []);
+
   const characterScore = computeCharacterScore(result);
   // The trip computer leads with the price verdict; the listing's label
-  // drops to the small line unless there's no verdict to show
+  // drops to the small line unless there's no verdict to show. "Premium
+  // Asking Price" is itself a price call, so beside a headline like FAIR BUY
+  // it would argue with it — the headline already speaks to price
   const tripHeadline = tripReadout(result.priceVerdict?.assessment);
   const tripDetail = [
     result.vehicle.variant,
     isSpecified(result.vehicle.importStatus) ? result.vehicle.importStatus : "",
-    tripHeadline ? result.label : "",
+    tripHeadline && result.label !== "Premium Asking Price" ? result.label : "",
   ].filter(Boolean).join(" · ");
   const [shareNote, setShareNote] = useState("");
   const [sharing, setSharing] = useState(false);
@@ -219,14 +229,58 @@ export default function AnalysisResults({
     setTimeout(() => setShareNote(""), 4000);
   }
 
+  const jumps = [
+    { label: "Invest", score: result.investmentScore ?? null, ref: investmentSectionRef },
+    { label: "Character", score: characterScore, ref: characterSectionRef },
+    { label: "Cred", score: result.vibeScore ?? null, ref: streetCredSectionRef },
+  ];
+
   return (
     <div className="space-y-4">
+
+      {/* The jump strip, pinned under the masthead (61px tall) */}
+      <nav
+        aria-label="Jump to a section"
+        inert={!pastDash}
+        className={`fixed inset-x-0 top-[61px] z-30 border-b border-line bg-carbon-950/95 backdrop-blur transition-[opacity,transform] duration-200 ${
+          pastDash ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2 pointer-events-none"
+        }`}
+      >
+        <div className="max-w-3xl mx-auto px-4 flex items-center justify-between">
+          <button
+            type="button"
+            onClick={() => scrollTo(dashRef)}
+            className="min-h-11 px-1 font-mono text-xs uppercase tracking-[0.08em] text-glow-400 hover:text-glow-300 transition-colors"
+          >
+            ↑<span className="hidden min-[360px]:inline"> Dash</span>
+          </button>
+          {jumps.map((j) => (
+            <button
+              key={j.label}
+              type="button"
+              onClick={() => scrollTo(j.ref)}
+              className="min-h-11 px-1 font-mono text-xs uppercase tracking-[0.08em] text-ink-muted hover:text-ink transition-colors"
+            >
+              {j.label} <span className="text-glow-300 tabular-nums">{j.score ?? "–"}</span>
+            </button>
+          ))}
+          {result.enthusiastTake && (
+            <button
+              type="button"
+              onClick={() => scrollTo(takeRef)}
+              className="min-h-11 px-1 font-mono text-xs uppercase tracking-[0.08em] text-mfd hover:text-mfd/80 transition-colors"
+            >
+              Take
+            </button>
+          )}
+        </div>
+      </nav>
 
       {/* ── THE DASH ──────────────────────────────────────
           Everything a buyer needs at a glance, sized to fit one phone
           screen: the dials, the trip computer, the warning lamps and the
           temperature and fuel gauges. The detail cards follow below. */}
-      <div className="space-y-2.5">
+      <div ref={dashRef} className="space-y-2.5 scroll-mt-20">
 
         {/* The cluster: tap a dial to jump to its section */}
         <Cluster
@@ -463,12 +517,12 @@ export default function AnalysisResults({
       )}
 
       {/* ── SECTION 1: INVESTMENT ───────────────────────── */}
-      <div id="investment" ref={investmentSectionRef} className="scroll-mt-16 space-y-4">
+      <div id="investment" ref={investmentSectionRef} className="scroll-mt-28 space-y-4">
         <TileHeader label="Investment" score={result.investmentScore ?? null} quip={getQuip("investment", result.investmentScore ?? null)} />
 
         {/* Price Analysis */}
         {result.priceVerdict && (
-          <div ref={priceVerdictRef} className="scroll-mt-16">
+          <div ref={priceVerdictRef} className="scroll-mt-28">
             <Card className="p-6">
               <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-2">
                 <SectionLabel>Price Analysis</SectionLabel>
@@ -520,7 +574,7 @@ export default function AnalysisResults({
         {result.worstFinancialDecision && (() => {
           const t = VERDICT_THEME_MAP[result.worstFinancialDecision.rating] ?? V_NEUTRAL;
           return (
-            <div ref={walletRef} className="scroll-mt-16">
+            <div ref={walletRef} className="scroll-mt-28">
             <Card className="p-6">
               <div>
                 <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-4">
@@ -548,11 +602,11 @@ export default function AnalysisResults({
         {result.ownershipPain && (() => {
           const t = result.ownershipPain.score >= 8 ? V_RED : result.ownershipPain.score >= 5 ? V_AMBER : V_GREEN;
           return (
-            <div ref={reliabilityRef} className="scroll-mt-16">
+            <div ref={reliabilityRef} className="scroll-mt-28">
             <Card className="p-6">
               <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-4">
                 <SectionLabel>Reliability Risk</SectionLabel>
-                <VerdictBadge verdict={result.ownershipPain.score >= 8 ? "High Pain" : result.ownershipPain.score >= 5 ? "Moderate" : "Low Pain"} />
+                <span style={themeToStyle(t)}>{tempState(result.ownershipPain.score)}</span>
               </div>
               {result.ownershipPain.issues?.length > 0 && (
                 <ul className="space-y-3.5 mt-1">
@@ -597,7 +651,7 @@ export default function AnalysisResults({
             <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-4">
               <SectionLabel>Future Classic Potential</SectionLabel>
               <span className="w-20 rounded-full bg-dial" role="img" aria-label={`${result.classicPotential.score} out of 10`}>
-                <Dial score={result.classicPotential.score} label="Classic" />
+                <Dial score={result.classicPotential.score} label="Classic" faceLabel={false} />
               </span>
             </div>
             {result.classicPotential.reasons?.length > 0 && (
@@ -615,7 +669,7 @@ export default function AnalysisResults({
       </div>
 
       {/* ── SECTION 2: CHARACTER ────────────────────────── */}
-      <div id="character" ref={characterSectionRef} className="scroll-mt-16 space-y-4">
+      <div id="character" ref={characterSectionRef} className="scroll-mt-28 space-y-4">
         <TileHeader label="Character" score={characterScore} quip={getQuip("character", characterScore)} />
 
         {/* Why Enthusiasts Care */}
@@ -632,20 +686,14 @@ export default function AnalysisResults({
             <SectionLabel>Driving Character</SectionLabel>
             <MultiFunctionDisplay
               rows={[
-                { label: "Steering", score: result.drivingCharacter.steeringFeel.score },
-                { label: "Engine", score: result.drivingCharacter.engineCharacter.score },
-                { label: "Daily", score: result.drivingCharacter.dailyComfort.score },
-                { label: "Fun", score: result.drivingCharacter.overallFun.score },
+                { label: "Steering", score: result.drivingCharacter.steeringFeel.score, note: result.drivingCharacter.steeringFeel.description },
+                { label: "Engine", score: result.drivingCharacter.engineCharacter.score, note: result.drivingCharacter.engineCharacter.description },
+                { label: "Daily", score: result.drivingCharacter.dailyComfort.score, note: result.drivingCharacter.dailyComfort.description },
+                { label: "Fun", score: result.drivingCharacter.overallFun.score, note: result.drivingCharacter.overallFun.description },
               ]}
             />
-            <div className="mt-2">
-              <DriveNote metric={result.drivingCharacter.steeringFeel} label="Steering" />
-              <DriveNote metric={result.drivingCharacter.engineCharacter} label="Engine" />
-              <DriveNote metric={result.drivingCharacter.dailyComfort} label="Daily" />
-              <DriveNote metric={result.drivingCharacter.overallFun} label="Fun" />
-            </div>
             {result.drivingCharacter.summary && (
-              <p className="text-ink-muted text-xs italic leading-relaxed border-t border-line pt-4 mt-1">
+              <p className="text-ink-muted text-sm italic leading-relaxed pt-4">
                 {result.drivingCharacter.summary}
               </p>
             )}
@@ -657,12 +705,12 @@ export default function AnalysisResults({
       </div>
 
       {/* ── SECTION 3: STREET CRED ──────────────────────── */}
-      <div id="street-cred" ref={streetCredSectionRef} className="scroll-mt-16 space-y-4">
+      <div id="street-cred" ref={streetCredSectionRef} className="scroll-mt-28 space-y-4">
         <TileHeader label="Street Cred" score={result.vibeScore ?? null} />
 
         {/* Owner Vibe */}
         {result.ownerVibe?.label && (
-          <div ref={ownerVibeRef} className="scroll-mt-16">
+          <div ref={ownerVibeRef} className="scroll-mt-28">
             <Card className="p-6">
               <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-3">
                 <SectionLabel>Owner Vibe</SectionLabel>
@@ -786,8 +834,8 @@ export default function AnalysisResults({
                 </a>
               </div>
             ))}
-            <p className="font-mono text-ink-faint text-xs leading-relaxed pt-3 border-t border-line">
-              These are AI suggestions from general market knowledge, not listings we&apos;ve seen. The prices are rough estimates and appreciating cars can run well past them — each link searches Trade Me for that car, so trust what comes back over what we guessed.
+            <p className="text-ink-muted text-xs leading-relaxed pt-3 border-t border-line">
+              AI suggestions, not listings we&apos;ve seen. Prices are rough guesses and rising classics can go well past them, so trust what each Trade Me search finds.
             </p>
           </Card>
         </div>
@@ -795,7 +843,7 @@ export default function AnalysisResults({
 
       {/* ── THE ENTHUSIAST TAKE ─────────────────────────── */}
       {result.enthusiastTake && (
-        <div ref={takeRef} className="scroll-mt-16 rounded-xl bg-dial ring-1 ring-glow-600/40 overflow-hidden">
+        <div ref={takeRef} className="scroll-mt-28 rounded-xl bg-dial ring-1 ring-glow-600/40 overflow-hidden">
           <div className="px-6 pt-5">
             <span className="font-mono text-base uppercase tracking-[0.06em] text-mfd [text-shadow:0_0_6px_rgba(255,173,59,0.45)]">
               The Enthusiast Take
