@@ -547,6 +547,78 @@ function applyRoastRewrite(original: Record<string, any>, rewrite: Record<string
   return merged;
 }
 
+// --- Street cred repair -------------------------------------------------
+//
+// The facts call occasionally hands the street-cred fields back as the
+// template's empty strings — the rest of the analysis fine, but Cars &
+// Coffee and Community Credibility rendering as blank badges and Owner Vibe
+// vanishing. When that happens, one small follow-up call fills in just those
+// fields. The rules are lifted straight from SYSTEM_PROMPT_TAIL so the two
+// prompts can't drift apart.
+
+const STREET_CRED_RULE_KEYS = [
+  "ownerVibe.label",
+  "ownerVibe.reasoning",
+  "carsCoffee.rating",
+  "carsCoffee.description",
+  "communityCredibility.rating",
+  "communityCredibility.description",
+  "socialStanding",
+];
+
+const STREET_CRED_RULES = STREET_CRED_RULE_KEYS
+  .map((key) => SYSTEM_PROMPT_TAIL.split("\n").find((line) => line.startsWith(`${key} —`)))
+  .filter(Boolean)
+  .join("\n");
+
+const STREET_CRED_REPAIR_PROMPT = `${SYSTEM_PROMPT_HEAD.split("\n")[0]}
+
+You will be given a car listing and a summary of an analysis already written for it. Fill in ONLY the street-cred fields below, consistent with that analysis. Be specific to this exact car — no line that could fit any car.
+
+${STREET_CRED_RULES}
+
+Return ONLY valid JSON in exactly this shape, every value non-empty:
+{
+  "ownerVibe": { "label": "", "reasoning": "" },
+  "carsCoffee": { "rating": "", "description": "" },
+  "communityCredibility": { "rating": "", "description": "" },
+  "socialStanding": ""
+}`;
+
+const blank = (v: unknown) => typeof v !== "string" || !v.trim();
+
+function streetCredMissing(a: Record<string, any>): boolean {
+  return (
+    blank(a.ownerVibe?.label) || blank(a.ownerVibe?.reasoning) ||
+    blank(a.carsCoffee?.rating) || blank(a.carsCoffee?.description) ||
+    blank(a.communityCredibility?.rating) || blank(a.communityCredibility?.description) ||
+    blank(a.socialStanding)
+  );
+}
+
+// Only ever fills blanks — anything the facts call did produce stays
+function fillStreetCred(original: Record<string, any>, fill: Record<string, any>) {
+  const merged = structuredClone(original);
+  const pick = (current: unknown, next: unknown) => (blank(current) && !blank(next) ? (next as string).trim() : current);
+  const rating = (current: unknown, next: unknown) =>
+    blank(current) && typeof next === "string" && ["High", "Medium", "Low"].includes(next.trim()) ? next.trim() : current;
+
+  merged.ownerVibe = {
+    label: pick(original.ownerVibe?.label, fill.ownerVibe?.label) ?? "",
+    reasoning: pick(original.ownerVibe?.reasoning, fill.ownerVibe?.reasoning) ?? "",
+  };
+  merged.carsCoffee = {
+    rating: rating(original.carsCoffee?.rating, fill.carsCoffee?.rating) ?? "",
+    description: pick(original.carsCoffee?.description, fill.carsCoffee?.description) ?? "",
+  };
+  merged.communityCredibility = {
+    rating: rating(original.communityCredibility?.rating, fill.communityCredibility?.rating) ?? "",
+    description: pick(original.communityCredibility?.description, fill.communityCredibility?.description) ?? "",
+  };
+  merged.socialStanding = pick(original.socialStanding, fill.socialStanding) ?? "";
+  return merged;
+}
+
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
 export async function POST(req: NextRequest) {
@@ -617,6 +689,38 @@ export async function POST(req: NextRequest) {
 
     let result = JSON.parse(raw);
     console.log("modPotential:", JSON.stringify(result.modPotential ?? null));
+
+    // Runs before the roast rewrite so the filled-in text gets roasted too.
+    // Same budget rule as the roast call: never risk the whole request.
+    const repairBudgetMs = (maxDuration - 5) * 1000 - (Date.now() - startedAt);
+    if (streetCredMissing(result) && repairBudgetMs >= 8_000) {
+      try {
+        const summary = {
+          vehicle: result.vehicle,
+          label: result.label,
+          verdict: result.verdict,
+          whatMakesSpecial: result.whatMakesSpecial,
+          whyEnthusiastsCare: result.whyEnthusiastsCare,
+          priceVerdict: result.priceVerdict,
+        };
+        const repair = await client.chat.completions.create({
+          model: "gpt-4o",
+          messages: [
+            { role: "system", content: STREET_CRED_REPAIR_PROMPT },
+            { role: "user", content: [...content, { type: "text", text: `Analysis summary:\n${JSON.stringify(summary)}` }] },
+          ],
+          response_format: { type: "json_object" },
+          temperature: 0.3,
+          max_tokens: 700,
+        }, { timeout: Math.min(repairBudgetMs - 2_000, 20_000), maxRetries: 0 });
+        const repairRaw = repair.choices[0].message.content;
+        if (repairRaw) result = fillStreetCred(result, JSON.parse(repairRaw));
+        console.log("Street cred repaired:", !streetCredMissing(result));
+      } catch (repairErr) {
+        // Blank street cred is a cosmetic gap, not worth failing the check
+        console.error("Street cred repair failed, returning as-is:", repairErr);
+      }
+    }
 
     // The facts call can eat most of maxDuration on a bad day (429 retries),
     // and a roast call that runs past it gets the whole request killed —

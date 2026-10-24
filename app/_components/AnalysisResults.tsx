@@ -580,40 +580,39 @@ export default function AnalysisResults({
           </div>
         )}
 
-        {/* Cars & Coffee + Community Credibility */}
-        {(result.carsCoffee || result.communityCredibility) && (
-          <Card className="p-6 space-y-5">
-            {result.carsCoffee && (
-              <div>
-                <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-2">
-                  <SectionLabel>Cars &amp; Coffee</SectionLabel>
-                  <RatingBadge rating={result.carsCoffee.rating} />
+        {/* Cars & Coffee + Community Credibility. The analysis can come back
+            with these as empty strings, so a row only shows if it has
+            something to say — an empty badge looks like it failed to load */}
+        {(() => {
+          const rows = [
+            { label: "Cars & Coffee", data: result.carsCoffee },
+            { label: "Community Credibility", data: result.communityCredibility },
+          ].filter((r) => r.data?.rating?.trim() || r.data?.description?.trim());
+          const standing = result.socialStanding?.trim();
+          if (rows.length === 0 && !standing) return null;
+          return (
+            <Card className="p-6 space-y-5">
+              {rows.map((r, i) => (
+                <div key={r.label} className={i > 0 ? "pt-5 border-t border-line" : ""}>
+                  <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-2">
+                    <SectionLabel>{r.label}</SectionLabel>
+                    {r.data?.rating?.trim() && <RatingBadge rating={r.data.rating} />}
+                  </div>
+                  {r.data?.description?.trim() && (
+                    <p className="text-ink-muted text-sm leading-relaxed">{r.data.description}</p>
+                  )}
                 </div>
-                <p className="text-ink-muted text-sm leading-relaxed">{result.carsCoffee.description}</p>
-              </div>
-            )}
-            {result.carsCoffee && result.communityCredibility && (
-              <div className="h-px bg-line" />
-            )}
-            {result.communityCredibility && (
-              <div>
-                <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-2">
-                  <SectionLabel>Community Credibility</SectionLabel>
-                  <RatingBadge rating={result.communityCredibility.rating} />
+              ))}
+              {standing && (
+                <div className={rows.length > 0 ? "pt-5 border-t border-line" : ""}>
+                  <p className="text-ink-muted text-sm italic leading-relaxed pl-3.5 border-l-2 border-glow-500/60">
+                    {standing}
+                  </p>
                 </div>
-                <p className="text-ink-muted text-sm leading-relaxed">{result.communityCredibility.description}</p>
-              </div>
-            )}
-            {result.socialStanding && (
-              <>
-                <div className="h-px bg-line" />
-                <p className="text-ink-muted text-sm italic leading-relaxed pl-3.5 border-l-2 border-glow-500/60">
-                  {result.socialStanding}
-                </p>
-              </>
-            )}
-          </Card>
-        )}
+              )}
+            </Card>
+          );
+        })()}
 
         {/* Regret Risk */}
         {result.regretRisk && (
