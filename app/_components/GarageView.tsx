@@ -115,7 +115,7 @@ export default function GarageView() {
                 onClick={() => setSelected(null)}
                 className="font-mono text-[10px] font-medium uppercase tracking-[0.2em] text-ink-faint hover:text-ink-muted transition-colors py-2 flex items-center gap-2"
               >
-                <span className="text-ember-400">←</span> Back to Garage
+                <span className="text-glow-400">←</span> Back to Garage
               </button>
               <div className="flex items-center gap-3">
                 <p className="font-mono text-[10px] text-ink-faint">Checked {checkedOn(selected.savedAt)}</p>
@@ -131,7 +131,7 @@ export default function GarageView() {
                 )}
                 <button
                   onClick={() => handleExport(selected)}
-                  className="font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-ember-400 hover:text-ember-300 transition-colors py-2"
+                  className="font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-glow-400 hover:text-glow-300 transition-colors py-2"
                 >
                   Export
                 </button>
@@ -143,7 +143,7 @@ export default function GarageView() {
           <>
             {/* List view */}
             <div className="pt-2">
-              <p className="font-mono text-[10px] font-medium uppercase tracking-[0.3em] text-ember-400 mb-4">
+              <p className="font-mono text-[10px] font-medium uppercase tracking-[0.3em] text-glow-400 mb-4">
                 Your saved checks
               </p>
               <h2 className="font-display text-4xl font-extrabold text-ink leading-[1.05] tracking-tight">
@@ -162,7 +162,7 @@ export default function GarageView() {
                 </p>
                 <Link
                   href="/"
-                  className="inline-block font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-ember-400 hover:text-ember-300 transition-colors py-2"
+                  className="inline-block font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-glow-400 hover:text-glow-300 transition-colors py-2"
                 >
                   Analyse a listing →
                 </Link>
@@ -170,7 +170,7 @@ export default function GarageView() {
                   or{" "}
                   <button
                     onClick={() => importInputRef.current?.click()}
-                    className="text-ink-muted hover:text-ink underline underline-offset-2 decoration-ember-500/50 py-2"
+                    className="text-ink-muted hover:text-ink underline underline-offset-2 decoration-glow-500/50 py-2"
                   >
                     import a mate&apos;s check
                   </button>
@@ -197,7 +197,7 @@ export default function GarageView() {
                               {a.vehicle.make} {a.vehicle.model}
                             </h3>
                             {a.vehicle.price && (
-                              <p className="font-mono text-ember-400 text-sm font-bold tabular-nums mt-1">{a.vehicle.price}</p>
+                              <p className="font-mono text-glow-400 text-sm font-bold tabular-nums mt-1">{a.vehicle.price}</p>
                             )}
                           </div>
                           <div className="flex gap-3 flex-shrink-0 pt-1">
@@ -218,7 +218,7 @@ export default function GarageView() {
                           onClick={() => toggleCompare(check.id)}
                           className={`font-mono text-[9px] font-medium uppercase tracking-[0.18em] transition-colors py-2 px-2 -ml-2 ${
                             compareIds.includes(check.id)
-                              ? "text-ember-400"
+                              ? "text-glow-400"
                               : "text-ink-faint hover:text-ink-muted"
                           }`}
                         >
@@ -304,7 +304,7 @@ export default function GarageView() {
               <button
                 onClick={() => setComparing(true)}
                 disabled={comparePair.length < 2}
-                className="bg-ember-500 hover:bg-ember-400 active:bg-ember-600 disabled:bg-carbon-800 disabled:text-ink-faint disabled:cursor-not-allowed text-carbon-950 font-mono font-bold uppercase tracking-[0.18em] rounded-lg py-3 px-5 transition-all text-[10px]"
+                className="bg-glow-500 hover:bg-glow-400 active:bg-glow-600 disabled:bg-carbon-800 disabled:text-ink-faint disabled:cursor-not-allowed text-carbon-950 font-mono font-bold uppercase tracking-[0.18em] rounded-lg py-3 px-5 transition-all text-[10px]"
               >
                 Tally Up
               </button>

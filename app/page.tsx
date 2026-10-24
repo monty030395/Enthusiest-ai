@@ -10,7 +10,7 @@ import { isRoastMode } from "./_lib/roastMode";
 import { extractTradeMeUrl } from "./_lib/trademe";
 import { extractFacebookUrl, FACEBOOK_HINT } from "./_lib/facebook";
 import { V_RED } from "./_components/badges";
-import { Card, RotatingMessage, WheelSpinner } from "./_components/ui";
+import { Card, RotatingMessage, StartButton, Tacho } from "./_components/ui";
 import Masthead from "./_components/Masthead";
 import ListingHowTo from "./_components/ListingHowTo";
 import AnalysisResults from "./_components/AnalysisResults";
@@ -242,12 +242,8 @@ export default function Home() {
 
         {/* Hero */}
         <div className="pt-2">
-          <p className="font-mono text-[10px] font-medium uppercase tracking-[0.3em] text-ember-400 mb-4">
-            Pre-purchase intelligence
-          </p>
-          <h2 className="font-display text-[2.6rem] sm:text-5xl font-extrabold text-ink leading-[1.05] tracking-tight">
-            Is this car<br />
-            <span className="text-ember-400">worth your money?</span>
+          <h2 className="font-display text-[2.6rem] sm:text-5xl font-bold text-ink leading-[1.02] tracking-tight [text-wrap:balance]">
+            Is this car worth your money?
           </h2>
           <p className="mt-4 text-ink-muted text-sm leading-relaxed max-w-md">
             Share a Trade Me or Facebook Marketplace listing straight to the app, paste its link, or upload screenshots. Get a specific, honest enthusiast read — not the generic rubbish you already know.
@@ -266,7 +262,7 @@ export default function Home() {
                 onClick={() => { setInputMode(m); setError(""); }}
                 className={`flex-1 py-3.5 font-mono text-[11px] font-medium uppercase tracking-[0.18em] transition-colors ${
                   inputMode === m
-                    ? "text-ink border-b-2 border-ember-400 bg-white/[0.03]"
+                    ? "text-ink border-b-2 border-glow-400 bg-white/[0.03]"
                     : "text-ink-faint hover:text-ink-muted"
                 }`}
               >
@@ -285,12 +281,12 @@ export default function Home() {
                   onDrop={handleDrop}
                   className={`border border-dashed rounded-lg p-8 text-center cursor-pointer transition-all ${
                     dragging
-                      ? "border-ember-400 bg-ember-500/10"
-                      : "border-line-strong hover:border-ember-500/50 hover:bg-white/[0.03]"
+                      ? "border-glow-400 bg-glow-500/10"
+                      : "border-line-strong hover:border-glow-500/50 hover:bg-white/[0.03]"
                   }`}
                 >
                   <p className="text-sm text-ink-muted font-medium">
-                    Drop screenshots here or <span className="text-ember-400">tap to browse</span>
+                    Drop screenshots here or <span className="text-glow-400">tap to browse</span>
                   </p>
                   <p className="font-mono text-[11px] text-ink-faint mt-2">
                     Screenshot the listing — price, KMs, description, seller notes
@@ -317,7 +313,7 @@ export default function Home() {
                         <button
                           aria-label={`Remove screenshot ${i + 1}`}
                           onClick={() => setImages((prev) => prev.filter((_, idx) => idx !== i))}
-                          className="absolute -top-2 -right-2 w-6 h-6 bg-ember-500 rounded-full text-carbon-950 text-sm font-bold flex items-center justify-center leading-none sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
+                          className="absolute -top-2 -right-2 w-6 h-6 bg-glow-500 rounded-full text-carbon-950 text-sm font-bold flex items-center justify-center leading-none sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
                         >
                           ×
                         </button>
@@ -342,15 +338,15 @@ export default function Home() {
                   onPaste={handlePaste}
                   placeholder="Paste a listing link or the listing text here..."
                   rows={7}
-                  className="w-full bg-carbon-900/80 border border-line rounded-lg px-4 py-3.5 text-base sm:text-sm text-ink placeholder:text-ink-faint placeholder:font-mono focus:outline-none focus:border-ember-500/60 transition-all resize-none"
+                  className="w-full bg-carbon-900/80 border border-line rounded-lg px-4 py-3.5 text-base sm:text-sm text-ink placeholder:text-ink-faint placeholder:font-mono focus:outline-none focus:border-glow-500/60 transition-all resize-none"
                 />
                 {urlHint && (
                   <div
-                    className="flex gap-2.5 bg-ember-500/10 border border-ember-600/40 rounded-lg px-4 py-3 transition-opacity duration-300"
+                    className="flex gap-2.5 bg-glow-500/10 border border-glow-600/40 rounded-lg px-4 py-3 transition-opacity duration-300"
                     style={{ opacity: urlHintVisible ? 1 : 0 }}
                   >
-                    <span className="text-ember-400 flex-shrink-0 font-bold">→</span>
-                    <p className="text-ember-300/90 text-sm leading-relaxed">{urlHint}</p>
+                    <span className="text-glow-400 flex-shrink-0 font-bold">→</span>
+                    <p className="text-glow-300/90 text-sm leading-relaxed">{urlHint}</p>
                   </div>
                 )}
               </div>
@@ -363,13 +359,20 @@ export default function Home() {
               </div>
             )}
 
-            <button
-              onClick={() => analyse()}
-              disabled={!canAnalyse || loading || fetchingListing}
-              className="w-full bg-ember-500 hover:bg-ember-400 active:bg-ember-600 disabled:bg-carbon-800 disabled:text-ink-faint disabled:cursor-not-allowed text-carbon-950 font-mono font-bold uppercase tracking-[0.22em] rounded-lg py-4 transition-all text-xs"
-            >
-              {loading ? "Getting Under the Hood..." : "Analyse Listing"}
-            </button>
+            <div className="flex items-center gap-5 pt-1">
+              <StartButton
+                onClick={() => analyse()}
+                disabled={!canAnalyse || loading || fetchingListing}
+                busy={loading}
+              />
+              <p className="text-sm text-ink-muted leading-relaxed">
+                {loading
+                  ? "Getting under the hood…"
+                  : canAnalyse
+                    ? "Press to check this listing. Takes about 20 seconds."
+                    : "Add a listing above, then press start."}
+              </p>
+            </div>
           </div>
         </div>
 
@@ -382,7 +385,7 @@ export default function Home() {
             onClick={handleReset}
             className="w-full border border-line hover:border-line-strong text-ink-faint hover:text-ink-muted rounded-lg py-3 font-mono text-[10px] font-medium uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2"
           >
-            <span className="text-ember-400 text-sm leading-none">+</span> New Analysis
+            <span className="text-glow-400 text-sm leading-none">+</span> New Analysis
           </button>
         )}
 
@@ -392,7 +395,7 @@ export default function Home() {
         {/* Pulling a shared/pasted listing from Trade Me or Facebook */}
         {fetchingListing && (
           <Card className="p-12 flex flex-col items-center gap-6">
-            <WheelSpinner />
+            <Tacho />
             <p className="font-display text-ink font-bold text-sm uppercase tracking-[0.12em]">Pulling the listing</p>
           </Card>
         )}
@@ -400,7 +403,7 @@ export default function Home() {
         {/* Loading */}
         {loading && (
           <Card className="p-12 flex flex-col items-center gap-6">
-            <WheelSpinner />
+            <Tacho />
             <div className="text-center">
               <p className="font-display text-ink font-bold text-sm uppercase tracking-[0.12em]">Getting Under the Hood</p>
               <RotatingMessage />
@@ -414,7 +417,7 @@ export default function Home() {
             <AnalysisResults analysis={result} />
 
             <p className="font-mono text-[10px] text-ink-faint text-center">
-              Saved to your <Link href="/garage" className="text-ember-400 hover:text-ember-300 transition-colors">Garage</Link> — on this device only.
+              Saved to your <Link href="/garage" className="text-glow-400 hover:text-glow-300 transition-colors">Garage</Link> — on this device only.
             </p>
 
             {/* Reset */}

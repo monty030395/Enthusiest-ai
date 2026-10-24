@@ -151,6 +151,23 @@ Community alternatives exist, such as
    runs production. A PR preview can't be tested from the share sheet
    unless that preview is installed as its own app.
 
+## Night dash redesign — 🔨 in progress
+
+The old look shared too much with other AI-built apps: a near-black
+background with one bright accent, Syne/Inter/JetBrains Mono, tracked-out
+capitals everywhere, and film grain. The new direction makes Motormind read
+like a car's instrument cluster at night. Every control is a piece of car
+hardware, lit Optitron-style (black until lit, white-blue glow, red needles),
+with a Japanese GT-R-style cluster. Mockups: [Night Dash Kit](https://claude.ai/artifact/C7Z1Xt18BfyGLUm9R8Hxpe)
+(the full gadget mapping) and [Cluster Origins](https://claude.ai/artifact/765NgBoxW7irZL8tcjXpL3)
+(the Japanese column, without the boost gauge).
+
+| Phase | What | Status |
+|---|---|---|
+| 1 | The look — petrol-blue/glow tokens, Chakra Petch + Saira + Share Tech Mono, no film grain, push-to-start button, revving tacho loader, Roast Mode behind a flip-up switch guard | 🔨 in review |
+| 2 | The results — three-dial cluster with an ignition sweep, amber multi-function display for driving character, warning lamps for red flags, temperature gauge (reliability), fuel gauge (wallet damage), odometer | ⬜ |
+| 3 | Garage key tags; Compare as two clusters side by side | ⬜ |
+
 ## Price calibration on appreciating JDM/enthusiast imports — ✅ shipped ([PR #27](https://github.com/monty030395/Enthusiest-ai/pull/27))
 
 Closes [#24](https://github.com/monty030395/Enthusiest-ai/issues/24) (option

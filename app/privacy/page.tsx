@@ -21,7 +21,7 @@ export default function PrivacyPage() {
         </div>
 
         <section className="space-y-3">
-          <h2 className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-ember-400">Data we collect</h2>
+          <h2 className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-glow-400">Data we collect</h2>
           <div className="h-px bg-line" />
           <p className="text-ink-muted text-sm leading-relaxed">
             Motormind does not collect, store, or retain any personal data. We do not require an account,
@@ -30,7 +30,7 @@ export default function PrivacyPage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-ember-400">Your Garage</h2>
+          <h2 className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-glow-400">Your Garage</h2>
           <div className="h-px bg-line" />
           <p className="text-ink-muted text-sm leading-relaxed">
             Completed checks are saved to your device&apos;s local browser storage (your Garage) so you can
@@ -41,7 +41,7 @@ export default function PrivacyPage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-ember-400">Listing data</h2>
+          <h2 className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-glow-400">Listing data</h2>
           <div className="h-px bg-line" />
           <p className="text-ink-muted text-sm leading-relaxed">
             Listing content you submit — whether screenshots or pasted text — is used solely
@@ -51,7 +51,7 @@ export default function PrivacyPage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-ember-400">Shared links</h2>
+          <h2 className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-glow-400">Shared links</h2>
           <div className="h-px bg-line" />
           <p className="text-ink-muted text-sm leading-relaxed">
             This is the one case where a check leaves your device. When you tap Share on a check or a tally,
@@ -67,7 +67,7 @@ export default function PrivacyPage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-ember-400">AI processing</h2>
+          <h2 className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-glow-400">AI processing</h2>
           <div className="h-px bg-line" />
           <p className="text-ink-muted text-sm leading-relaxed">
             Listing content is sent to OpenAI&apos;s API to generate your analysis. This is subject to{" "}
@@ -75,7 +75,7 @@ export default function PrivacyPage() {
               href="https://openai.com/policies/privacy-policy"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-ink underline underline-offset-2 decoration-ember-500/50 hover:decoration-ember-400 transition-colors"
+              className="text-ink underline underline-offset-2 decoration-glow-500/50 hover:decoration-glow-400 transition-colors"
             >
               OpenAI&apos;s privacy policy
             </a>
@@ -84,7 +84,7 @@ export default function PrivacyPage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-ember-400">Cookies &amp; tracking</h2>
+          <h2 className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-glow-400">Cookies &amp; tracking</h2>
           <div className="h-px bg-line" />
           <p className="text-ink-muted text-sm leading-relaxed">
             Motormind does not use cookies, analytics, or any third-party tracking tools.
@@ -92,13 +92,13 @@ export default function PrivacyPage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-ember-400">Contact</h2>
+          <h2 className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-glow-400">Contact</h2>
           <div className="h-px bg-line" />
           <p className="text-ink-muted text-sm leading-relaxed">
             Privacy questions can be sent to{" "}
             <a
               href="mailto:monty.wood1289@gmail.com"
-              className="text-ink underline underline-offset-2 decoration-ember-500/50 hover:decoration-ember-400 transition-colors"
+              className="text-ink underline underline-offset-2 decoration-glow-500/50 hover:decoration-glow-400 transition-colors"
             >
               monty.wood1289@gmail.com
             </a>

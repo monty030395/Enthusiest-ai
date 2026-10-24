@@ -27,12 +27,12 @@ const SOURCES: { name: string; steps: React.ReactNode[] }[] = [
 export default function ListingHowTo() {
   return (
     <div className="rounded-xl border border-line bg-white/[0.02] p-5 space-y-4">
-      <p className="font-mono text-[10px] font-medium uppercase tracking-[0.25em] text-ember-400">
+      <p className="font-mono text-[10px] font-medium uppercase tracking-[0.25em] text-glow-400">
         How to add a listing
       </p>
       <ul className="space-y-4">
         {SOURCES.map((source) => (
-          <li key={source.name} className="border-l-2 border-ember-500/60 pl-3.5">
+          <li key={source.name} className="border-l-2 border-glow-500/60 pl-3.5">
             <div className="space-y-1">
               <p className="font-display text-sm font-bold text-ink">{source.name}</p>
               {source.steps.map((step, j) => (

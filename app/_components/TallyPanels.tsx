@@ -15,7 +15,7 @@ function CarHeader({ analysis }: { analysis: Analysis }) {
         {v.make} {v.model}
       </h3>
       {v.price && (
-        <p className="font-mono text-ember-400 text-sm font-bold tabular-nums">{v.price}</p>
+        <p className="font-mono text-glow-400 text-sm font-bold tabular-nums">{v.price}</p>
       )}
       {analysis.label && (
         <div className="pt-0.5 flex flex-wrap items-center gap-1.5">
@@ -44,7 +44,7 @@ export function TallyBoard({ a, b, tally }: { a: Analysis; b: Analysis; tally: T
     <>
       {/* Car headers */}
       <Card className="overflow-hidden">
-        <div className="h-px bg-gradient-to-r from-ember-500 via-ember-500/40 to-transparent" />
+        <div className="h-px bg-gradient-to-r from-glow-500 via-glow-500/40 to-transparent" />
         <div className="p-5 grid grid-cols-2 gap-4">
           <CarHeader analysis={a} />
           <CarHeader analysis={b} />
@@ -92,7 +92,7 @@ export function TallyBoard({ a, b, tally }: { a: Analysis; b: Analysis; tally: T
 
       {/* Verdict bar */}
       <div className="rounded-xl bg-carbon-900 border border-line-strong overflow-hidden">
-        <div className="bg-ember-500 px-5 py-3 flex items-center gap-2.5">
+        <div className="bg-glow-500 px-5 py-3 flex items-center gap-2.5">
           <div className="w-1.5 h-1.5 rounded-full bg-carbon-950/50" />
           <span className="font-mono text-[10px] font-bold uppercase tracking-[0.24em] text-carbon-950">
             The Tally
@@ -126,7 +126,7 @@ export function HeadToHeadCard({ a, b, h2h }: { a: Analysis; b: Analysis; h2h: H
       <ul className="space-y-2">
         {h2h.caseFor?.[side]?.map((point, i) => (
           <li key={i} className="flex gap-2 text-xs text-ink-muted leading-relaxed">
-            <span className="text-ember-400 flex-shrink-0 font-bold">+</span>
+            <span className="text-glow-400 flex-shrink-0 font-bold">+</span>
             {point}
           </li>
         ))}
@@ -142,7 +142,7 @@ export function HeadToHeadCard({ a, b, h2h }: { a: Analysis; b: Analysis; h2h: H
 
   return (
     <div className="rounded-xl bg-carbon-900 border border-line-strong overflow-hidden">
-      <div className="bg-ember-500 px-5 py-3 flex items-center gap-2.5">
+      <div className="bg-glow-500 px-5 py-3 flex items-center gap-2.5">
         <div className="w-1.5 h-1.5 rounded-full bg-carbon-950/50" />
         <span className="font-mono text-[10px] font-bold uppercase tracking-[0.24em] text-carbon-950">
           The Head-to-Head
@@ -157,13 +157,13 @@ export function HeadToHeadCard({ a, b, h2h }: { a: Analysis; b: Analysis; h2h: H
           <div className="pt-4">{col("a", a)}</div>
           <div className="pt-0 sm:pt-4">{col("b", b)}</div>
         </div>
-        <div className="pl-4 border-l-2 border-ember-400">
+        <div className="pl-4 border-l-2 border-glow-400">
           <p className="font-mono text-[9px] font-medium uppercase tracking-[0.22em] text-ink-faint mb-1.5">If it were my money</p>
           <p className="text-ink text-sm leading-relaxed">{h2h.myMoney}</p>
         </div>
         {h2h.curveball && (
           <p className="font-mono text-[11px] text-ink-faint leading-relaxed pt-3 border-t border-line">
-            <span className="text-ember-400 font-bold">Curveball:</span> {h2h.curveball}
+            <span className="text-glow-400 font-bold">Curveball:</span> {h2h.curveball}
           </p>
         )}
       </div>

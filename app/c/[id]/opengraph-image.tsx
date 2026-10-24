@@ -9,13 +9,13 @@ export const contentType = "image/png";
 // Brand tokens, restated here because the OG renderer has no Tailwind.
 // Satori rules: every element with more than one child needs an explicit
 // display, and `{a} {b}` counts as three children — keep text nodes single.
-const CARBON = "#0b0b0c";
-const CARD = "#121214";
-const INK = "#f4f2ed";
-const INK_MUTED = "#a39f96";
-const INK_FAINT = "#6e6a63";
-const EMBER = "#e89a2b";
-const LINE = "rgba(255,255,255,0.10)";
+const CARBON = "#0b151b";
+const CARD = "#11202a";
+const INK = "#e6f1f4";
+const INK_MUTED = "#a4bac3";
+const INK_FAINT = "#7f9ca8";
+const GLOW = "#a9d8ff";
+const LINE = "rgba(169,216,255,0.12)";
 
 const root: React.CSSProperties = {
   width: "100%",
@@ -25,7 +25,7 @@ const root: React.CSSProperties = {
   justifyContent: "space-between",
   background: CARBON,
   padding: 64,
-  borderTop: `6px solid ${EMBER}`,
+  borderTop: `6px solid ${GLOW}`,
 };
 
 const row: React.CSSProperties = { display: "flex", alignItems: "center" };
@@ -43,7 +43,7 @@ function Wordmark() {
     <div style={{ ...row, gap: 14 }}>
       <div style={{ ...row, fontSize: 30, fontWeight: 800 }}>
         <span style={{ color: INK }}>MOTOR</span>
-        <span style={{ color: EMBER }}>MIND</span>
+        <span style={{ color: GLOW }}>MIND</span>
       </div>
       <div style={{ width: 1, height: 20, background: "rgba(255,255,255,0.2)" }} />
       <div style={{ fontSize: 17, color: INK_FAINT, letterSpacing: 4 }}>NZ CAR COPILOT</div>
@@ -91,7 +91,7 @@ export default async function Image({ params }: { params: Promise<{ id: string }
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
             <Wordmark />
             {v.price ? (
-              <div style={{ ...col, alignItems: "flex-end", background: EMBER, borderRadius: 10, padding: "10px 20px" }}>
+              <div style={{ ...col, alignItems: "flex-end", background: GLOW, borderRadius: 10, padding: "10px 20px" }}>
                 <span style={{ fontSize: 15, color: "rgba(11,11,12,0.65)", letterSpacing: 3 }}>ASKING</span>
                 <span style={{ fontSize: 38, fontWeight: 800, color: CARBON }}>{v.price}</span>
               </div>
@@ -108,8 +108,8 @@ export default async function Image({ params }: { params: Promise<{ id: string }
                 style={{
                   display: "flex",
                   alignSelf: "flex-start",
-                  border: `1px solid ${EMBER}`,
-                  color: EMBER,
+                  border: `1px solid ${GLOW}`,
+                  color: GLOW,
                   borderRadius: 6,
                   padding: "8px 16px",
                   fontSize: 20,
@@ -142,7 +142,7 @@ export default async function Image({ params }: { params: Promise<{ id: string }
       <div style={{ fontSize: 44, fontWeight: 800, color: dimmed ? INK_MUTED : INK, lineHeight: 1.1 }}>
         {`${x.vehicle.make} ${x.vehicle.model}`}
       </div>
-      {x.vehicle.price ? <div style={{ fontSize: 26, color: EMBER }}>{x.vehicle.price}</div> : null}
+      {x.vehicle.price ? <div style={{ fontSize: 26, color: GLOW }}>{x.vehicle.price}</div> : null}
     </div>
   );
 
@@ -152,7 +152,7 @@ export default async function Image({ params }: { params: Promise<{ id: string }
         <Wordmark />
         <div style={{ ...row, gap: 36 }}>
           {side(a, Boolean(winner) && winner !== a)}
-          <div style={{ fontSize: 40, fontWeight: 800, color: EMBER }}>V</div>
+          <div style={{ fontSize: 40, fontWeight: 800, color: GLOW }}>V</div>
           {side(b, Boolean(winner) && winner !== b)}
         </div>
         <div style={{ ...col, gap: 8, background: CARD, border: `1px solid ${LINE}`, borderRadius: 14, padding: "24px 32px" }}>

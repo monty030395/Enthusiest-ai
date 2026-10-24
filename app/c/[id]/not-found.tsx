@@ -18,7 +18,7 @@ export default function SharedCheckNotFound() {
           </p>
           <Link
             href="/"
-            className="inline-block font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-ember-400 hover:text-ember-300 transition-colors py-2"
+            className="inline-block font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-glow-400 hover:text-glow-300 transition-colors py-2"
           >
             Check a listing →
           </Link>

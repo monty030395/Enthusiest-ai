@@ -1,41 +1,44 @@
 @import "tailwindcss";
 
 /* ── Motormind design tokens ─────────────────────────────────────────
-   Editorial dark theme: warm charcoal surfaces, ivory ink, ember accent.
-   Defined here because Tailwind 4 is CSS-first (no tailwind.config.ts). */
+   Night dash: the app reads like an instrument cluster at night. Petrol-blue
+   panels, Optitron-style white-blue illumination ("glow"), and a red needle
+   kept for the few things that should catch the eye like a gauge pointer.
+   Defined here because Tailwind 4 is CSS-first (no tailwind.config.ts).
+   Contrast measured on carbon-950: ink 16.1, ink-muted 9.1, ink-faint 6.4,
+   glow-400 12.3, needle 5.2 — all clear WCAG AA. */
 @theme {
-  /* Surfaces — warm near-black scale */
-  --color-carbon-950: #0b0b0c;
-  --color-carbon-900: #121214;
-  --color-carbon-850: #17171a;
-  --color-carbon-800: #1d1d21;
-  --color-carbon-700: #28282e;
-  --color-carbon-600: #36363e;
+  /* Surfaces — dark petrol blue, never neutral black */
+  --color-carbon-950: #0b151b;
+  --color-carbon-900: #11202a;
+  --color-carbon-850: #152631;
+  --color-carbon-800: #1b2f3b;
+  --color-carbon-700: #24404d;
+  --color-carbon-600: #2f5161;
 
-  /* Ink — warm off-whites, editorial paper feel.
-     ink-faint was #6e6a63 (3.66:1 on carbon-950 — fails WCAG AA for the
-     9-10px mono labels it's used on, some of which carry real information
-     like disclaimers). #827e76 clears 4.5:1 (4.87:1 measured) while staying
-     clearly darker than ink-muted (7.45:1). */
-  --color-ink: #f4f2ed;
-  --color-ink-muted: #a39f96;
-  --color-ink-faint: #827e76;
+  /* Ink — cool white, like lit gauge markings */
+  --color-ink: #e6f1f4;
+  --color-ink-muted: #a4bac3;
+  --color-ink-faint: #7f9ca8;
 
-  /* Brand accent — ember */
-  --color-ember-300: #ffce7a;
-  --color-ember-400: #f5b04c;
-  --color-ember-500: #e89a2b;
-  --color-ember-600: #c77f1b;
-  --color-ember-700: #9a6112;
+  /* Brand accent — instrument glow */
+  --color-glow-300: #eaf6ff;
+  --color-glow-400: #a9d8ff;
+  --color-glow-500: #7cc3f5;
+  --color-glow-600: #4f9fd6;
+  --color-glow-700: #2f6f9e;
 
-  /* Hairlines */
-  --color-line: rgba(255, 255, 255, 0.08);
-  --color-line-strong: rgba(255, 255, 255, 0.15);
+  /* Gauge needle — pointers, redlines, the start button's ring */
+  --color-needle: #ff3b2f;
 
-  /* Type — Syne display, Inter body, JetBrains Mono data */
-  --font-display: var(--font-syne);
-  --font-sans: var(--font-inter);
-  --font-mono: var(--font-jbmono);
+  /* Hairlines — tinted toward the glow, like a bezel catching light */
+  --color-line: rgba(169, 216, 255, 0.10);
+  --color-line-strong: rgba(169, 216, 255, 0.18);
+
+  /* Type — Chakra Petch display, Saira body, Share Tech Mono for readouts */
+  --font-display: var(--font-chakra);
+  --font-sans: var(--font-saira);
+  --font-mono: var(--font-sharetech);
 }
 
 body {
@@ -43,32 +46,33 @@ body {
   color: var(--color-ink);
 }
 
-/* Film grain — subtle editorial texture over everything */
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 60;
-  pointer-events: none;
-  opacity: 0.05;
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-
 ::selection {
-  background: var(--color-ember-500);
+  background: var(--color-glow-500);
   color: var(--color-carbon-950);
 }
 
+/* Loading tacho: blip the throttle, catch it, let it fall back */
+@keyframes tacho-rev {
+  0% { transform: rotate(0deg); }
+  40% { transform: rotate(160deg); }
+  50% { transform: rotate(146deg); }
+  60% { transform: rotate(166deg); }
+  100% { transform: rotate(0deg); }
+}
+.tacho-needle {
+  transform-box: view-box;
+  transform-origin: 100px 100px;
+  animation: tacho-rev 2.6s cubic-bezier(0.45, 0, 0.3, 1) infinite;
+}
+
 :focus-visible {
-  outline: 2px solid var(--color-ember-500);
+  outline: 2px solid var(--color-glow-500);
   outline-offset: 2px;
 }
 
 /* Standard universal reduced-motion snippet — kills the masthead pulse dot
-   and the loading spinner's rotation (the loading TEXT still communicates
-   progress), and treats the film grain as decorative visual noise bundled
-   in with motion preferences. Doesn't touch the JS-driven `behavior: "smooth"`
+   and the loading tacho's revving needle (the loading TEXT still
+   communicates progress). Doesn't touch the JS-driven `behavior: "smooth"`
    scrollIntoView/scrollTo calls elsewhere in the app — those would need
    their own check against this same media query if full compliance is
    wanted later. */
@@ -78,8 +82,5 @@ body::after {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
-  }
-  body::after {
-    display: none;
   }
 }

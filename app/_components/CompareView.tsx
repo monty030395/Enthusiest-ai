@@ -5,7 +5,7 @@ import { type SavedCheck } from "../_lib/garage";
 import { tallyUp, fetchHeadToHead, buildTallyShareText, type HeadToHead } from "../_lib/compare";
 import { shareOrCopy, createShareLink } from "../_lib/share";
 import { V_RED } from "./badges";
-import { Card, WheelSpinner } from "./ui";
+import { Card, Tacho } from "./ui";
 import { TallyBoard, HeadToHeadCard } from "./TallyPanels";
 
 // One head-to-head per pair per session — don't re-spend the API call when
@@ -61,11 +61,11 @@ export default function CompareView({ a, b, onBack }: { a: SavedCheck; b: SavedC
         onClick={onBack}
         className="font-mono text-[10px] font-medium uppercase tracking-[0.2em] text-ink-faint hover:text-ink-muted transition-colors py-2 flex items-center gap-2"
       >
-        <span className="text-ember-400">←</span> Back to Garage
+        <span className="text-glow-400">←</span> Back to Garage
       </button>
 
       <div className="pt-1">
-        <p className="font-mono text-[10px] font-medium uppercase tracking-[0.3em] text-ember-400 mb-3">
+        <p className="font-mono text-[10px] font-medium uppercase tracking-[0.3em] text-glow-400 mb-3">
           Head to head
         </p>
         <h2 className="font-display text-4xl font-extrabold text-ink leading-[1.05] tracking-tight">
@@ -92,7 +92,7 @@ export default function CompareView({ a, b, onBack }: { a: SavedCheck; b: SavedC
           )}
           <button
             onClick={settleIt}
-            className="w-full bg-ember-500 hover:bg-ember-400 active:bg-ember-600 text-carbon-950 font-mono font-bold uppercase tracking-[0.22em] rounded-lg py-4 transition-all text-xs"
+            className="w-full bg-glow-500 hover:bg-glow-400 active:bg-glow-600 text-carbon-950 font-mono font-bold uppercase tracking-[0.22em] rounded-lg py-4 transition-all text-xs"
           >
             Settle It — Head-to-Head
           </button>
@@ -101,7 +101,7 @@ export default function CompareView({ a, b, onBack }: { a: SavedCheck; b: SavedC
 
       {h2hLoading && (
         <Card className="p-10 flex flex-col items-center gap-5">
-          <WheelSpinner />
+          <Tacho />
           <p className="font-display text-ink font-bold text-sm uppercase tracking-[0.12em]">Settling the Argument</p>
           <p className="font-mono text-ink-muted text-xs -mt-3">Steel-manning both sides...</p>
         </Card>
@@ -114,7 +114,7 @@ export default function CompareView({ a, b, onBack }: { a: SavedCheck; b: SavedC
         <button
           onClick={shareTally}
           disabled={sharing}
-          className="w-full border border-ember-600/50 hover:border-ember-500 disabled:border-line disabled:text-ink-faint text-ember-400 hover:text-ember-300 rounded-lg py-3.5 font-mono text-[11px] font-medium uppercase tracking-[0.2em] transition-all"
+          className="w-full border border-glow-600/50 hover:border-glow-500 disabled:border-line disabled:text-ink-faint text-glow-400 hover:text-glow-300 rounded-lg py-3.5 font-mono text-[11px] font-medium uppercase tracking-[0.2em] transition-all"
         >
           {sharing ? "Building the link..." : h2h ? "Share the Head-to-Head" : "Share the Tally"}
         </button>
