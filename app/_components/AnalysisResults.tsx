@@ -19,7 +19,7 @@ import {
   VerdictBadge, RatingBadge, RoastBadge,
 } from "./badges";
 import { Card, Pill, SectionLabel } from "./ui";
-import { Cluster, Dial, HalfGauge, MultiFunctionDisplay, Odometer, WarningLamp, parseOdometer } from "./gauges";
+import { Cluster, Dial, HalfGauge, MultiFunctionDisplay, Odometer, TelltalePanel, WarningLamp, lampFor, parseOdometer } from "./gauges";
 
 // Where the fuel needle sits for each wallet-damage rating: a sensible buy
 // leaves the tank nearly full, a catastrophic one runs it dry
@@ -455,17 +455,21 @@ export default function AnalysisResults({
             one that hinges on the variant. The heading follows the strongest */}
         {result.redFlags?.length > 0 && (() => {
           const anyConfirmed = result.redFlags.some((f) => !isConditional(f));
+          const flags = result.redFlags.map((f) => ({ ...f, kind: lampFor(`${f.flag} ${f.explanation}`), conditional: isConditional(f) }));
           return (
             <Card className="overflow-hidden">
-              <p className="px-5 pt-5 pb-1 font-display text-sm font-bold" style={{ color: anyConfirmed ? V_RED.text : V_AMBER.text }}>
-                {anyConfirmed ? "Red flags: read before buying" : "Worth checking: depends on the variant"}
-              </p>
+              <div className="px-5 pt-5 pb-2 space-y-3.5">
+                <p className="font-display text-sm font-bold" style={{ color: anyConfirmed ? V_RED.text : V_AMBER.text }}>
+                  {anyConfirmed ? "Red flags: read before buying" : "Worth checking: depends on the variant"}
+                </p>
+                <TelltalePanel flags={flags} />
+              </div>
               <ul className="divide-y divide-line">
-                {result.redFlags.map((f, i) => {
-                  const cond = isConditional(f);
+                {flags.map((f, i) => {
+                  const cond = f.conditional;
                   return (
                     <li key={i} className="px-5 py-4 flex gap-3.5">
-                      <WarningLamp tone={cond ? "amber" : "red"} />
+                      <WarningLamp kind={f.kind} tone={cond ? "amber" : "red"} size="sm" />
                       <div>
                         <p className="font-bold text-sm text-ink">
                           {f.flag}

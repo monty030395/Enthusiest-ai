@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, type CSSProperties } from "react";
+import { useId, type CSSProperties, type ReactNode } from "react";
 
 // The results screen's instrument panel: dials for scores, half-moon gauges
 // for temperature and fuel, an amber multi-function display, warning lamps
@@ -236,23 +236,113 @@ export function MultiFunctionDisplay({ rows }: { rows: { label: string; score: n
   );
 }
 
-// Master-warning lamp: a lit triangle with "!" — red for a confirmed fault,
-// amber for one that depends on the variant. Deliberately generic: a flag
-// about rust shouldn't light an oil-can lamp.
-export function WarningLamp({ tone }: { tone: "red" | "amber" }) {
-  const color = tone === "red" ? "var(--color-needle)" : "var(--color-mfd)";
+// Dashboard telltales. Red flags arrive as free text, so each one is sorted
+// into the system its wording points at; anything that fits no lamp (rust,
+// paperwork, a dodgy seller) lights the master warning, so every flag shows.
+export type LampKind = "engine" | "oil" | "temp" | "battery" | "gearbox" | "master";
+
+const LAMP_ORDER: LampKind[] = ["engine", "oil", "temp", "battery", "gearbox", "master"];
+
+const LAMP_NAME: Record<LampKind, string> = {
+  engine: "Engine",
+  oil: "Oil",
+  temp: "Cooling",
+  battery: "Electrical",
+  gearbox: "Gearbox",
+  master: "General",
+};
+
+// Most specific first: "oil leak from the turbo" is an oil lamp, not engine
+const LAMP_MATCH: [LampKind, RegExp][] = [
+  ["oil", /\boil\b|sump|rear main seal|valve stem seal/i],
+  ["temp", /coolant|cooling|overheat|radiator|water pump|thermostat|head gasket/i],
+  ["gearbox", /gearbox|transmission|clutch|\bcvt\b|\bdsg\b|differential|\bdiff\b|synchro|auto box/i],
+  ["battery", /electric|battery|alternator|wiring|\bfuse/i],
+  ["engine", /engine|turbo|timing|misfire|vanos|camshaft|piston|rod knock|compression|boost|injector|ignition|coil pack|rebuil/i],
+];
+
+export function lampFor(text: string): LampKind {
+  return LAMP_MATCH.find(([, re]) => re.test(text))?.[0] ?? "master";
+}
+
+const LAMP_GLYPH: Record<LampKind, ReactNode> = {
+  engine: <path d="M5 12h3l2-3h6l1 2h3v2h2v-2h2v7h-2v-2h-2v3h-4l-2 2H9l-2-2H5z" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />,
+  oil: (
+    <>
+      <path d="M3 13l5-2h6l3 2 6-3-5 7H6l-3-2z" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+      <path d="M8 11V9h4" fill="none" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M22 14q0 2-1 2" stroke="currentColor" strokeWidth="1.4" fill="none" />
+    </>
+  ),
+  temp: (
+    <>
+      <path d="M12 4v10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <circle cx="12" cy="16.5" r="2.8" fill="none" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M14 7h3M14 10h3" stroke="currentColor" strokeWidth="1.4" />
+      <path d="M5 21q2-1.5 3.5 0t3.5 0 3.5 0 3.5 0" fill="none" stroke="currentColor" strokeWidth="1.3" />
+    </>
+  ),
+  battery: (
+    <>
+      <rect x="4" y="8" width="16" height="11" rx="1" fill="none" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M7 8V6h3v2M14 8V6h3v2M7 13h3M15 11.5v3M13.5 13h3" stroke="currentColor" strokeWidth="1.5" fill="none" />
+    </>
+  ),
+  gearbox: (
+    <>
+      <circle cx="11" cy="12" r="6.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeDasharray="2.6 1.8" />
+      <circle cx="11" cy="12" r="3.2" fill="none" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M21 8v5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      <circle cx="21" cy="16" r="1" fill="currentColor" />
+    </>
+  ),
+  master: (
+    <>
+      <path d="M12 3.5 22 20.5H2Z" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+      <path d="M12 9.5v5.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <circle cx="12" cy="17.6" r="1.2" fill="currentColor" />
+    </>
+  ),
+};
+
+export type LampTone = "red" | "amber" | "off";
+
+// One telltale. Off lamps stay visible but dark, as on a real dash.
+export function WarningLamp({ kind, tone, size = "md" }: { kind: LampKind; tone: LampTone; size?: "sm" | "md" }) {
+  const color = tone === "red" ? "var(--color-needle)" : tone === "amber" ? "var(--color-mfd)" : "var(--color-carbon-700)";
+  const lit = tone !== "off";
   return (
     <span
-      className="flex-none grid place-items-center w-9 h-9 rounded-lg bg-dial ring-1 ring-line"
-      style={{ color, boxShadow: `0 0 12px color-mix(in srgb, ${color} 35%, transparent)` }}
+      className={`flex-none grid place-items-center rounded-lg bg-dial ring-1 ring-line ${size === "sm" ? "w-9 h-9" : "w-11 h-11"}`}
+      style={{ color, boxShadow: lit ? `0 0 12px color-mix(in srgb, ${color} 35%, transparent)` : undefined }}
       aria-hidden="true"
     >
-      <svg viewBox="0 0 24 24" className="w-6 h-6" style={{ filter: `drop-shadow(0 0 3px ${color})` }}>
-        <path d="M12 3.5 22 20.5H2Z" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
-        <path d="M12 9.5v5.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-        <circle cx="12" cy="17.6" r="1.2" fill="currentColor" />
+      <svg viewBox="0 0 24 24" className={size === "sm" ? "w-6 h-6" : "w-7 h-7"} style={lit ? { filter: `drop-shadow(0 0 3px ${color})` } : undefined}>
+        {LAMP_GLYPH[kind]}
       </svg>
     </span>
+  );
+}
+
+// The row of telltales across the panel. A lamp is red if any confirmed flag
+// lights it, amber if only "depends on the variant" ones do, else dark.
+export function TelltalePanel({ flags }: { flags: { kind: LampKind; conditional: boolean }[] }) {
+  const tones = LAMP_ORDER.map((kind) => {
+    const hits = flags.filter((f) => f.kind === kind);
+    const tone: LampTone = hits.length === 0 ? "off" : hits.some((f) => !f.conditional) ? "red" : "amber";
+    return { kind, tone };
+  });
+  const lit = tones.filter((t) => t.tone !== "off");
+  return (
+    <div
+      className="flex flex-wrap gap-2.5"
+      role="img"
+      aria-label={`Warning lamps lit: ${lit.map((t) => `${LAMP_NAME[t.kind]} (${t.tone})`).join(", ")}`}
+    >
+      {tones.map((t) => (
+        <WarningLamp key={t.kind} kind={t.kind} tone={t.tone} />
+      ))}
+    </div>
   );
 }
 
