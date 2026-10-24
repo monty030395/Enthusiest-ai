@@ -98,6 +98,34 @@ const LOADING_MESSAGES = [
   "Cross-referencing with every forum thread ever written...",
 ];
 
+export function CheckProgress({ title, seconds }: { title?: string; seconds: number }) {
+  const [slow, setSlow] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setSlow(true), (seconds + 8) * 1000);
+    return () => clearTimeout(t);
+  }, [seconds]);
+  return (
+    <div className="flex flex-col items-center gap-6">
+      <Tacho climbSeconds={seconds} />
+      {/* Announced: the heading, the car and the slow note. The rotating
+          jokes are left out so a screen reader isn't read one every 2.5s */}
+      <div className="text-center space-y-1.5" role="status">
+        <p className="font-display text-ink font-bold text-sm uppercase tracking-[0.12em]">Getting under the hood</p>
+        {title && (
+          <p className="text-ink text-sm">
+            <span className="text-ink-faint">Checking:</span> {title}
+          </p>
+        )}
+        {slow ? (
+          <p className="text-ink-muted text-xs mt-2">Taking longer than usual — hang tight, it&apos;s still going.</p>
+        ) : (
+          <div aria-hidden="true"><RotatingMessage /></div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export function RotatingMessage() {
   const [index, setIndex] = useState(() => Math.floor(Math.random() * LOADING_MESSAGES.length));
   const [visible, setVisible] = useState(true);
@@ -128,7 +156,11 @@ export function RotatingMessage() {
 // can park it at rest.
 const TACHO_TICKS = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 
-export function Tacho() {
+// Without `climbSeconds` the needle blips the throttle on a loop, for waits
+// of unknown length. With it, the needle climbs toward the redline over
+// roughly that many seconds and holds there with an idle wobble, so a long
+// wait shows progress instead of the same blip over and over.
+export function Tacho({ climbSeconds }: { climbSeconds?: number } = {}) {
   const cx = 100, cy = 100, r = 82;
   const at = (radius: number, i: number) => {
     const a = Math.PI + (Math.PI * i) / 8;
@@ -152,9 +184,17 @@ export function Tacho() {
         );
       })}
       <text x={cx} y={cy - 20} textAnchor="middle" className="fill-ink-faint font-display" fontSize="8" letterSpacing="1">×1000 RPM</text>
-      <g className="tacho-needle">
-        <line x1={cx + 10} y1={cy} x2={cx - (r - 10)} y2={cy} className="stroke-needle" strokeWidth="3" strokeLinecap="round" />
-      </g>
+      {climbSeconds ? (
+        <g className="tacho-climb" style={{ animationDuration: `${climbSeconds}s` }}>
+          <g className="tacho-idle">
+            <line x1={cx + 10} y1={cy} x2={cx - (r - 10)} y2={cy} className="stroke-needle" strokeWidth="3" strokeLinecap="round" />
+          </g>
+        </g>
+      ) : (
+        <g className="tacho-needle">
+          <line x1={cx + 10} y1={cy} x2={cx - (r - 10)} y2={cy} className="stroke-needle" strokeWidth="3" strokeLinecap="round" />
+        </g>
+      )}
       <circle cx={cx} cy={cy} r="7" className="fill-carbon-800 stroke-needle" strokeWidth="1.5" />
     </svg>
   );
