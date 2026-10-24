@@ -21,7 +21,7 @@ export default function PrivacyPage() {
         </div>
 
         <section className="space-y-3">
-          <h2 className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-glow-400">Data we collect</h2>
+          <h2 className="font-mono text-xs font-bold uppercase tracking-[0.12em] text-glow-400">Data we collect</h2>
           <div className="h-px bg-line" />
           <p className="text-ink-muted text-sm leading-relaxed">
             Motormind does not collect, store, or retain any personal data. We do not require an account,
@@ -30,7 +30,7 @@ export default function PrivacyPage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-glow-400">Your Garage</h2>
+          <h2 className="font-mono text-xs font-bold uppercase tracking-[0.12em] text-glow-400">Your Garage</h2>
           <div className="h-px bg-line" />
           <p className="text-ink-muted text-sm leading-relaxed">
             Completed checks are saved to your device&apos;s local browser storage (your Garage) so you can
@@ -41,7 +41,7 @@ export default function PrivacyPage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-glow-400">Listing data</h2>
+          <h2 className="font-mono text-xs font-bold uppercase tracking-[0.12em] text-glow-400">Listing data</h2>
           <div className="h-px bg-line" />
           <p className="text-ink-muted text-sm leading-relaxed">
             Listing content you submit — whether screenshots or pasted text — is used solely
@@ -51,7 +51,7 @@ export default function PrivacyPage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-glow-400">Shared links</h2>
+          <h2 className="font-mono text-xs font-bold uppercase tracking-[0.12em] text-glow-400">Shared links</h2>
           <div className="h-px bg-line" />
           <p className="text-ink-muted text-sm leading-relaxed">
             This is the one case where a check leaves your device. When you tap Share on a check or a tally,
@@ -67,7 +67,7 @@ export default function PrivacyPage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-glow-400">AI processing</h2>
+          <h2 className="font-mono text-xs font-bold uppercase tracking-[0.12em] text-glow-400">AI processing</h2>
           <div className="h-px bg-line" />
           <p className="text-ink-muted text-sm leading-relaxed">
             Listing content is sent to OpenAI&apos;s API to generate your analysis. This is subject to{" "}
@@ -84,7 +84,7 @@ export default function PrivacyPage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-glow-400">Cookies &amp; tracking</h2>
+          <h2 className="font-mono text-xs font-bold uppercase tracking-[0.12em] text-glow-400">Cookies &amp; tracking</h2>
           <div className="h-px bg-line" />
           <p className="text-ink-muted text-sm leading-relaxed">
             Motormind does not use cookies, analytics, or any third-party tracking tools.
@@ -92,7 +92,7 @@ export default function PrivacyPage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="font-mono text-[10px] font-bold uppercase tracking-[0.22em] text-glow-400">Contact</h2>
+          <h2 className="font-mono text-xs font-bold uppercase tracking-[0.12em] text-glow-400">Contact</h2>
           <div className="h-px bg-line" />
           <p className="text-ink-muted text-sm leading-relaxed">
             Privacy questions can be sent to{" "}
@@ -108,7 +108,7 @@ export default function PrivacyPage() {
         <div className="pt-4">
           <Link
             href="/"
-            className="font-mono text-[10px] font-medium uppercase tracking-[0.2em] text-ink-faint hover:text-ink-muted transition-colors"
+            className="font-mono text-xs font-medium uppercase tracking-[0.12em] text-ink-faint hover:text-ink-muted transition-colors"
           >
             ← Back to app
           </Link>

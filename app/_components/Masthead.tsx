@@ -9,7 +9,7 @@ import { GuardedSwitch } from "./ui";
 // Sticky glass masthead, shared by every page.
 export default function Masthead({ active }: { active?: "analyse" | "garage" }) {
   const pathname = usePathname();
-  const linkBase = "font-mono text-[10px] uppercase tracking-[0.2em] transition-colors py-2";
+  const linkBase = "font-mono text-xs uppercase tracking-[0.12em] transition-colors min-h-11 inline-flex items-center";
   const [menuOpen, setMenuOpen] = useState(false);
   const roastMode = useRoastMode();
 
@@ -47,7 +47,7 @@ export default function Masthead({ active }: { active?: "analyse" | "garage" }) 
             Motormind
           </Link>
           <div className="hidden sm:block h-3.5 w-px bg-line-strong" />
-          <span className="hidden sm:block font-mono text-[9px] uppercase tracking-[0.28em] text-ink-faint whitespace-nowrap">NZ Car Copilot</span>
+          <span className="hidden sm:block font-mono text-xs uppercase tracking-[0.12em] text-ink-faint whitespace-nowrap">NZ Car Copilot</span>
         </div>
         <nav className="flex items-center gap-4">
           <Link

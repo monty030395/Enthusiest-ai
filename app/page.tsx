@@ -266,33 +266,31 @@ export default function Home() {
 
       <Masthead active="analyse" />
 
-      <main className="max-w-3xl mx-auto px-5 py-10 space-y-6">
+      <main className="max-w-3xl mx-auto px-5 py-6 space-y-6">
 
         {/* Collapsible: Hero + Input */}
         <div className={`overflow-hidden transition-all duration-500 ease-in-out ${collapsed ? "max-h-0 opacity-0 pointer-events-none" : "max-h-[1600px] opacity-100"}`}>
-          <div className="space-y-8">
+          <div className="space-y-5">
 
         {/* Hero */}
-        <div className="pt-2">
+        <div>
           <h2 className="font-display text-[2.6rem] sm:text-5xl font-bold text-ink leading-[1.02] tracking-tight [text-wrap:balance]">
             Is this car worth your money?
           </h2>
-          <p className="mt-4 text-ink-muted text-sm leading-relaxed max-w-md">
-            Share a Trade Me or Facebook Marketplace listing straight to the app, paste its link, or upload screenshots. Get a specific, honest enthusiast read — not the generic rubbish you already know.
+          <p className="mt-3 text-ink-muted text-sm leading-relaxed max-w-md">
+            Paste a Trade Me or Facebook Marketplace link and get a specific, honest enthusiast read — not the generic rubbish you already know.
           </p>
         </div>
 
-        <ListingHowTo />
-
-
-        {/* Input card */}
-        <div className="rounded-xl border border-line bg-white/[0.02] overflow-hidden">
+        {/* Input card — first thing under the headline so Start is on the
+            first phone screen; the how-to folds away below it */}
+        <div className="rounded-xl bg-dial/60 ring-1 ring-line overflow-hidden">
           <div className="flex border-b border-line">
             {(["text", "images"] as const).map((m) => (
               <button
                 key={m}
                 onClick={() => { setInputMode(m); setError(""); }}
-                className={`flex-1 py-3.5 font-mono text-[11px] font-medium uppercase tracking-[0.18em] transition-colors ${
+                className={`flex-1 min-h-12 font-mono text-xs font-medium uppercase tracking-[0.12em] transition-colors ${
                   inputMode === m
                     ? "text-ink border-b-2 border-glow-400 bg-white/[0.03]"
                     : "text-ink-faint hover:text-ink-muted"
@@ -320,7 +318,7 @@ export default function Home() {
                   <p className="text-sm text-ink-muted font-medium">
                     Drop screenshots here or <span className="text-glow-400">tap to browse</span>
                   </p>
-                  <p className="font-mono text-[11px] text-ink-faint mt-2">
+                  <p className="font-mono text-xs text-ink-faint mt-2">
                     Screenshot the listing — price, KMs, description, seller notes
                   </p>
                 </div>
@@ -358,9 +356,6 @@ export default function Home() {
 
             {inputMode === "text" && (
               <div className="space-y-2.5">
-                <p className="font-mono text-[11px] text-ink-faint leading-relaxed">
-                  Paste a Trade Me or Facebook Marketplace link, or the full listing description from anywhere else — the more detail the better.
-                </p>
                 <textarea
                   value={pastedText}
                   onChange={(e) => {
@@ -368,8 +363,8 @@ export default function Home() {
                     if (urlHint) { setUrlHint(""); setUrlHintVisible(false); }
                   }}
                   onPaste={handlePaste}
-                  placeholder="Paste a listing link or the listing text here..."
-                  rows={7}
+                  placeholder="Paste a listing link, or the listing's full description — the more detail the better"
+                  rows={4}
                   className="w-full bg-carbon-900/80 border border-line rounded-lg px-4 py-3.5 text-base sm:text-sm text-ink placeholder:text-ink-faint placeholder:font-mono focus:outline-none focus:border-glow-500/60 transition-all resize-none"
                 />
                 {urlHint && (
@@ -409,14 +404,16 @@ export default function Home() {
           </div>
         </div>
 
-          </div>{/* end space-y-8 */}
+        <ListingHowTo />
+
+          </div>{/* end space-y-5 */}
         </div>{/* end collapsible */}
 
         {/* New Analysis button — visible at top when input is collapsed */}
         {inputCollapsed && (
           <button
             onClick={handleReset}
-            className="w-full border border-line hover:border-line-strong text-ink-faint hover:text-ink-muted rounded-lg py-3 font-mono text-[10px] font-medium uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2"
+            className="w-full border border-line hover:border-line-strong text-ink-faint hover:text-ink-muted rounded-lg py-3 font-mono text-xs font-medium uppercase tracking-[0.12em] transition-all flex items-center justify-center gap-2"
           >
             <span className="text-glow-400 text-sm leading-none">+</span> New Check
           </button>
@@ -449,14 +446,14 @@ export default function Home() {
           <div className="space-y-4">
             <AnalysisResults analysis={result} />
 
-            <p className="font-mono text-[10px] text-ink-faint text-center">
+            <p className="font-mono text-xs text-ink-faint text-center">
               Saved to your <Link href="/garage" className="text-glow-400 hover:text-glow-300 transition-colors">Garage</Link> — on this device only.
             </p>
 
             {/* Reset */}
             <button
               onClick={handleReset}
-              className="w-full border border-line hover:border-line-strong text-ink-faint hover:text-ink-muted rounded-lg py-3.5 font-mono text-[11px] font-medium uppercase tracking-[0.2em] transition-all"
+              className="w-full border border-line hover:border-line-strong text-ink-faint hover:text-ink-muted rounded-lg py-3.5 font-mono text-xs font-medium uppercase tracking-[0.12em] transition-all"
             >
               Check Another Listing
             </button>

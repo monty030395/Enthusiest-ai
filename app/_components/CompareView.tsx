@@ -59,13 +59,13 @@ export default function CompareView({ a, b, onBack }: { a: SavedCheck; b: SavedC
     <div className="space-y-4">
       <button
         onClick={onBack}
-        className="font-mono text-[10px] font-medium uppercase tracking-[0.2em] text-ink-faint hover:text-ink-muted transition-colors py-2 flex items-center gap-2"
+        className="font-mono text-xs font-medium uppercase tracking-[0.12em] text-ink-faint hover:text-ink-muted transition-colors min-h-11 flex items-center gap-2"
       >
         <span className="text-glow-400">←</span> Back to Garage
       </button>
 
       <div className="pt-1">
-        <p className="font-mono text-[10px] font-medium uppercase tracking-[0.3em] text-glow-400 mb-3">
+        <p className="font-mono text-xs font-medium uppercase tracking-[0.12em] text-glow-400 mb-3">
           Head to head
         </p>
         <h2 className="font-display text-4xl font-extrabold text-ink leading-[1.05] tracking-tight">
@@ -111,16 +111,16 @@ export default function CompareView({ a, b, onBack }: { a: SavedCheck; b: SavedC
         <button
           onClick={shareTally}
           disabled={sharing}
-          className="w-full border border-glow-600/50 hover:border-glow-500 disabled:border-line disabled:text-ink-faint text-glow-400 hover:text-glow-300 rounded-lg py-3.5 font-mono text-[11px] font-medium uppercase tracking-[0.2em] transition-all"
+          className="w-full border border-glow-600/50 hover:border-glow-500 disabled:border-line disabled:text-ink-faint text-glow-400 hover:text-glow-300 rounded-lg py-3.5 font-mono text-xs font-medium uppercase tracking-[0.12em] transition-all"
         >
           {sharing ? "Building the link..." : h2h ? "Share the Head-to-Head" : "Share the Tally"}
         </button>
         {shareNote && (
-          <p className="font-mono text-[10px] text-ink-faint text-center">{shareNote}</p>
+          <p className="font-mono text-xs text-ink-faint text-center">{shareNote}</p>
         )}
       </div>
 
-      <p className="font-mono text-ink-faint text-[10px] leading-relaxed text-center">
+      <p className="font-mono text-ink-faint text-xs leading-relaxed text-center">
         AI scores only count when the two cars are more than one point apart — a single point either way is noise, not a finding. Flag counts and rated tiers score on any real difference. Asking price is shown but never scored: cheaper isn&apos;t better, it&apos;s just cheaper.
       </p>
     </div>

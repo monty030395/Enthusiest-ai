@@ -89,7 +89,8 @@ export function Dial({ score, label, big = false, faceLabel = true }: { score: n
   );
 }
 
-export type ClusterDial = { label: string; score: number | null; onClick: () => void };
+// `short` is the switch's printed name, so three fit across a phone at 12px
+export type ClusterDial = { label: string; short?: string; score: number | null; onClick: () => void };
 
 // Remembers that the switches have had their one-time glow on this device
 const SWITCH_HINT_KEY = "motormind.switchHint.v1";
@@ -125,11 +126,11 @@ export function Cluster({ dials }: { dials: [ClusterDial, ClusterDial, ClusterDi
             <Dial score={d.score} label={d.label} big={i === 1} faceLabel={false} />
           </span>
           <span
-            className="dash-switch inline-flex items-center gap-1 rounded-md bg-carbon-850 ring-1 ring-line-strong px-2 py-1 font-display text-[10px] font-semibold uppercase tracking-[0.06em] text-glow-400 whitespace-nowrap shadow-[0_2px_0_var(--color-carbon-950),inset_0_1px_0_rgba(255,255,255,0.06)] [text-shadow:0_0_6px_rgba(169,216,255,0.45)] transition-all group-hover:text-glow-300 group-hover:ring-glow-600/60 group-active:translate-y-[2px] group-active:shadow-none"
+            className="dash-switch inline-flex items-center gap-1 rounded-md bg-carbon-850 ring-1 ring-line-strong px-2 py-1 font-display text-xs font-semibold uppercase tracking-[0.06em] text-glow-400 whitespace-nowrap shadow-[0_2px_0_var(--color-carbon-950),inset_0_1px_0_rgba(255,255,255,0.06)] [text-shadow:0_0_6px_rgba(169,216,255,0.45)] transition-all group-hover:text-glow-300 group-hover:ring-glow-600/60 group-active:translate-y-[2px] group-active:shadow-none"
             aria-hidden="true"
           >
-            {d.label}
-            <span className="text-[9px] leading-none opacity-80">↓</span>
+            {d.short ?? d.label}
+            <span className="leading-none opacity-80">↓</span>
           </span>
         </button>
       ))}
@@ -162,7 +163,7 @@ export function MiniDial({ score, label }: { score: number | null; label: string
           {score === null ? "?" : score}
         </text>
       </svg>
-      <span className="font-display text-[10px] font-semibold text-ink-faint leading-none whitespace-nowrap">{label}</span>
+      <span className="font-display text-xs font-semibold text-ink-faint leading-none whitespace-nowrap">{label}</span>
     </span>
   );
 }
@@ -397,7 +398,7 @@ export function Odometer({ digits }: { digits: string }) {
           </span>
         ))}
       </span>
-      <span className="font-mono text-[11px] text-ink-faint pb-0.5">km</span>
+      <span className="font-mono text-xs text-ink-faint pb-0.5">km</span>
     </span>
   );
 }

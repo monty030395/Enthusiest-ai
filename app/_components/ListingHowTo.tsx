@@ -11,7 +11,7 @@ const SOURCES: { name: string; steps: React.ReactNode[] }[] = [
       </>,
       <>
         <span className="text-ink">iPhone or computer:</span> tap Share, then <span className="text-ink">Copy link</span>, and
-        paste it in the box below.
+        paste it in the box above.
       </>,
       <>
         If we can&apos;t pull it, we&apos;ll ask you to copy the listing&apos;s description in instead, or use screenshots.
@@ -24,12 +24,16 @@ const SOURCES: { name: string; steps: React.ReactNode[] }[] = [
   },
 ];
 
+// Folded away under the input: returning users never need it, and open it
+// would push Start off the first phone screen
 export default function ListingHowTo() {
   return (
-    <div className="rounded-xl border border-line bg-white/[0.02] p-5 space-y-4">
-      <p className="font-mono text-[10px] font-medium uppercase tracking-[0.25em] text-glow-400">
-        How to add a listing
-      </p>
+    <details className="group rounded-xl bg-dial/60 ring-1 ring-line">
+      <summary className="flex items-center justify-between gap-3 px-5 min-h-12 cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+        <span className="font-display text-sm font-semibold text-glow-400">How do I add a listing?</span>
+        <span className="text-ink-faint text-xs transition-transform group-open:rotate-180" aria-hidden="true">▼</span>
+      </summary>
+      <div className="px-5 pb-5 space-y-4">
       <ul className="space-y-4">
         {SOURCES.map((source) => (
           <li key={source.name} className="border-l-2 border-glow-500/60 pl-3.5">
@@ -42,10 +46,11 @@ export default function ListingHowTo() {
           </li>
         ))}
       </ul>
-      <p className="font-mono text-[10px] text-ink-faint leading-relaxed">
+      <p className="text-xs text-ink-faint leading-relaxed">
         No Motormind in your Android share menu? Open motormind.nz in Chrome, tap ⋮ then{" "}
         <span className="text-ink-muted">Add to Home screen</span> (or Install app). It shows up after that.
       </p>
-    </div>
+      </div>
+    </details>
   );
 }

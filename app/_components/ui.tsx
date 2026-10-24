@@ -4,13 +4,13 @@ import { useState, useEffect, type ReactNode } from "react";
 
 export function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p className="font-mono text-[10px] font-medium uppercase tracking-[0.2em] text-ink-faint mb-3">{children}</p>
+    <p className="font-display text-xs font-semibold uppercase tracking-[0.08em] text-ink-faint mb-3">{children}</p>
   );
 }
 
 export function Card({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`rounded-xl border border-line bg-white/[0.02] ${className}`}>
+    <div className={`rounded-xl bg-dial/60 ring-1 ring-line ${className}`}>
       {children}
     </div>
   );
@@ -18,7 +18,7 @@ export function Card({ children, className = "" }: { children: React.ReactNode; 
 
 export function Pill({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-flex items-center px-2.5 py-1 rounded border border-line bg-white/[0.04] text-ink-muted font-mono text-[11px]">
+    <span className="inline-flex items-center px-2.5 py-1 rounded border border-line bg-white/[0.04] text-ink-muted font-mono text-xs">
       {children}
     </span>
   );
@@ -48,7 +48,7 @@ export function GuardedSwitch({ checked, onChange, label }: { checked: boolean; 
       </span>
       <span className="grid gap-0.5">
         <span className="font-display text-sm font-semibold text-ink">{label}</span>
-        <span className={`font-mono text-[11px] uppercase tracking-[0.12em] ${checked ? "text-needle" : "text-ink-faint"}`}>
+        <span className={`font-mono text-xs uppercase tracking-[0.12em] ${checked ? "text-needle" : "text-ink-faint"}`}>
           {checked ? "Armed" : "Off — tap to lift the guard"}
         </span>
       </span>
@@ -73,7 +73,7 @@ export function StartButton({ onClick, disabled, busy, label }: { onClick: () =>
           className={`block w-3.5 h-3.5 rounded-full border-2 border-t-transparent ${lit ? "border-needle" : "border-carbon-600"} ${busy ? "animate-spin" : ""}`}
           aria-hidden="true"
         />
-        <span className={`font-display text-[11px] font-bold uppercase tracking-[0.1em] leading-tight ${lit ? "text-ink" : "text-ink-faint"}`}>
+        <span className={`font-display text-xs font-bold uppercase tracking-[0.1em] leading-tight ${lit ? "text-ink" : "text-ink-faint"}`}>
           {busy ? <>Checking</> : label ?? <>Start<br />check</>}
         </span>
       </span>
