@@ -131,6 +131,10 @@ export function TallyBoard({ a, b, tally }: { a: Analysis; b: Analysis; tally: T
             <span><LcdNumber value={tally.aWins} lit={tally.aWins >= tally.bWins} /></span>
             <span className="text-right"><LcdNumber value={tally.bWins} lit={tally.bWins >= tally.aWins} /></span>
           </div>
+          {/* How a row is won, where the count is read */}
+          <p className="mt-3 text-xs text-ink-faint leading-relaxed text-center">
+            Scores count when the cars are 2+ points apart; flags and ratings on any difference. Price is shown, never scored.
+          </p>
         </div>
       </Card>
 
