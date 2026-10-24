@@ -57,7 +57,10 @@ export function TallyBoard({ a, b, tally }: { a: Analysis; b: Analysis; tally: T
         : `${bName} takes it ${tally.bWins}–${tally.aWins}.`;
 
   const scoreRows = tally.rows.filter((r) => r.label in SCORE_ROWS);
-  const otherRows = tally.rows.filter((r) => !(r.label in SCORE_ROWS));
+  // A row neither car has anything for is only a pair of dashes
+  const otherRows = tally.rows.filter(
+    (r) => !(r.label in SCORE_ROWS) && !(r.aDisplay === "—" && r.bDisplay === "—")
+  );
 
   const cell = (won: boolean, lost: boolean) =>
     `flex items-baseline gap-1.5 text-xs leading-snug ${won ? "text-ink font-bold" : lost ? "text-ink-faint" : "text-ink-muted"}`;
