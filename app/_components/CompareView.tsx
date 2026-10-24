@@ -111,9 +111,9 @@ export default function CompareView({ a, b, onBack }: { a: SavedCheck; b: SavedC
         <button
           onClick={shareTally}
           disabled={sharing}
-          className="w-full border border-glow-600/50 hover:border-glow-500 disabled:border-line disabled:text-ink-faint text-glow-400 hover:text-glow-300 rounded-lg py-3.5 font-mono text-xs font-medium uppercase tracking-[0.12em] transition-all"
+          className="w-full min-h-12 rounded-lg bg-glow-500 hover:bg-glow-400 active:bg-glow-600 disabled:bg-carbon-800 disabled:text-ink-faint text-carbon-950 font-display text-sm font-bold uppercase tracking-[0.06em] transition-colors"
         >
-          {sharing ? "Building the link..." : h2h ? "Share the Head-to-Head" : "Share the Tally"}
+          {sharing ? "Building the link..." : h2h ? "Share the head-to-head" : "Share the tally"}
         </button>
         {shareNote && (
           <p className="font-mono text-xs text-ink-faint text-center">{shareNote}</p>

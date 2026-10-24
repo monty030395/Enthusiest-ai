@@ -36,7 +36,7 @@ export default function Masthead({ active }: { active?: "analyse" | "garage" }) 
   }
 
   return (
-    <header className="sticky top-0 z-40 px-6 py-2 border-b border-line bg-carbon-950">
+    <header className="sticky top-0 z-40 px-4 min-[360px]:px-6 py-2 border-b border-line bg-carbon-950">
       <div className="max-w-3xl mx-auto flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Link
@@ -49,7 +49,7 @@ export default function Masthead({ active }: { active?: "analyse" | "garage" }) 
           <div className="hidden sm:block h-3.5 w-px bg-line-strong" />
           <span className="hidden sm:block font-mono text-xs uppercase tracking-[0.12em] text-ink-faint whitespace-nowrap">NZ Car Copilot</span>
         </div>
-        <nav className="flex items-center gap-4">
+        <nav className="flex items-center gap-3 min-[360px]:gap-4">
           <Link
             href="/"
             onClick={scrollToTopIfSamePage("/")}
