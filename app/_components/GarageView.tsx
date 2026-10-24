@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { computeCharacterScore } from "../_lib/analysis";
-import { type SavedCheck, useGarage, deleteCheck, clearGarage, exportCheck, importCheck } from "../_lib/garage";
+import { type SavedCheck, useGarage, deleteCheck, restoreCheck, clearGarage, exportCheck, importCheck } from "../_lib/garage";
 import { verdictBadgeStyle, RoastBadge } from "./badges";
 import { Card } from "./ui";
 import { MiniCluster } from "./gauges";
@@ -46,10 +46,27 @@ export default function GarageView() {
   const [importError, setImportError] = useState("");
   const importInputRef = useRef<HTMLInputElement>(null);
 
+  // The last removed check, kept a few seconds so Remove can be undone.
+  // Checks only live on this device, so a mis-tap would otherwise lose one
+  const [removed, setRemoved] = useState<{ check: SavedCheck; index: number } | null>(null);
+  useEffect(() => {
+    if (!removed) return;
+    const t = setTimeout(() => setRemoved(null), 5000);
+    return () => clearTimeout(t);
+  }, [removed]);
+
   function handleDelete(id: string) {
+    const index = checks.findIndex((c) => c.id === id);
+    if (index !== -1) setRemoved({ check: checks[index], index });
     deleteCheck(id);
     setCompareIds((prev) => prev.filter((c) => c !== id));
     if (selected?.id === id) setSelected(null);
+  }
+
+  function handleUndo() {
+    if (!removed) return;
+    restoreCheck(removed.check, removed.index);
+    setRemoved(null);
   }
 
   function handleClearAll() {
@@ -160,7 +177,7 @@ export default function GarageView() {
                   href="/"
                   className="inline-block font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-glow-400 hover:text-glow-300 transition-colors py-2"
                 >
-                  Analyse a listing →
+                  Check a listing →
                 </Link>
                 <p className="font-mono text-[10px] text-ink-faint">
                   or{" "}
@@ -227,7 +244,7 @@ export default function GarageView() {
                               : "text-ink-faint hover:text-ink-muted"
                           }`}
                         >
-                          {compareIds.includes(check.id) ? "On the hook to tally" : "+ Tally up"}
+                          {compareIds.includes(check.id) ? "✓ Comparing" : "+ Compare"}
                         </button>
                         <button
                           onClick={() => handleDelete(check.id)}
@@ -290,6 +307,26 @@ export default function GarageView() {
         )}
       </main>
 
+      {/* Undo bar for Remove — sits above the compare bar when both show */}
+      {removed && !comparing && !selected && (
+        <div
+          role="status"
+          className={`fixed inset-x-0 z-40 px-5 ${compareIds.length > 0 ? "bottom-20" : "bottom-4"}`}
+        >
+          <div className="max-w-3xl mx-auto flex items-center justify-between gap-3 rounded-lg bg-carbon-850 ring-1 ring-line-strong px-4 py-2 shadow-[0_8px_24px_rgba(0,0,0,0.5)]">
+            <p className="text-sm text-ink-muted min-w-0 truncate">
+              Removed {removed.check.analysis.vehicle.make} {removed.check.analysis.vehicle.model}
+            </p>
+            <button
+              onClick={handleUndo}
+              className="flex-shrink-0 font-display text-sm font-bold uppercase tracking-[0.08em] text-glow-400 hover:text-glow-300 min-h-11 px-2"
+            >
+              Undo
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Tally Up bar — appears once a check is picked */}
       {!comparing && !selected && compareIds.length > 0 && (
         <div className="fixed bottom-0 inset-x-0 z-30 border-t border-line bg-carbon-950/90 backdrop-blur-md px-5 py-3">
@@ -297,7 +334,7 @@ export default function GarageView() {
             <p className="font-mono text-[10px] text-ink-muted uppercase tracking-[0.16em] leading-relaxed min-w-0 truncate">
               {comparePair.length === 2
                 ? `${comparePair[0].analysis.vehicle.model} vs ${comparePair[1].analysis.vehicle.model}`
-                : "Pick one more to tally"}
+                : "Pick one more to compare"}
             </p>
             <div className="flex items-center gap-2 flex-shrink-0">
               <button
@@ -312,7 +349,7 @@ export default function GarageView() {
                 disabled={comparePair.length < 2}
                 className="bg-glow-500 hover:bg-glow-400 active:bg-glow-600 disabled:bg-carbon-800 disabled:text-ink-faint disabled:cursor-not-allowed text-carbon-950 font-mono font-bold uppercase tracking-[0.18em] rounded-lg py-3 px-5 transition-all text-[10px]"
               >
-                Tally Up
+                Compare
               </button>
             </div>
           </div>

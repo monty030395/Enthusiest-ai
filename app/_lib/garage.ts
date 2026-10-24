@@ -88,6 +88,15 @@ export function deleteCheck(id: string): SavedCheck[] {
   return remaining;
 }
 
+// Undo for a delete: puts the check back where it was, unless it's already
+// there (a double-tapped Undo)
+export function restoreCheck(check: SavedCheck, index: number) {
+  const checks = loadGarage();
+  if (checks.some((c) => c.id === check.id)) return;
+  checks.splice(Math.min(index, checks.length), 0, check);
+  persist(checks.slice(0, MAX_CHECKS));
+}
+
 export function clearGarage() {
   try {
     window.localStorage.removeItem(KEY);

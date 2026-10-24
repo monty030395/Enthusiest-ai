@@ -55,7 +55,7 @@ export default function Masthead({ active }: { active?: "analyse" | "garage" }) 
             onClick={scrollToTopIfSamePage("/")}
             className={`${linkBase} ${active === "analyse" ? "text-glow-400" : "text-ink-faint hover:text-ink-muted"}`}
           >
-            Analyse
+            Check
           </Link>
           <Link
             href="/garage"
