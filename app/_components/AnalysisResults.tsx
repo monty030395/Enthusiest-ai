@@ -651,7 +651,7 @@ export default function AnalysisResults({
             <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-4">
               <SectionLabel>Future Classic Potential</SectionLabel>
               <span className="w-20 rounded-full bg-dial" role="img" aria-label={`${result.classicPotential.score} out of 10`}>
-                <Dial score={result.classicPotential.score} label="Classic" />
+                <Dial score={result.classicPotential.score} label="Classic" faceLabel={false} />
               </span>
             </div>
             {result.classicPotential.reasons?.length > 0 && (
