@@ -69,10 +69,24 @@ export function StartButton({ onClick, disabled, busy, label }: { onClick: () =>
       className="group relative flex-none w-24 h-24 rounded-full grid place-items-center text-center bg-[radial-gradient(circle_at_50%_35%,var(--color-carbon-700),var(--color-carbon-950)_75%)] shadow-[0_0_0_4px_var(--color-carbon-950),0_0_0_6px_var(--color-carbon-600),0_6px_16px_rgba(0,0,0,0.5)] enabled:hover:shadow-[0_0_0_4px_var(--color-carbon-950),0_0_0_6px_var(--color-glow-600),0_0_18px_rgba(169,216,255,0.25)] enabled:active:scale-[0.97] transition-[transform,box-shadow] disabled:cursor-not-allowed focus-visible:outline-offset-8"
     >
       <span className="grid justify-items-center gap-1">
-        <span
-          className={`block w-3.5 h-3.5 rounded-full border-2 border-t-transparent ${lit ? "border-needle" : "border-carbon-600"} ${busy ? "animate-spin" : ""}`}
-          aria-hidden="true"
-        />
+        {/* A power symbol, ring and stem, as on a real start button. While
+            busy it gives way to a spinning ring */}
+        {busy ? (
+          <span className="block w-3.5 h-3.5 rounded-full border-2 border-t-transparent border-needle animate-spin" aria-hidden="true" />
+        ) : (
+          <svg
+            viewBox="0 0 24 24"
+            className={`w-4 h-4 ${lit ? "text-needle" : "text-carbon-600"}`}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.75"
+            strokeLinecap="round"
+            aria-hidden="true"
+          >
+            <path d="M7.05 6.5A8.17 8.17 0 1 0 16.95 6.5" />
+            <path d="M12 2.5v9" />
+          </svg>
+        )}
         <span className={`font-display text-xs font-bold uppercase tracking-[0.1em] leading-tight ${lit ? "text-ink" : "text-ink-faint"}`}>
           {busy ? <>Checking</> : label ?? <>Start<br />check</>}
         </span>

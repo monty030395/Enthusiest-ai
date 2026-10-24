@@ -2,7 +2,7 @@
 // Winner-per-row semantics: colour tracks sentiment, so "lower" wins on
 // cost/pain rows and "higher" wins on score rows. Rows where either side
 // has no data score no points for anyone.
-import { type Analysis, computeCharacterScore, isSpecified, isConditional } from "./analysis";
+import { type Analysis, computeCharacterScore, isSpecified, isConditional, formatPrice } from "./analysis";
 
 function confirmedFlagCount(a: Analysis): number {
   return (a.redFlags ?? []).filter((f) => !isConditional(f)).length;
@@ -75,7 +75,7 @@ const ROW_DEFS: CompareRowDef[] = [
   },
   {
     label: "Asking",
-    display: (a) => a.vehicle.price || DASH,
+    display: (a) => (a.vehicle.price ? formatPrice(a.vehicle.price) : DASH),
   },
   {
     label: "Enthusiast Tax",
@@ -196,7 +196,7 @@ export function buildTallyShareText(
   const name = (x: Analysis) => `${x.vehicle.make} ${x.vehicle.model}`;
   const titled = (x: Analysis) => {
     const withYear = [isSpecified(x.vehicle.year) ? x.vehicle.year : "", name(x)].filter(Boolean).join(" ");
-    const priced = x.vehicle.price ? `${withYear} (${x.vehicle.price})` : withYear;
+    const priced = x.vehicle.price ? `${withYear} (${formatPrice(x.vehicle.price)})` : withYear;
     return x.mode === "roast" ? `${priced} (Roasted)` : priced;
   };
 

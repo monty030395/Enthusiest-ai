@@ -2,7 +2,7 @@
 // view and the read-only public /c/<id> page. No hooks, no state — whatever
 // renders these decides where the data came from.
 import type { ReactNode } from "react";
-import { type Analysis, computeCharacterScore } from "../_lib/analysis";
+import { type Analysis, computeCharacterScore, formatPrice } from "../_lib/analysis";
 import { type Tally, type HeadToHead, tallyQuip } from "../_lib/compare";
 import { V_GREEN, V_RED, verdictBadgeStyle, RoastBadge } from "./badges";
 import { Card } from "./ui";
@@ -26,7 +26,7 @@ function CarHeader({ analysis, mirror = false }: { analysis: Analysis; mirror?: 
         {v.make} {v.model}
       </h3>
       {v.price && (
-        <p className="font-mono text-glow-300 text-sm tabular-nums [text-shadow:0_0_6px_rgba(169,216,255,0.45)]">{v.price}</p>
+        <p className="font-mono text-glow-300 text-sm tabular-nums [text-shadow:0_0_6px_rgba(169,216,255,0.45)]">{formatPrice(v.price)}</p>
       )}
       {analysis.label && (
         <div className={`pt-0.5 flex flex-wrap items-center gap-1.5 ${mirror ? "justify-end" : ""}`}>

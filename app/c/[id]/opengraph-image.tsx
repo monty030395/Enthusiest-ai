@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { computeCharacterScore } from "../../_lib/analysis";
+import { computeCharacterScore, formatPrice } from "../../_lib/analysis";
 import { getShared } from "../../_lib/shareStore";
 
 export const alt = "Motormind check";
@@ -93,7 +93,7 @@ export default async function Image({ params }: { params: Promise<{ id: string }
             {v.price ? (
               <div style={{ ...col, alignItems: "flex-end", background: GLOW, borderRadius: 10, padding: "10px 20px" }}>
                 <span style={{ fontSize: 15, color: "rgba(11,11,12,0.65)", letterSpacing: 3 }}>ASKING</span>
-                <span style={{ fontSize: 38, fontWeight: 800, color: CARBON }}>{v.price}</span>
+                <span style={{ fontSize: 38, fontWeight: 800, color: CARBON }}>{formatPrice(v.price)}</span>
               </div>
             ) : null}
           </div>
@@ -142,7 +142,7 @@ export default async function Image({ params }: { params: Promise<{ id: string }
       <div style={{ fontSize: 44, fontWeight: 800, color: dimmed ? INK_MUTED : INK, lineHeight: 1.1 }}>
         {`${x.vehicle.make} ${x.vehicle.model}`}
       </div>
-      {x.vehicle.price ? <div style={{ fontSize: 26, color: GLOW }}>{x.vehicle.price}</div> : null}
+      {x.vehicle.price ? <div style={{ fontSize: 26, color: GLOW }}>{formatPrice(x.vehicle.price)}</div> : null}
     </div>
   );
 
