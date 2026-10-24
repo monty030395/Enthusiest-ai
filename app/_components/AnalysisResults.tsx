@@ -19,7 +19,7 @@ import {
   VerdictBadge, RatingBadge, RoastBadge,
 } from "./badges";
 import { Card, Pill, SectionLabel } from "./ui";
-import { Cluster, Dial, HalfGauge, MultiFunctionDisplay, Odometer, TelltalePanel, lampFor, parseOdometer } from "./gauges";
+import { Cluster, HalfGauge, MultiFunctionDisplay, Odometer, TelltalePanel, lampFor, parseOdometer } from "./gauges";
 
 // Where the fuel needle sits for each wallet-damage rating: a sensible buy
 // leaves the tank nearly full, a catastrophic one runs it dry
@@ -178,16 +178,15 @@ export default function AnalysisResults({
   const characterSectionRef = useRef<HTMLDivElement>(null);
   const streetCredSectionRef = useRef<HTMLDivElement>(null);
   const priceVerdictRef = useRef<HTMLDivElement>(null);
-  const ownerVibeRef = useRef<HTMLDivElement>(null);
+  const sellerRef = useRef<HTMLDivElement>(null);
   const reliabilityRef = useRef<HTMLDivElement>(null);
   const walletRef = useRef<HTMLDivElement>(null);
-  const takeRef = useRef<HTMLDivElement>(null);
   const dashRef = useRef<HTMLDivElement>(null);
   const scrollTo = (ref: RefObject<HTMLDivElement | null>) =>
     ref.current?.scrollIntoView({ behavior: "smooth", block: "start" });
 
   // Once the dash has scrolled up out of view, a strip under the masthead
-  // keeps its jumps to hand: back to the dash, the three sections, the take
+  // keeps its jumps to hand: back to the dash, the seller, the three sections
   const [pastDash, setPastDash] = useState(false);
   useEffect(() => {
     const dash = dashRef.current;
@@ -231,6 +230,30 @@ export default function AnalysisResults({
     setTimeout(() => setShareNote(""), 4000);
   }
 
+  // The questions as a message to the seller, ready to paste into Trade Me
+  // or Messenger
+  const [copyNote, setCopyNote] = useState("");
+  async function copyQuestions() {
+    const v = result.vehicle;
+    const car = [v.year, v.make, v.model].filter(isSpecified).join(" ");
+    const text = [
+      `Hi, I'm interested in your ${car}. A few questions:`,
+      "",
+      ...result.questionsToAsk.map((q, i) => `${i + 1}. ${q}`),
+    ].join("\n");
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopyNote("Copied — paste it into your message to the seller.");
+    } catch {
+      setCopyNote("Couldn't copy from here — select the questions and copy them instead.");
+    }
+    setTimeout(() => setCopyNote(""), 4000);
+  }
+
+  // Price Outlook and Market Trend asked the same thing; only the outlook is
+  // asked for now, but checks saved before then may only have the trend
+  const outlook = result.priceOutlook ?? result.marketTrend;
+
   const jumps = [
     { label: "Invest", score: result.investmentScore ?? null, ref: investmentSectionRef },
     { label: "Character", score: characterScore, ref: characterSectionRef },
@@ -252,29 +275,30 @@ export default function AnalysisResults({
           <button
             type="button"
             onClick={() => scrollTo(dashRef)}
+            aria-label="Back to the dash"
             className="min-h-11 px-1 font-mono text-xs uppercase tracking-[0.08em] text-glow-400 hover:text-glow-300 transition-colors"
           >
             ↑<span className="hidden min-[360px]:inline"> Dash</span>
           </button>
+          {(result.questionsToAsk?.length > 0 || result.ownerVibe?.label) && (
+            <button
+              type="button"
+              onClick={() => scrollTo(sellerRef)}
+              className="min-h-11 px-1 font-mono text-xs uppercase tracking-[0.08em] text-mfd hover:text-mfd/80 transition-colors"
+            >
+              Seller
+            </button>
+          )}
           {jumps.map((j) => (
             <button
               key={j.label}
               type="button"
               onClick={() => scrollTo(j.ref)}
-              className="min-h-11 px-1 font-mono text-xs uppercase tracking-[0.08em] text-ink-muted hover:text-ink transition-colors"
+              className="min-h-11 px-1 whitespace-nowrap font-mono text-xs uppercase tracking-[0.08em] text-ink-muted hover:text-ink transition-colors"
             >
               {j.label} <span className="text-glow-300 tabular-nums">{j.score ?? "–"}</span>
             </button>
           ))}
-          {result.enthusiastTake && (
-            <button
-              type="button"
-              onClick={() => scrollTo(takeRef)}
-              className="min-h-11 px-1 font-mono text-xs uppercase tracking-[0.08em] text-mfd hover:text-mfd/80 transition-colors"
-            >
-              Take
-            </button>
-          )}
         </div>
       </nav>
 
@@ -397,7 +421,7 @@ export default function AnalysisResults({
                 onClick={() => scrollTo(reliabilityRef)}
                 className="rounded-xl bg-dial ring-1 ring-line px-2.5 pt-2 pb-2.5 grid justify-items-center gap-0.5 text-center active:scale-[0.98] transition-transform"
               >
-                <span className="justify-self-start font-display text-xs font-semibold uppercase tracking-[0.08em] text-ink-faint">Reliability risk</span>
+                <span className="justify-self-start font-display text-xs font-semibold uppercase tracking-[0.08em] text-ink-faint">Reliability</span>
                 <HalfGauge level={result.ownershipPain.score / 10} left="C" right="H" danger="right" />
                 <span className="font-display text-xs font-semibold text-ink">{tempReadout(result.ownershipPain.score)}</span>
               </button>
@@ -421,39 +445,36 @@ export default function AnalysisResults({
       </div>
 
       {/* ── THE SHORT VERDICT ─────────────────────────────
-          Right under the dash so people who stop scrolling here still get
-          the call, a way to send it, and a jump to the full take */}
-      {(result.verdict || showShare) && (
+          Right under the dash: the call and the full take together, and a
+          way to send them, so the summary isn't split across the page */}
+      {(result.verdict || result.enthusiastTake || showShare) && (
         <Card className="p-5 space-y-4">
           {result.verdict && (
             <p className="text-ink text-[15px] leading-relaxed">{result.verdict}</p>
           )}
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            {showShare && (
-              <button
-                onClick={shareVerdict}
-                disabled={sharing}
-                className="min-h-11 rounded-lg bg-glow-500 hover:bg-glow-400 active:bg-glow-600 disabled:bg-carbon-800 disabled:text-ink-faint text-carbon-950 px-4 font-display text-sm font-bold uppercase tracking-[0.06em] transition-colors"
-              >
-                {sharing ? "Building the link..." : "Share the verdict"}
-              </button>
-            )}
-            {result.enthusiastTake && (
-              <button
-                type="button"
-                onClick={() => scrollTo(takeRef)}
-                className="min-h-11 font-display text-sm font-semibold text-glow-400 hover:text-glow-300 transition-colors"
-              >
-                Read the full take ↓
-              </button>
-            )}
-          </div>
+          {result.enthusiastTake && (
+            <div className="space-y-1.5">
+              <p className="font-mono text-sm uppercase tracking-[0.06em] text-mfd [text-shadow:0_0_6px_rgba(255,173,59,0.45)]">
+                The enthusiast take
+              </p>
+              <p className="text-ink-muted text-[15px] leading-relaxed">{result.enthusiastTake}</p>
+            </div>
+          )}
+          {showShare && (
+            <button
+              onClick={shareVerdict}
+              disabled={sharing}
+              className="min-h-11 rounded-lg bg-glow-500 hover:bg-glow-400 active:bg-glow-600 disabled:bg-carbon-800 disabled:text-ink-faint text-carbon-950 px-4 font-display text-sm font-bold uppercase tracking-[0.06em] transition-colors"
+            >
+              {sharing ? "Building the link..." : "Share the verdict"}
+            </button>
+          )}
           {shareNote && <p className="text-xs text-ink-faint">{shareNote}</p>}
         </Card>
       )}
 
-      {/* ── UNDER THE DASH: specs and what makes it special ─ */}
-      {(result.performanceSpecs?.engine || result.whatMakesSpecial) && (
+      {/* ── UNDER THE DASH: the specs, this car's spec, and why it matters ─ */}
+      {(result.performanceSpecs?.engine || result.whatMakesSpecial || result.whyEnthusiastsCare || result.specSignificance?.length > 0) && (
         <Card className="overflow-hidden">
           <div className="p-6 space-y-5">
 
@@ -506,10 +527,33 @@ export default function AnalysisResults({
             </div>
           )}
 
-          {/* Pull-quote */}
-          {result.whatMakesSpecial && (
-            <div className="pl-4 border-l-2 border-glow-400">
-              <p className="text-ink text-[17px] font-medium italic leading-snug">{result.whatMakesSpecial}</p>
+          {/* This example's spec: what's noteworthy about this car, not the model */}
+          {result.specSignificance?.length > 0 && (
+            <div className={result.performanceSpecs?.engine ? "pt-5 border-t border-line" : ""}>
+              <SectionLabel>This car&apos;s spec</SectionLabel>
+              <ul className="space-y-3">
+                {result.specSignificance.map((s, i) => (
+                  <li key={i} className="flex gap-3">
+                    <span className="text-glow-400 flex-shrink-0 font-bold mt-0.5">+</span>
+                    <div>
+                      <span className="font-bold text-ink text-sm">{s.item}</span>
+                      {s.note && <p className="text-ink-faint text-xs mt-1 leading-relaxed">{s.note}</p>}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Why it matters: the pull-quote, then the wider story behind it */}
+          {(result.whatMakesSpecial || result.whyEnthusiastsCare) && (
+            <div className="pl-4 border-l-2 border-glow-400 space-y-2">
+              {result.whatMakesSpecial && (
+                <p className="text-ink text-[17px] font-medium italic leading-snug">{result.whatMakesSpecial}</p>
+              )}
+              {result.whyEnthusiastsCare && (
+                <p className="text-ink-muted text-sm leading-relaxed">{result.whyEnthusiastsCare}</p>
+              )}
             </div>
           )}
 
@@ -518,154 +562,190 @@ export default function AnalysisResults({
         </Card>
       )}
 
-      {/* ── SECTION 1: INVESTMENT ───────────────────────── */}
+      {/* ── THE SELLER ─────────────────────────────────────
+          The most useful thing at a viewing: what to ask, ready to paste
+          into a message, and what the listing says about who's selling */}
+      {(result.questionsToAsk?.length > 0 || result.ownerVibe?.label) && (
+        <div ref={sellerRef} className="scroll-mt-28 space-y-3">
+          <TileHeader label="Ask the Seller" score={null} />
+          <Card className="p-6 space-y-5">
+            {result.ownerVibe?.label && (
+              <div>
+                <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-2">
+                  <SectionLabel>Read on the seller</SectionLabel>
+                  <VerdictBadge verdict={result.ownerVibe.label} />
+                </div>
+                {result.ownerVibe.reasoning && (
+                  <p className="text-ink-muted text-sm leading-relaxed">{result.ownerVibe.reasoning}</p>
+                )}
+              </div>
+            )}
+            {result.questionsToAsk?.length > 0 && (
+              <div className={result.ownerVibe?.label ? "pt-5 border-t border-line" : ""}>
+                <ol className="space-y-3.5">
+                  {result.questionsToAsk.map((q, i) => (
+                    <li key={i} className="flex gap-3.5 text-sm border-b border-line pb-3.5 last:border-0 last:pb-0">
+                      <span className="font-mono text-glow-500 font-bold w-5 flex-shrink-0 tabular-nums">{String(i + 1).padStart(2, "0")}</span>
+                      <span className="text-ink/85 leading-snug">{q}</span>
+                    </li>
+                  ))}
+                </ol>
+                <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2">
+                  <button
+                    type="button"
+                    onClick={copyQuestions}
+                    className="min-h-11 rounded-lg ring-1 ring-glow-600/60 hover:ring-glow-400 px-4 font-display text-sm font-bold uppercase tracking-[0.06em] text-glow-300 transition-colors"
+                  >
+                    Copy questions
+                  </button>
+                  {copyNote && <p className="text-xs text-ink-faint" role="status">{copyNote}</p>}
+                </div>
+              </div>
+            )}
+          </Card>
+        </div>
+      )}
+
+      {/* ── SECTION 1: INVESTMENT ───────────────────────────
+          Three questions, three cards: is the price right, what will it
+          cost to own, where are values heading */}
       <div id="investment" ref={investmentSectionRef} className="scroll-mt-28 space-y-4">
         <TileHeader label="Investment" score={result.investmentScore ?? null} quip={getQuip("investment", result.investmentScore ?? null)} />
 
-        {/* Price Analysis */}
-        {result.priceVerdict && (
+        {/* Price: the verdict and its reason, then the enthusiast premium */}
+        {(result.priceVerdict || result.enthusiastTax) && (
           <div ref={priceVerdictRef} className="scroll-mt-28">
-            <Card className="p-6">
-              <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-2">
-                <SectionLabel>Price Analysis</SectionLabel>
-                <VerdictBadge verdict={result.priceVerdict.assessment} />
-              </div>
-              <p className="text-ink-muted text-sm leading-relaxed">{result.priceVerdict.reason}</p>
+            <Card className="p-6 space-y-5">
+              {result.priceVerdict && (
+                <div>
+                  <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-2">
+                    <SectionLabel>Price</SectionLabel>
+                    <VerdictBadge verdict={result.priceVerdict.assessment} />
+                  </div>
+                  <p className="text-ink-muted text-sm leading-relaxed">{result.priceVerdict.reason}</p>
+                </div>
+              )}
+              {result.enthusiastTax && (
+                <div className={result.priceVerdict ? "pt-5 border-t border-line" : ""}>
+                  <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-3">
+                    <SectionLabel>Enthusiast premium</SectionLabel>
+                    {result.enthusiastTax.premium && (
+                      <span style={themeToStyle(VERDICT_THEME_MAP[result.enthusiastTax.level] ?? V_NEUTRAL)}>
+                        {result.enthusiastTax.premium}
+                      </span>
+                    )}
+                  </div>
+                  {result.enthusiastTax.reasons?.length > 0 && (
+                    <ul className="space-y-2.5">
+                      {result.enthusiastTax.reasons.map((r, i) => (
+                        <li key={i} className="flex gap-2.5 text-sm text-ink-muted leading-snug">
+                          <span className="flex-shrink-0 font-mono font-bold" style={{ color: (TAX_LEVEL_THEMES[result.enthusiastTax.level] ?? V_NEUTRAL).text }}>$</span>
+                          {r}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )}
             </Card>
           </div>
         )}
 
-        {/* Price Reality Check */}
-        {result.enthusiastTax && (
-          <Card className="p-6">
-            <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-4">
-              <SectionLabel>Enthusiast Tax</SectionLabel>
-              {result.enthusiastTax.premium && (
-                <span style={themeToStyle(VERDICT_THEME_MAP[result.enthusiastTax.level] ?? V_NEUTRAL)}>
-                  {result.enthusiastTax.premium}
-                </span>
-              )}
-            </div>
-            {result.enthusiastTax.reasons?.length > 0 && (
-              <ul className="space-y-2.5">
-                {result.enthusiastTax.reasons.map((r, i) => (
-                  <li key={i} className="flex gap-2.5 text-sm text-ink-muted leading-snug">
-                    <span className="flex-shrink-0 font-mono font-bold" style={{ color: (TAX_LEVEL_THEMES[result.enthusiastTax.level] ?? V_NEUTRAL).text }}>$</span>
-                    {r}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </Card>
-        )}
-
-        {/* Price Outlook */}
-        {result.priceOutlook && (
-          <Card className="p-6">
-            <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-2">
-              <SectionLabel>Price Outlook</SectionLabel>
-              <VerdictBadge verdict={result.priceOutlook.trend} />
-            </div>
-            <p className="text-ink-muted text-sm leading-relaxed">{result.priceOutlook.reason}</p>
-            <p className="font-mono text-ink-faint text-xs mt-2.5">Based on enthusiast market trends, not live pricing data.</p>
-          </Card>
-        )}
-
-        {/* Wallet Damage Rating — the arrows take the verdict badge's colour
-            so they can't disagree with it */}
-        {result.worstFinancialDecision && (() => {
-          const t = VERDICT_THEME_MAP[result.worstFinancialDecision.rating] ?? V_NEUTRAL;
-          return (
-            <div ref={walletRef} className="scroll-mt-28">
-            <Card className="p-6">
-              <div>
-                <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-4">
-                  <SectionLabel>Wallet Damage Rating</SectionLabel>
-                  <VerdictBadge verdict={result.worstFinancialDecision.rating} />
+        {/* Running costs: what fails (the temperature gauge) and what owning
+            it costs (the fuel gauge), together in one card. Each half takes
+            its gauge's words and its badge's colour */}
+        {(result.ownershipPain || result.worstFinancialDecision) && (
+          <Card className="p-6 space-y-5">
+            {result.ownershipPain && (() => {
+              const t = result.ownershipPain.score >= 8 ? V_RED : result.ownershipPain.score >= 5 ? V_AMBER : V_GREEN;
+              return (
+                <div ref={reliabilityRef} className="scroll-mt-28">
+                  <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-4">
+                    <SectionLabel>Reliability</SectionLabel>
+                    <span style={themeToStyle(t)}>{tempState(result.ownershipPain.score)}</span>
+                  </div>
+                  {result.ownershipPain.issues?.length > 0 && (
+                    <ul className="space-y-3.5">
+                      {result.ownershipPain.issues.map((issue, i) => {
+                        // A fault that hinges on an unconfirmed engine variant never
+                        // renders at the card's full severity
+                        const cond = isConditional(issue);
+                        const it = cond ? V_AMBER : t;
+                        return (
+                          <li key={i} className="pl-3.5 border-l-2 py-0.5" style={{ borderColor: it.border }}>
+                            <p className="font-bold text-ink text-sm">
+                              {issue.title}
+                              {cond && <ConditionalTag />}
+                            </p>
+                            {issue.detail && (
+                              <p className="text-ink-faint text-xs mt-1 leading-relaxed">{issue.detail}</p>
+                            )}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
                 </div>
-                {result.worstFinancialDecision.reasons?.length > 0 && (
-                  <ul className="space-y-2.5">
-                    {result.worstFinancialDecision.reasons.map((r, i) => (
-                      <li key={i} className="flex gap-2.5 text-sm text-ink/85 leading-snug">
-                        <span className="flex-shrink-0 font-mono font-bold" style={{ color: t.text }}>→</span>
+              );
+            })()}
+            {result.worstFinancialDecision && (() => {
+              const t = VERDICT_THEME_MAP[result.worstFinancialDecision.rating] ?? V_NEUTRAL;
+              return (
+                <div ref={walletRef} className={`scroll-mt-28 ${result.ownershipPain ? "pt-5 border-t border-line" : ""}`}>
+                  <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-4">
+                    <SectionLabel>Wallet damage</SectionLabel>
+                    <VerdictBadge verdict={result.worstFinancialDecision.rating} />
+                  </div>
+                  {result.worstFinancialDecision.reasons?.length > 0 && (
+                    <ul className="space-y-2.5">
+                      {result.worstFinancialDecision.reasons.map((r, i) => (
+                        <li key={i} className="flex gap-2.5 text-sm text-ink/85 leading-snug">
+                          <span className="flex-shrink-0 font-mono font-bold" style={{ color: t.text }}>→</span>
+                          {r}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              );
+            })()}
+          </Card>
+        )}
+
+        {/* Future value: where values are heading, and the classic case.
+            Checks saved before Market Trend was dropped fall back to it */}
+        {(outlook || result.classicPotential) && (
+          <Card className="p-6 space-y-5">
+            {outlook && (
+              <div>
+                <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-2">
+                  <SectionLabel>Future value</SectionLabel>
+                  <VerdictBadge verdict={outlook.trend} />
+                </div>
+                <p className="text-ink-muted text-sm leading-relaxed">{outlook.reason}</p>
+              </div>
+            )}
+            {result.classicPotential && (
+              <div className={outlook ? "pt-5 border-t border-line" : ""}>
+                <div className="flex items-center justify-between gap-3 mb-3">
+                  <SectionLabel>Classic potential</SectionLabel>
+                  <span className="rounded-md bg-dial ring-1 ring-line px-2 py-0.5 font-mono text-base tabular-nums text-glow-300">
+                    {result.classicPotential.score}<span className="text-ink-faint text-xs">/10</span>
+                  </span>
+                </div>
+                {result.classicPotential.reasons?.length > 0 && (
+                  <ul className="space-y-2">
+                    {result.classicPotential.reasons.map((r, i) => (
+                      <li key={i} className="flex gap-2.5 text-sm text-ink-muted leading-relaxed">
+                        <span className="text-glow-600 flex-shrink-0">▸</span>
                         {r}
                       </li>
                     ))}
                   </ul>
                 )}
               </div>
-            </Card>
-            </div>
-          );
-        })()}
-
-        {/* Reliability Risk — issue borders carry the severity colour of the
-            card's verdict badge, not the brand accent */}
-        {result.ownershipPain && (() => {
-          const t = result.ownershipPain.score >= 8 ? V_RED : result.ownershipPain.score >= 5 ? V_AMBER : V_GREEN;
-          return (
-            <div ref={reliabilityRef} className="scroll-mt-28">
-            <Card className="p-6">
-              <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-4">
-                <SectionLabel>Reliability Risk</SectionLabel>
-                <span style={themeToStyle(t)}>{tempState(result.ownershipPain.score)}</span>
-              </div>
-              {result.ownershipPain.issues?.length > 0 && (
-                <ul className="space-y-3.5 mt-1">
-                  {result.ownershipPain.issues.map((issue, i) => {
-                    // A fault that hinges on an unconfirmed engine variant never
-                    // renders at the card's full severity
-                    const cond = isConditional(issue);
-                    const it = cond ? V_AMBER : t;
-                    return (
-                      <li key={i} className="pl-3.5 border-l-2 py-0.5" style={{ borderColor: it.border }}>
-                        <p className="font-bold text-ink text-sm">
-                          {issue.title}
-                          {cond && <ConditionalTag />}
-                        </p>
-                        {issue.detail && (
-                          <p className="text-ink-faint text-xs mt-1 leading-relaxed">{issue.detail}</p>
-                        )}
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
-            </Card>
-            </div>
-          );
-        })()}
-
-        {/* Market Trend */}
-        {result.marketTrend && (
-          <Card className="p-6">
-            <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-2">
-              <SectionLabel>Market Trend</SectionLabel>
-              <VerdictBadge verdict={result.marketTrend.trend} />
-            </div>
-            <p className="text-ink-muted text-sm leading-relaxed">{result.marketTrend.reason}</p>
-          </Card>
-        )}
-
-        {/* Future Classic Potential */}
-        {result.classicPotential && (
-          <Card className="p-6">
-            <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-4">
-              <SectionLabel>Future Classic Potential</SectionLabel>
-              <span className="w-20 rounded-full bg-dial" role="img" aria-label={`${result.classicPotential.score} out of 10`}>
-                <Dial score={result.classicPotential.score} label="Classic" faceLabel={false} />
-              </span>
-            </div>
-            {result.classicPotential.reasons?.length > 0 && (
-              <ul className="space-y-2">
-                {result.classicPotential.reasons.map((r, i) => (
-                  <li key={i} className="flex gap-2.5 text-xs text-ink-muted leading-relaxed">
-                    <span className="text-glow-600 flex-shrink-0">▸</span>
-                    {r}
-                  </li>
-                ))}
-              </ul>
             )}
+            <p className="font-mono text-ink-faint text-xs">Based on enthusiast market trends, not live pricing data.</p>
           </Card>
         )}
       </div>
@@ -673,14 +753,6 @@ export default function AnalysisResults({
       {/* ── SECTION 2: CHARACTER ────────────────────────── */}
       <div id="character" ref={characterSectionRef} className="scroll-mt-28 space-y-4">
         <TileHeader label="Character" score={characterScore} quip={getQuip("character", characterScore)} />
-
-        {/* Why Enthusiasts Care */}
-        {result.whyEnthusiastsCare && (
-          <Card className="p-6">
-            <SectionLabel>Why Enthusiasts Care</SectionLabel>
-            <p className="text-ink/85 text-sm leading-relaxed">{result.whyEnthusiastsCare}</p>
-          </Card>
-        )}
 
         {/* Driving Character */}
         {result.drivingCharacter && (
@@ -706,107 +778,37 @@ export default function AnalysisResults({
         {result.modPotential && <ModPotentialCard data={result.modPotential} />}
       </div>
 
-      {/* ── SECTION 3: STREET CRED ──────────────────────── */}
-      <div id="street-cred" ref={streetCredSectionRef} className="scroll-mt-28 space-y-4">
-        <TileHeader label="Street Cred" score={result.vibeScore ?? null} />
-
-        {/* Owner Vibe */}
-        {result.ownerVibe?.label && (
-          <div ref={ownerVibeRef} className="scroll-mt-28">
-            <Card className="p-6">
-              <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-3">
-                <SectionLabel>Owner Vibe</SectionLabel>
-                <VerdictBadge verdict={result.ownerVibe.label} />
-              </div>
-              {result.ownerVibe.reasoning && (
-                <p className="text-ink-muted text-sm leading-relaxed">{result.ownerVibe.reasoning}</p>
-              )}
-            </Card>
+      {/* ── SECTION 3: STREET CRED ──────────────────────────
+          The owners' scene: how the community rates it (specialists, parts,
+          clubs) and how it goes down at Cars & Coffee. The analysis can come
+          back with either as empty strings, so a row only shows if it has
+          something to say — an empty badge looks like it failed to load */}
+      {(() => {
+        const rows = [
+          { label: "Owners' scene", data: result.communityCredibility },
+          { label: "Cars & Coffee", data: result.carsCoffee },
+        ].filter((r) => r.data?.rating?.trim() || r.data?.description?.trim());
+        return (
+          <div id="street-cred" ref={streetCredSectionRef} className="scroll-mt-28 space-y-4">
+            <TileHeader label="Street Cred" score={result.vibeScore ?? null} />
+            {rows.length > 0 && (
+              <Card className="p-6 space-y-5">
+                {rows.map((r, i) => (
+                  <div key={r.label} className={i > 0 ? "pt-5 border-t border-line" : ""}>
+                    <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-2">
+                      <SectionLabel>{r.label}</SectionLabel>
+                      {r.data?.rating?.trim() && <RatingBadge rating={r.data.rating} />}
+                    </div>
+                    {r.data?.description?.trim() && (
+                      <p className="text-ink-muted text-sm leading-relaxed">{r.data.description}</p>
+                    )}
+                  </div>
+                ))}
+              </Card>
+            )}
           </div>
-        )}
-
-        {/* Cars & Coffee + Community Credibility. The analysis can come back
-            with these as empty strings, so a row only shows if it has
-            something to say — an empty badge looks like it failed to load */}
-        {(() => {
-          const rows = [
-            { label: "Cars & Coffee", data: result.carsCoffee },
-            { label: "Community Credibility", data: result.communityCredibility },
-          ].filter((r) => r.data?.rating?.trim() || r.data?.description?.trim());
-          const standing = result.socialStanding?.trim();
-          if (rows.length === 0 && !standing) return null;
-          return (
-            <Card className="p-6 space-y-5">
-              {rows.map((r, i) => (
-                <div key={r.label} className={i > 0 ? "pt-5 border-t border-line" : ""}>
-                  <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-2">
-                    <SectionLabel>{r.label}</SectionLabel>
-                    {r.data?.rating?.trim() && <RatingBadge rating={r.data.rating} />}
-                  </div>
-                  {r.data?.description?.trim() && (
-                    <p className="text-ink-muted text-sm leading-relaxed">{r.data.description}</p>
-                  )}
-                </div>
-              ))}
-              {standing && (
-                <div className={rows.length > 0 ? "pt-5 border-t border-line" : ""}>
-                  <p className="text-ink-muted text-sm italic leading-relaxed pl-3.5 border-l-2 border-glow-500/60">
-                    {standing}
-                  </p>
-                </div>
-              )}
-            </Card>
-          );
-        })()}
-
-        {/* Regret Risk */}
-        {result.regretRisk && (
-          <Card className="p-6">
-            <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-2">
-              <SectionLabel>Regret Risk</SectionLabel>
-              <VerdictBadge verdict={result.regretRisk.level} />
-            </div>
-            <p className="text-ink-muted text-sm leading-relaxed">{result.regretRisk.reason}</p>
-          </Card>
-        )}
-      </div>
-
-      {/* ── SPEC SIGNIFICANCE ───────────────────────────── */}
-      {result.specSignificance?.length > 0 && (
-        <div className="space-y-3">
-          <TileHeader label="Spec Significance" score={null} />
-          <Card className="p-6">
-            <ul className="space-y-3.5">
-              {result.specSignificance.map((s, i) => (
-                <li key={i} className="flex gap-3">
-                  <span className="text-glow-400 flex-shrink-0 font-bold mt-0.5">+</span>
-                  <div>
-                    <span className="font-bold text-ink text-sm">{s.item}</span>
-                    {s.note && <p className="text-ink-faint text-xs mt-1 leading-relaxed">{s.note}</p>}
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </Card>
-        </div>
-      )}
-
-      {/* ── ASK THE SELLER ──────────────────────────────── */}
-      {result.questionsToAsk?.length > 0 && (
-        <div className="space-y-3">
-          <TileHeader label="Ask the Seller" score={null} />
-          <Card className="p-6">
-            <ol className="space-y-3.5">
-              {result.questionsToAsk.map((q, i) => (
-                <li key={i} className="flex gap-3.5 text-sm border-b border-line pb-3.5 last:border-0 last:pb-0">
-                  <span className="font-mono text-glow-500 font-bold w-5 flex-shrink-0 tabular-nums">{String(i + 1).padStart(2, "0")}</span>
-                  <span className="text-ink/85 leading-snug">{q}</span>
-                </li>
-              ))}
-            </ol>
-          </Card>
-        </div>
-      )}
+        );
+      })()}
 
       {/* ── YOU MIGHT ALSO CONSIDER ─────────────────────── */}
       {result.alternatives && result.alternatives.length > 0 && (
@@ -840,20 +842,6 @@ export default function AnalysisResults({
               AI suggestions, not listings we&apos;ve seen. Prices are rough guesses and rising classics can go well past them, so trust what each Trade Me search finds.
             </p>
           </Card>
-        </div>
-      )}
-
-      {/* ── THE ENTHUSIAST TAKE ─────────────────────────── */}
-      {result.enthusiastTake && (
-        <div ref={takeRef} className="scroll-mt-28 rounded-xl bg-dial ring-1 ring-glow-600/40 overflow-hidden">
-          <div className="px-6 pt-5">
-            <span className="font-mono text-base uppercase tracking-[0.06em] text-mfd [text-shadow:0_0_6px_rgba(255,173,59,0.45)]">
-              The Enthusiast Take
-            </span>
-          </div>
-          <div className="px-6 pt-3 pb-6">
-            <p className="text-ink leading-relaxed text-[15px]">{result.enthusiastTake}</p>
-          </div>
         </div>
       )}
 

@@ -74,17 +74,13 @@ const ROW_DEFS: CompareRowDef[] = [
     margin: SCORE_ROW_MARGIN,
   },
   {
-    label: "Asking",
-    display: (a) => (a.vehicle.price ? formatPrice(a.vehicle.price) : DASH),
-  },
-  {
     label: "Enthusiast Tax",
     display: (a) => a.enthusiastTax?.level ?? DASH,
     comparable: (a) => TAX_RANK[a.enthusiastTax?.level] ?? null,
     direction: "lower",
   },
   {
-    label: "Reliability Pain",
+    label: "Reliability",
     display: (a) => (a.ownershipPain?.score != null ? `${a.ownershipPain.score}/10` : DASH),
     comparable: (a) => a.ownershipPain?.score ?? null,
     direction: "lower",
